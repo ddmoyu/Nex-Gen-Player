@@ -3,9 +3,12 @@
     <n-button @click="go">go download</n-button>
     {{sum}}{{dbSum}}
     <n-button @click="add"> + </n-button>
+    <n-button @click="addHistory"> history </n-button>
   </div>
 </template>
 <script lang="ts" setup>
+import { db } from '@/renderer/utils/database/controller/DBTools'
+import { History } from '@/renderer/utils/database/models/History'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -16,6 +19,11 @@ const sum = ref(0)
 const dbSum = computed(() => sum.value * 2)
 function add () {
   sum.value++
+}
+function addHistory () {
+  const his = new History()
+  his.ids = 12314
+  db.put<History>('history', his)
 }
 </script>
 <style lang="scss" scoped></style>
