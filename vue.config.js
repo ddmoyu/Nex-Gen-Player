@@ -1,3 +1,5 @@
+const { NaiveUiResolver } = require('unplugin-vue-components/resolvers')
+const Components = require('unplugin-vue-components/webpack')
 module.exports = {
   pages: {
     main: 'src/renderer/pages/main/main.ts',
@@ -12,5 +14,13 @@ module.exports = {
         preload: 'src/preload/index.ts'
       }
     }
+  },
+  configureWebpack: {
+    plugins: [
+      Components({
+        resolvers: [NaiveUiResolver()],
+        dts: 'src/typings/components.d.ts'
+      })
+    ]
   }
 }
