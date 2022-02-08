@@ -4,7 +4,13 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Contextmenu: typeof import('./../renderer/components/Contextmenu.vue')['default']
+    Detail: typeof import('./../renderer/components/Detail.vue')['default']
+    Frame: typeof import('./../renderer/components/Frame.vue')['default']
+    List: typeof import('./../renderer/components/List.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
+    Share: typeof import('./../renderer/components/Share.vue')['default']
+    Waterfall: typeof import('./../renderer/components/Waterfall.vue')['default']
   }
 }
 

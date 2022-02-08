@@ -4,6 +4,7 @@ module.exports = {
     node: true
   },
   extends: [
+    'vue-global-api',
     'plugin:vue/vue3-essential',
     '@vue/standard',
     '@vue/typescript/recommended'
@@ -16,11 +17,5 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-  },
-  globals: {
-    defineProps: 'readonly',
-    defineEmits: 'readonly',
-    defineExpose: 'readonly',
-    withDefaults: 'readonly',
   }
 }

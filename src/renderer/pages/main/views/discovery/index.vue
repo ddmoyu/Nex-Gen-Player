@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { History } from '@/renderer/utils/database/models/History'
-import { computed, ref } from 'vue'
+// import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 function go () {

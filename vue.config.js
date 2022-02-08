@@ -1,5 +1,7 @@
 const { NaiveUiResolver } = require('unplugin-vue-components/resolvers')
+const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
+
 module.exports = {
   pages: {
     main: 'src/renderer/pages/main/main.ts',
@@ -17,9 +19,17 @@ module.exports = {
   },
   configureWebpack: {
     plugins: [
+      AutoImport({
+        dts: 'src/typings/auto-imports.d.ts',
+        imports: [
+          'vue',
+          'vue-router'
+        ]
+      }),
       Components({
-        resolvers: [NaiveUiResolver()],
-        dts: 'src/typings/components.d.ts'
+        dirs: ['src/renderer/components'],
+        dts: 'src/typings/components.d.ts',
+        resolvers: [NaiveUiResolver()]
       })
     ]
   }
