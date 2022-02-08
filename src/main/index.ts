@@ -2,8 +2,8 @@
 
 import { app, protocol, BrowserWindow } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import { registerIpcEvent } from './events'
 import win from './router'
-import './events/win'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -30,6 +30,7 @@ app.on('ready', async () => {
     }
   }
   win.open('main')
+  registerIpcEvent()
   // autoUpdater.checkForUpdatesAndNotify()
 })
 
