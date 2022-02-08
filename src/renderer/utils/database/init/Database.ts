@@ -2,7 +2,7 @@ import Dexie from 'dexie'
 import { initSettings } from './default'
 import { HistoryStores } from '../models/History'
 import { MovieStores } from '../models/Movie'
-import { IpTvStores } from '../models/IpTv'
+import { IpTvStores } from '../models/Iptv'
 import { FavoriteStores } from '../models/Favorite'
 
 export const tableSet = ['favorits', 'history', 'movies', 'iptv', 'settings'] as const
