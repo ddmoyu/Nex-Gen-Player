@@ -4,6 +4,7 @@ module.exports = {
     node: true
   },
   extends: [
+    'vue-global-api',
     'plugin:vue/vue3-essential',
     '@vue/standard',
     '@vue/typescript/recommended'
