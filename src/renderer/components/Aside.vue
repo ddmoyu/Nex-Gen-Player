@@ -3,7 +3,7 @@
     <div class="top">
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large" @click="goView('discovery')">
+          <n-button circle type="primary" size="large" @click="goView('discovery')" :dashed="active === 'discovery'" :quaternary="active !== 'discovery'">
             <n-icon size="20"><PrismSharp /></n-icon>
           </n-button>
         </template>
@@ -11,7 +11,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large" @click="goView('iptv')">
+          <n-button circle type="primary" size="large" @click="goView('iptv')" :dashed="active === 'iptv'" :quaternary="active !== 'iptv'">
             <n-icon size="20"><Tv /></n-icon>
           </n-button>
         </template>
@@ -19,7 +19,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large" @click="goView('search')">
+          <n-button circle type="primary" size="large" @click="goView('search')" :dashed="active === 'search'" :quaternary="active !== 'search'">
             <n-icon size="20"><Search /></n-icon>
           </n-button>
         </template>
@@ -27,7 +27,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large" @click="goView('favorites')">
+          <n-button circle type="primary" size="large" @click="goView('favorites')" :dashed="active === 'favorites'" :quaternary="active !== 'favorites'">
             <n-icon size="20"><Heart /></n-icon>
           </n-button>
         </template>
@@ -35,7 +35,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large" @click="goView('history')">
+          <n-button circle type="primary" size="large" @click="goView('history')" :dashed="active === 'history'" :quaternary="active !== 'history'">
             <n-icon size="20"><Time /></n-icon>
           </n-button>
         </template>
@@ -43,7 +43,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large" @click="goView('download')">
+          <n-button circle type="primary" size="large" @click="goView('download')" :dashed="active === 'download'" :quaternary="active !== 'download'">
             <n-icon size="20"><ArrowDown /></n-icon>
           </n-button>
         </template>
@@ -64,7 +64,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large" @click="goView('settings')">
+          <n-button circle type="primary" size="large" @click="goView('settings')" :dashed="active === 'settings'" :quaternary="active !== 'settings'">
             <n-icon size="20"><Settings /></n-icon>
           </n-button>
         </template>
@@ -75,9 +75,19 @@
 </template>
 <script lang="ts" setup>
 import { PrismSharp, Tv, Search, Heart, Time, ArrowDown, Notifications, Settings } from '@vicons/ionicons5'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute, RouteRecordName } from 'vue-router'
+
 const show = ref(true)
 const router = useRouter()
+const route = useRoute()
+const active = ref<RouteRecordName>('discovery')
+
+watch(() => route.name, (name) => {
+  if (name) {
+    active.value = name
+  }
+})
+
 function goView (v: string) {
   router.push({ name: v })
 }
