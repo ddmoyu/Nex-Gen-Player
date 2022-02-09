@@ -1,9 +1,9 @@
 <template>
   <div class="frame">
     <div class="mac">
-      <span class="min" @click="mini()"></span>
-      <span class="max" @click="maximize()"></span>
       <span class="close" @click="close()"></span>
+      <span class="max" @click="maximize()"></span>
+      <span class="min" @click="mini()"></span>
     </div>
     <div class="win">
       <n-button quaternary type="primary" @click="mini()">
@@ -12,7 +12,7 @@
       <n-button quaternary type="primary" @click="maximize()">
         <n-icon size="20"><Add /></n-icon>
       </n-button>
-      <n-button quaternary type="primary" @click="close()">
+      <n-button quaternary type="error" @click="close()">
         <n-icon size="20"><Close /></n-icon>
       </n-button>
     </div>
@@ -40,6 +40,29 @@ function close () {
   -webkit-app-region: drag;
   button{
     -webkit-app-region: no-drag;
+  }
+  .mac{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    span{
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      -webkit-app-region: no-drag;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    .close{
+      background-color: #ff6057;
+    }
+    .max{
+      background-color: #ffbd2e;
+    }
+    .min{
+      background-color: #29c940;
+    }
   }
 }
 </style>

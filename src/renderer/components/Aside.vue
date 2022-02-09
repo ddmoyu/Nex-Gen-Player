@@ -3,7 +3,7 @@
     <div class="top">
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large">
+          <n-button quaternary circle type="primary" size="large" @click="goView('discovery')">
             <n-icon size="20"><PrismSharp /></n-icon>
           </n-button>
         </template>
@@ -11,7 +11,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large">
+          <n-button quaternary circle type="primary" size="large" @click="goView('iptv')">
             <n-icon size="20"><Tv /></n-icon>
           </n-button>
         </template>
@@ -19,7 +19,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large">
+          <n-button quaternary circle type="primary" size="large" @click="goView('search')">
             <n-icon size="20"><Search /></n-icon>
           </n-button>
         </template>
@@ -27,7 +27,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large">
+          <n-button quaternary circle type="primary" size="large" @click="goView('favorites')">
             <n-icon size="20"><Heart /></n-icon>
           </n-button>
         </template>
@@ -35,7 +35,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large">
+          <n-button quaternary circle type="primary" size="large" @click="goView('history')">
             <n-icon size="20"><Time /></n-icon>
           </n-button>
         </template>
@@ -43,7 +43,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large">
+          <n-button quaternary circle type="primary" size="large" @click="goView('download')">
             <n-icon size="20"><ArrowDown /></n-icon>
           </n-button>
         </template>
@@ -64,7 +64,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button quaternary circle type="primary" size="large">
+          <n-button quaternary circle type="primary" size="large" @click="goView('settings')">
             <n-icon size="20"><Settings /></n-icon>
           </n-button>
         </template>
@@ -75,7 +75,12 @@
 </template>
 <script lang="ts" setup>
 import { PrismSharp, Tv, Search, Heart, Time, ArrowDown, Notifications, Settings } from '@vicons/ionicons5'
+import { useRouter } from 'vue-router'
 const show = ref(true)
+const router = useRouter()
+function goView (v: string) {
+  router.push({ name: v })
+}
 </script>
 <style lang="scss" scoped>
 .aside{
