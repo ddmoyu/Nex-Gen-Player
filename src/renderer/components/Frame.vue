@@ -26,5 +26,6 @@ span{
   padding: 10px;
   border: 1px #ccc solid;
   cursor: pointer;
+  -webkit-app-region: no-drag;
 }
 </style>
