@@ -19,8 +19,9 @@
   </n-config-provider>
 </template>
 <script lang="ts" setup>
-import { darkTheme } from 'naive-ui'
+import { darkTheme, lightTheme } from 'naive-ui'
 const theme = ref(darkTheme)
+// const theme = ref(lightTheme)
 </script>
 <style lang="scss">
 html,body,#app,.n-config-provider{

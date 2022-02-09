@@ -1480,6 +1480,11 @@
     "@typescript-eslint/types" "4.33.0"
     "eslint-visitor-keys" "^2.0.0"
 
+"@vicons/ionicons5@^0.12.0":
+  "integrity" "sha512-Iy1EUVRpX0WWxeu1VIReR1zsZLMc4fqpt223czR+Rpnrwu7pt46nbnC2ycO7ItI/uqDLJxnbcMC7FujKs9IfFA=="
+  "resolved" "https://mirrors.cloud.tencent.com/npm/@vicons%2fionicons5/-/ionicons5-0.12.0.tgz"
+  "version" "0.12.0"
+
 "@vue/babel-helper-vue-jsx-merge-props@^1.2.1":
   "integrity" "sha512-QOi5OW45e2R20VygMSNhyQHvpdUwQZqGPc748JLGCYEy+yp8fNFNdbNIGAgZmi9e+2JHPd6i6idRuqivyicIkA=="
   "resolved" "https://mirrors.tencent.com/npm/@vue%2fbabel-helper-vue-jsx-merge-props/-/babel-helper-vue-jsx-merge-props-1.2.1.tgz"
