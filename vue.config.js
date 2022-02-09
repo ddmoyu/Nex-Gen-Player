@@ -11,7 +11,7 @@ module.exports = {
     electronBuilder: {
       mainProcessFile: 'src/main/index.ts',
       nodeIntegration: false,
-      mainProcessWatch: ['src/main/', 'src/perload/'],
+      mainProcessWatch: ['src/main/', 'src/preload/'],
       preload: {
         preload: 'src/preload/index.ts'
       }
