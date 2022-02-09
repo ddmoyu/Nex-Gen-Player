@@ -2,8 +2,8 @@
 
 import { app, protocol, BrowserWindow } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-import { registerIpcEvent } from './events'
 import win from './router'
+import { registerIpcEvent } from './events'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 

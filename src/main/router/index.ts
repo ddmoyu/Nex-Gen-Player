@@ -1,7 +1,6 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import WinConfig from './config'
-import 'core-js/es/object'
 
 interface WinType {
   [key: string]: BrowserWindow
