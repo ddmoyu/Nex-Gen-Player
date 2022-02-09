@@ -2,52 +2,44 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import WinConfig from './config'
 
-interface WinType {
-  [key: string]: BrowserWindow
-}
 class Router {
-  windows: WinType
+  windows: Map<string, BrowserWindow>
+  windowSizeStatus:Map<string, boolean>
   constructor () {
-    this.windows = {}
+    this.windows = new Map()
+    this.windowSizeStatus = new Map()
   }
 
-  // 【窗口】 最小化
+  // 【窗口】 最小化-
   mini (name: string) {
-    if (name && this.windows[name]) {
-      this.windows[name].minimize()
-    } else {
-      const win = BrowserWindow.getFocusedWindow()
-      if (win) win.minimize()
-    }
+    const win = this.windows.get(name)
+    win && win.minimize()
   }
 
   // 【窗口】 最大化
   max (name: string) {
-    if (name && this.windows[name]) {
-      this.windows[name].isMaximized() ? this.windows[name].unmaximize() : this.windows[name].maximize()
-    } else {
-      const win = BrowserWindow.getFocusedWindow()
-      if (win) win.isMaximized() ? win.unmaximize() : win.maximize()
-    }
+    const status = this.windowSizeStatus.get(name)
+    const win = this.windows.get(name)
+    if (!win) return
+    status ? win.unmaximize() : win.maximize()
+    this.windowSizeStatus.set(name, !status)
   }
 
   // 【窗口】 关闭
   close (name: string) {
-    if (name && this.windows[name]) {
-      this.windows[name].close()
-    } else {
-      const win = BrowserWindow.getFocusedWindow()
-      if (win) win.close()
-    }
+    const win = this.windows.get(name)
+    win && win.close()
   }
 
   // 【窗口】 获取单个窗口
   get (name: string) {
-    if (name) {
-      return this.windows[name]
-    } else {
-      return BrowserWindow.getFocusedWindow()
-    }
+    const win = this.windows.get(name)
+    return win || BrowserWindow.getFocusedWindow()
+  }
+
+  // 获取当前窗口的是否最大化
+  getIsMaximize (name:string) {
+    return this.windowSizeStatus.get(name)
   }
 
   // 【窗口】 获取所有窗口
@@ -65,25 +57,27 @@ class Router {
 
   // 【窗口】 打开窗口
   async open (name: string, config?: BrowserWindowConstructorOptions) {
-    if (this.windows[name]) {
-      if (this.windows[name].isMinimized()) this.windows[name].restore()
-      this.windows[name].focus()
+    const win = this.windows.get(name)
+    if (win) {
+      const isMax = this.windowSizeStatus.get(name)
+      isMax && win.restore()
+      win.focus()
       return false
     }
 
-    const win = this.windows[name] = await createWindow(name, config)
-    win.on('close', () => {
-      win && win.hide()
-      delete this.windows[name]
-      win.destroy()
+    const nw = await createWindow(name, config)
+    this.windows.set(name, nw)
+    nw.on('close', () => {
+      nw && nw.hide()
+      this.windows.delete(name)
+      nw.destroy()
     })
 
-    win.once('ready-to-show', () => {
-      if (!win) return false
-      win.show()
+    nw.once('ready-to-show', () => {
+      nw.show()
     })
 
-    return win
+    return nw
   }
 }
 
