@@ -1,6 +1,9 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron'
+type IpcParams = {
+  [key:string]:string
+}
 export const Ipc = {
-  invoke: (channel: string, args: any): void => {
+  invoke: (channel: string, args?: IpcParams): void => {
     ipcRenderer.invoke(channel, args)
   },
   send: (channel: string, args: any[]): void => {
