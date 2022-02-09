@@ -1,8 +1,8 @@
 <template>
   <div class="frame">
-    <span @click="mini">-</span>
-    <span @click="maximize">□</span>
-    <span @click="close">X</span>
+    <span @click="mini()">-</span>
+    <span @click="maximize()">□</span>
+    <span @click="close()">X</span>
   </div>
 </template>
 <script lang="ts" setup>
@@ -18,6 +18,10 @@ function close () {
 }
 </script>
 <style lang="scss" scoped>
+.frame{
+  -webkit-app-region: drag;
+  height: 40px;
+}
 span{
   padding: 10px;
   border: 1px #ccc solid;
