@@ -12,29 +12,28 @@ class Router {
 
   // 【窗口】 最小化-
   mini (name: string) {
-    const win = this.windows.get(name)
+    const win = this.get(name)
     win && win.minimize()
   }
 
   // 【窗口】 最大化
   max (name: string) {
     const status = this.windowSizeStatus.get(name)
-    const win = this.windows.get(name)
+    const win = this.get(name)
     if (!win) return
     status ? win.unmaximize() : win.maximize()
     this.windowSizeStatus.set(name, !status)
   }
 
   // 【窗口】 关闭
-  close (name: string) {
-    const win = this.windows.get(name)
+  close (name?: string) {
+    const win = this.get(name)
     win && win.close()
   }
 
   // 【窗口】 获取单个窗口
-  get (name: string) {
-    const win = this.windows.get(name)
-    return win || BrowserWindow.getFocusedWindow()
+  get (name?: string) {
+    return name ? this.windows.get(name) ? this.windows.get(name) : BrowserWindow.getFocusedWindow() : BrowserWindow.getFocusedWindow()
   }
 
   // 获取当前窗口的是否最大化
