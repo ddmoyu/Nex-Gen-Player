@@ -19,7 +19,6 @@ class SettingsDB extends DBTools {
   }
 
   updateSetting (params:Partial<Setting>) {
-    console.log(params)
     return this.table.update(0, params)
   }
 }

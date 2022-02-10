@@ -36,7 +36,6 @@ function changeTheme (theme: 'dark'|'light') {
     activeTheme.value = lightTheme
   }
   settingsDB.updateSetting({ theme: theme })
-  localStorage.setItem('theme', theme)
 }
 </script>
 <style lang="scss">
