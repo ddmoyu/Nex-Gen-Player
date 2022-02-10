@@ -5,6 +5,7 @@ import { MovieStores } from '../models/Movie'
 import { IpTvStores } from '../models/IpTv'
 import { FavoriteStores } from '../models/Favorite'
 import { SiteStores } from '../models/Site'
+import { SettingStores } from '../models/Setting'
 
 export const tableSet = ['favorits', 'history', 'movies', 'iptv', 'settings', 'sites'] as const
 export class Database extends Dexie {
@@ -17,7 +18,7 @@ export class Database extends Dexie {
       movies: MovieStores,
       iptv: IpTvStores,
       sites: SiteStores,
-      settings: 'id, view, windows, play, theme, language, shortcut, search, player, downlaoder, exclude, proxy, password'
+      settings: SettingStores
     })
   }
 

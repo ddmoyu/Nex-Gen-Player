@@ -19,21 +19,23 @@
   </n-config-provider>
 </template>
 <script lang="ts" setup>
+import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 import { darkTheme, lightTheme } from 'naive-ui'
 import bus from './plugins/mitt'
 const activeTheme = ref(darkTheme)
-
-onMounted(() => {
-  activeTheme.value = localStorage.getItem('theme') === 'light' ? lightTheme : darkTheme
+onMounted(async () => {
+  const res = await settingsDB.getSetting('theme')
+  activeTheme.value = res === 'light' ? lightTheme : darkTheme
   bus.on('bus.settings.theme', changeTheme)
 })
 
-function changeTheme (theme: string) {
+function changeTheme (theme: 'dark'|'light') {
   if (theme === 'dark') {
     activeTheme.value = darkTheme
   } else {
     activeTheme.value = lightTheme
   }
+  settingsDB.updateSetting({ theme: theme })
   localStorage.setItem('theme', theme)
 }
 </script>
