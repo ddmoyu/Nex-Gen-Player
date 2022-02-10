@@ -1,7 +1,7 @@
 import mitt from 'mitt'
 
 export type Events = {
-  [key: string]: string
+  [key: string]: any
 }
 
 const bus = mitt<Events>()
