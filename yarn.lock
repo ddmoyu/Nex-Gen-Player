@@ -1035,6 +1035,62 @@
     "cssnano-preset-default" "^4.0.0"
     "postcss" "^7.0.0"
 
+"@intlify/core-base@9.1.9":
+  "integrity" "sha512-x5T0p/Ja0S8hs5xs+ImKyYckVkL4CzcEXykVYYV6rcbXxJTe2o58IquSqX9bdncVKbRZP7GlBU1EcRaQEEJ+vw=="
+  "resolved" "https://mirrors.tencent.com/npm/@intlify%2fcore-base/-/core-base-9.1.9.tgz"
+  "version" "9.1.9"
+  dependencies:
+    "@intlify/devtools-if" "9.1.9"
+    "@intlify/message-compiler" "9.1.9"
+    "@intlify/message-resolver" "9.1.9"
+    "@intlify/runtime" "9.1.9"
+    "@intlify/shared" "9.1.9"
+    "@intlify/vue-devtools" "9.1.9"
+
+"@intlify/devtools-if@9.1.9":
+  "integrity" "sha512-oKSMKjttG3Ut/1UGEZjSdghuP3fwA15zpDPcjkf/1FjlOIm6uIBGMNS5jXzsZy593u+P/YcnrZD6cD3IVFz9vQ=="
+  "resolved" "https://mirrors.tencent.com/npm/@intlify%2fdevtools-if/-/devtools-if-9.1.9.tgz"
+  "version" "9.1.9"
+  dependencies:
+    "@intlify/shared" "9.1.9"
+
+"@intlify/message-compiler@9.1.9":
+  "integrity" "sha512-6YgCMF46Xd0IH2hMRLCssZI3gFG4aywidoWQ3QP4RGYQXQYYfFC54DxhSgfIPpVoPLQ+4AD29eoYmhiHZ+qLFQ=="
+  "resolved" "https://mirrors.tencent.com/npm/@intlify%2fmessage-compiler/-/message-compiler-9.1.9.tgz"
+  "version" "9.1.9"
+  dependencies:
+    "@intlify/message-resolver" "9.1.9"
+    "@intlify/shared" "9.1.9"
+    "source-map" "0.6.1"
+
+"@intlify/message-resolver@9.1.9":
+  "integrity" "sha512-Lx/DBpigeK0sz2BBbzv5mu9/dAlt98HxwbG7xLawC3O2xMF9MNWU5FtOziwYG6TDIjNq0O/3ZbOJAxwITIWXEA=="
+  "resolved" "https://mirrors.cloud.tencent.com/npm/@intlify%2fmessage-resolver/-/message-resolver-9.1.9.tgz"
+  "version" "9.1.9"
+
+"@intlify/runtime@9.1.9":
+  "integrity" "sha512-XgPw8+UlHCiie3fI41HPVa/VDJb3/aSH7bLhY1hJvlvNV713PFtb4p4Jo+rlE0gAoMsMCGcsiT982fImolSltg=="
+  "resolved" "https://mirrors.cloud.tencent.com/npm/@intlify%2fruntime/-/runtime-9.1.9.tgz"
+  "version" "9.1.9"
+  dependencies:
+    "@intlify/message-compiler" "9.1.9"
+    "@intlify/message-resolver" "9.1.9"
+    "@intlify/shared" "9.1.9"
+
+"@intlify/shared@9.1.9":
+  "integrity" "sha512-xKGM1d0EAxdDFCWedcYXOm6V5Pfw/TMudd6/qCdEb4tv0hk9EKeg7lwQF1azE0dP2phvx0yXxrt7UQK+IZjNdw=="
+  "resolved" "https://mirrors.tencent.com/npm/@intlify%2fshared/-/shared-9.1.9.tgz"
+  "version" "9.1.9"
+
+"@intlify/vue-devtools@9.1.9":
+  "integrity" "sha512-YPehH9uL4vZcGXky4Ev5qQIITnHKIvsD2GKGXgqf+05osMUI6WSEQHaN9USRa318Rs8RyyPCiDfmA0hRu3k7og=="
+  "resolved" "https://mirrors.tencent.com/npm/@intlify%2fvue-devtools/-/vue-devtools-9.1.9.tgz"
+  "version" "9.1.9"
+  dependencies:
+    "@intlify/message-resolver" "9.1.9"
+    "@intlify/runtime" "9.1.9"
+    "@intlify/shared" "9.1.9"
+
 "@jridgewell/resolve-uri@^3.0.3":
   "integrity" "sha512-cz8HFjOFfUBtvN+NXYSFMHYRdxZMaEl0XypVrhzxBgadKIXhIkRd8aMeHhmF56Sl7SuS8OnUpQ73/k9LE4VnLg=="
   "resolved" "https://mirrors.tencent.com/npm/@jridgewell%2fresolve-uri/-/resolve-uri-3.0.4.tgz"
@@ -1806,7 +1862,7 @@
   optionalDependencies:
     "prettier" "^1.18.2 || ^2.0.0"
 
-"@vue/devtools-api@^6.0.0-beta.18":
+"@vue/devtools-api@^6.0.0-beta.18", "@vue/devtools-api@^6.0.0-beta.7":
   "integrity" "sha512-V2BKGa9pHf/sY2oBUr4uO8yF5MtgL2X96uJq2cBPxPqEUEkLfhJrbpU7t34JRjnanp2tkDJQrQsrsoMltHnFNQ=="
   "resolved" "https://mirrors.tencent.com/npm/@vue%2fdevtools-api/-/devtools-api-6.0.1.tgz"
   "version" "6.0.1"
@@ -9867,6 +9923,11 @@
   "resolved" "https://mirrors.tencent.com/npm/source-map/-/source-map-0.6.1.tgz"
   "version" "0.6.1"
 
+"source-map@0.6.1":
+  "integrity" "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="
+  "resolved" "https://mirrors.tencent.com/npm/source-map/-/source-map-0.6.1.tgz"
+  "version" "0.6.1"
+
 "sourcemap-codec@^1.4.4":
   "integrity" "sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA=="
   "resolved" "https://mirrors.tencent.com/npm/sourcemap-codec/-/sourcemap-codec-1.4.8.tgz"
@@ -11077,6 +11138,16 @@
   "integrity" "sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog=="
   "resolved" "http://mirrors.cloud.tencent.com/npm/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz"
   "version" "2.3.4"
+
+"vue-i18n@^9.1.9":
+  "integrity" "sha512-JeRdNVxS2OGp1E+pye5XB6+M6BBkHwAv9C80Q7+kzoMdUDGRna06tjC0vCB/jDX9aWrl5swxOMFcyAr7or8XTA=="
+  "resolved" "https://mirrors.tencent.com/npm/vue-i18n/-/vue-i18n-9.1.9.tgz"
+  "version" "9.1.9"
+  dependencies:
+    "@intlify/core-base" "9.1.9"
+    "@intlify/shared" "9.1.9"
+    "@intlify/vue-devtools" "9.1.9"
+    "@vue/devtools-api" "^6.0.0-beta.7"
 
 "vue-loader-v16@npm:vue-loader@^16.1.0":
   "integrity" "sha512-7vKN45IxsKxe5GcVCbc2qFU5aWzyiLrYJyUuMz4BQLKctCj/fmCa0w6fGiiQ2cLFetNcek1ppGJQDCup0c1hpA=="
