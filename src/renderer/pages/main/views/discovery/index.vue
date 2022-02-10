@@ -11,7 +11,6 @@
 import { fetchClassByKey } from '@/renderer/api/movie'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { History } from '@/renderer/utils/database/models/History'
-// import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 function go () {
@@ -28,7 +27,8 @@ function addHistory () {
   db.put<History>('history', his)
 }
 async function getClass () {
-  fetchClassByKey()
+  const res = await fetchClassByKey()
+  console.log(res)
 }
 </script>
 <style lang="scss" scoped></style>
