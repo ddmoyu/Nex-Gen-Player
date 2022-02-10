@@ -22,13 +22,13 @@
 import { Remove, Add, Close } from '@vicons/ionicons5'
 import { IpcDirective } from '@/main/ipcEnum'
 function mini () {
-  window.ipc.invoke(IpcDirective.WIN_MINI, { name: 'main' })
+  window.ipc.invoke(IpcDirective.WIN_MINI)
 }
 function maximize () {
-  window.ipc.invoke(IpcDirective.WIN_MAXIMIZE, { name: 'main' })
+  window.ipc.invoke(IpcDirective.WIN_MAXIMIZE)
 }
 function close () {
-  window.ipc.invoke(IpcDirective.WIN_CLOSE, { name: 'main' })
+  window.ipc.invoke(IpcDirective.WIN_CLOSE)
 }
 </script>
 <style lang="scss" scoped>
