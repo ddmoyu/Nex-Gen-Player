@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme="theme">
+  <n-config-provider :theme="activeTheme">
     <n-layout class="container">
       <n-layout-header>
         <Frame />
@@ -20,8 +20,20 @@
 </template>
 <script lang="ts" setup>
 import { darkTheme, lightTheme } from 'naive-ui'
-const theme = ref(darkTheme)
-// const theme = ref(lightTheme)
+import bus from './plugins/mitt'
+const activeTheme = ref(darkTheme)
+
+onMounted(() => {
+  bus.on('bus.settings.theme', changeTheme)
+})
+
+function changeTheme (theme: string) {
+  if (theme === 'dark') {
+    activeTheme.value = darkTheme
+  } else {
+    activeTheme.value = lightTheme
+  }
+}
 </script>
 <style lang="scss">
 html,body,#app,.n-config-provider{
