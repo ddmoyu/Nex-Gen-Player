@@ -4,9 +4,11 @@
     {{sum}}{{dbSum}}
     <n-button @click="add"> + </n-button>
     <n-button @click="addHistory"> history </n-button>
+    <n-button @click="getClass">获取分类</n-button>
   </div>
 </template>
 <script lang="ts" setup>
+import { fetchClassByKey } from '@/renderer/api/movie'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { History } from '@/renderer/utils/database/models/History'
 // import { computed, ref } from 'vue'
@@ -24,6 +26,9 @@ function addHistory () {
   const his = new History()
   his.ids = 12314
   db.put<History>('history', his)
+}
+async function getClass () {
+  fetchClassByKey()
 }
 </script>
 <style lang="scss" scoped></style>

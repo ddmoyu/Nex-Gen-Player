@@ -8,8 +8,8 @@ const routes: RouteRecordRaw[] = [
   { name: 'favorites', path: '/favorites', component: () => import('../views/favorites/index.vue') },
   { name: 'history', path: '/history', component: () => import('../views/history/index.vue') },
   { name: 'search', path: '/search', component: () => import('../views/search/index.vue') },
-  { name: 'settings', path: '/settings', component: () => import('../views/settings/index.vue') }
-
+  { name: 'settings', path: '/settings', component: () => import('../views/settings/index.vue') },
+  { name: 'player', path: '/player', component: () => import('../views/settings/index.vue') }
 ]
 
 const router = createRouter({
