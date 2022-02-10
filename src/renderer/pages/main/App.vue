@@ -24,6 +24,8 @@ import bus from './plugins/mitt'
 const activeTheme = ref(darkTheme)
 
 onMounted(() => {
+  const theme = localStorage.getItem('theme')
+  activeTheme.value = theme === 'light' ? lightTheme : darkTheme
   bus.on('bus.settings.theme', changeTheme)
 })
 
@@ -33,6 +35,7 @@ function changeTheme (theme: string) {
   } else {
     activeTheme.value = lightTheme
   }
+  localStorage.setItem('theme', theme)
 }
 </script>
 <style lang="scss">
