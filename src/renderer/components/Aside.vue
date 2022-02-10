@@ -7,7 +7,7 @@
             <n-icon size="20"><PrismSharp /></n-icon>
           </n-button>
         </template>
-        <span>Discovery</span>
+        <span>{{ $t('discovery') }}</span>
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
@@ -15,7 +15,7 @@
             <n-icon size="20"><Tv /></n-icon>
           </n-button>
         </template>
-        <span>TV</span>
+        <span>{{ $t('tv') }}</span>
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
@@ -23,7 +23,7 @@
             <n-icon size="20"><Play /></n-icon>
           </n-button>
         </template>
-        <span>Play</span>
+        <span>{{ $t('play') }}</span>
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
@@ -31,7 +31,7 @@
             <n-icon size="20"><Search /></n-icon>
           </n-button>
         </template>
-        <span>Search</span>
+        <span>{{ $t('search') }}</span>
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
@@ -39,7 +39,7 @@
             <n-icon size="20"><Heart /></n-icon>
           </n-button>
         </template>
-        <span>Favorites</span>
+        <span>{{ $t('favorites') }}</span>
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
@@ -47,7 +47,7 @@
             <n-icon size="20"><Time /></n-icon>
           </n-button>
         </template>
-        <span>History</span>
+        <span>{{ $t('history') }}</span>
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
@@ -55,7 +55,7 @@
             <n-icon size="20"><ArrowDown /></n-icon>
           </n-button>
         </template>
-        <span>Download</span>
+        <span>{{ $t('download') }}</span>
       </n-popover>
     </div>
     <div class="bottom">
@@ -68,7 +68,7 @@
             </n-icon>
           </n-button>
         </template>
-        <span>Notifications</span>
+        <span>{{ $t('notifications') }}</span>
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
@@ -76,7 +76,7 @@
             <n-icon size="20"><Settings /></n-icon>
           </n-button>
         </template>
-        <span>Settings</span>
+        <span>{{ $t('settings') }}</span>
       </n-popover>
     </div>
   </div>

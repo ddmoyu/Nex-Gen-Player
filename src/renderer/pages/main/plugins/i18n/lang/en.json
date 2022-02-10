@@ -1,0 +1,11 @@
+{
+  "discovery": "Discovery",
+  "tv": "TV",
+  "play": "Play",
+  "search": "Search",
+  "favorites": "Favorites",
+  "history": "History",
+  "download": "Download",
+  "notifications": "Notifications",
+  "settings": "Settings"
+}
