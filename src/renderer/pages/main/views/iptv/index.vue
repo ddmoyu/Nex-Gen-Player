@@ -1,10 +1,21 @@
 <template>
   <div class="iptv">
     <div class="header">
-      <n-button @click="handleRequst">request</n-button>
+      <n-space vertical>
+        <n-space justify="space-between">
+          <n-button size="small" @click="handleRequst">request</n-button>
+          <n-input placeholder="Search" clearable size="small" v-model:value="value" @input="handleInput">
+            <template #suffix>
+              <n-icon><Search /></n-icon>
+            </template>
+          </n-input>
+        </n-space>
+      </n-space>
     </div>
     <div class="body">
       <n-data-table
+        ref="table"
+        size="small"
         :columns="columns"
         :data="data"
         flex-height
@@ -16,26 +27,79 @@
 <script lang="ts" setup>
 import { m3uList } from '../../../../api/iptv'
 import type { PlaylistItem } from 'iptv-playlist-parser'
-import { DataTableColumns } from 'naive-ui'
+import { NButton } from 'naive-ui'
+import { Search } from '@vicons/ionicons5'
+import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
 
 const data = ref<PlaylistItem[]>()
-const columns = createColumns()
+const table = ref()
+const value = ref('')
 
-function createColumns (): DataTableColumns<PlaylistItem> {
-  return [
-    {
-      title: 'Name',
-      key: 'name'
+const columns: TableBaseColumn<PlaylistItem>[] = [
+  {
+    title: 'Name',
+    key: 'name',
+    ellipsis: {
+      tooltip: true
     },
-    {
-      title: 'Country',
-      key: 'tvg.country'
-    },
-    {
-      title: 'Language',
-      key: 'tvg.language'
+    filter (value, row) {
+      const reg = new RegExp(value as string, 'gi')
+      return reg.test(row.name)
     }
-  ]
+  },
+  {
+    title: 'Country',
+    key: 'tvg.country',
+    width: 100,
+    ellipsis: {
+      tooltip: true
+    }
+  },
+  {
+    title: 'Language',
+    key: 'tvg.language',
+    width: 120,
+    ellipsis: {
+      tooltip: true
+    }
+  },
+  {
+    title: 'Group',
+    key: 'group.title',
+    width: 140,
+    ellipsis: {
+      tooltip: true
+    }
+  },
+  {
+    title: 'Action',
+    key: 'actions',
+    width: 100,
+    render (row: PlaylistItem) {
+      return h(
+        NButton,
+        {
+          onClick: () => handlePlay(row)
+        },
+        {
+          default: () => 'Play'
+        }
+      )
+    }
+  }
+]
+
+function handleInput () {
+  const txt = value.value.trim()
+  if (txt !== '') {
+    table.value.filter({ name: [`${txt}`] })
+  } else {
+    table.value.filter(null)
+  }
+}
+
+function handlePlay (row: PlaylistItem): void {
+  console.log('play: ', row)
 }
 
 async function handleRequst () {
@@ -49,6 +113,9 @@ async function handleRequst () {
   display: flex;
   height: 100%;
   flex-direction: column;
+  .header{
+    height: 36px;
+  }
   .body{
     flex: 1;
   }
