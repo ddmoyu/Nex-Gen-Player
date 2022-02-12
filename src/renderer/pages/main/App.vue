@@ -9,7 +9,11 @@
           <Aside />
         </n-layout-sider>
         <n-layout-content content-style="padding: 10px;">
-          <router-view />
+          <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </router-view>
         </n-layout-content>
       </n-layout>
       <n-layout-footer>
