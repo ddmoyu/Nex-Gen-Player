@@ -3,7 +3,10 @@
     <div class="header">
       <n-space vertical>
         <n-space justify="space-between">
-          <n-button size="small" @click="handleRequst">request</n-button>
+          <n-space>
+            <n-select v-model:value="iptv" :options="iptvList" size="small"></n-select>
+            <n-button size="small" @click="handleRequst">Refresh</n-button>
+          </n-space>
           <n-input placeholder="Search" clearable size="small" v-model:value="value" @input="handleInput">
             <template #suffix>
               <n-icon><Search /></n-icon>
@@ -30,6 +33,11 @@ import type { PlaylistItem } from 'iptv-playlist-parser'
 import { NButton } from 'naive-ui'
 import { Search } from '@vicons/ionicons5'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
+
+const iptv = ref('awesome')
+const iptvList = ref([
+  { label: 'Awesome-iptv', value: 'awesome' }
+])
 
 const data = ref<PlaylistItem[]>()
 const table = ref()
