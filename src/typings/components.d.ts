@@ -22,6 +22,7 @@ declare module 'vue' {
     NLayoutHeader: typeof import('naive-ui')['NLayoutHeader']
     NLayoutSider: typeof import('naive-ui')['NLayoutSider']
     NPopover: typeof import('naive-ui')['NPopover']
+    NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
     Share: typeof import('./../renderer/components/Share.vue')['default']
     Waterfall: typeof import('./../renderer/components/Waterfall.vue')['default']
