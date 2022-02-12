@@ -11,7 +11,7 @@
         <n-layout-content content-style="padding: 10px;">
           <router-view v-slot="{ Component }">
             <keep-alive>
-              <component :is="Component" />
+              <component :is="Component"></component>
             </keep-alive>
           </router-view>
         </n-layout-content>
@@ -35,7 +35,7 @@ onMounted(async () => {
   bus.on('bus.settings.theme', changeTheme)
 })
 
-function changeTheme (theme: 'dark'|'light') {
+function changeTheme (theme: 'dark' | 'light') {
   if (theme === 'dark') {
     activeTheme.value = darkTheme
   } else {
@@ -45,12 +45,15 @@ function changeTheme (theme: 'dark'|'light') {
 }
 </script>
 <style lang="scss">
-html,body,#app,.n-config-provider{
+html,
+body,
+#app,
+.n-config-provider {
   height: 100%;
 }
-.container{
+.container {
   height: 100%;
-  .n-layout-scroll-container{
+  .n-layout-scroll-container {
     display: flex;
     flex-direction: column;
   }
