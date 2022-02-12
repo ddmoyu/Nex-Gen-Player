@@ -20,8 +20,10 @@
 </template>
 <script lang="ts" setup>
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
+import { History } from '@/renderer/utils/database/models/History'
 import { darkTheme, lightTheme } from 'naive-ui'
 import bus from './plugins/mitt'
+console.log(new History())
 const activeTheme = ref(darkTheme)
 onMounted(async () => {
   const res = await settingsDB.getSetting('theme')
