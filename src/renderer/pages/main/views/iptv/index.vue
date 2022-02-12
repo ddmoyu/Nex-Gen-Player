@@ -121,6 +121,7 @@ async function handleRequst () {
   display: flex;
   height: 100%;
   flex-direction: column;
+  padding: 10px;
   .header{
     height: 36px;
   }

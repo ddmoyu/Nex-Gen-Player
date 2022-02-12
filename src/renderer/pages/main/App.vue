@@ -8,7 +8,7 @@
         <n-layout-sider :width="60">
           <Aside />
         </n-layout-sider>
-        <n-layout-content content-style="padding: 10px;">
+        <n-layout-content>
           <router-view v-slot="{ Component }">
             <keep-alive>
               <component :is="Component"></component>

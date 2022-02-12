@@ -52,7 +52,7 @@
       <n-popover trigger="hover" placement="right">
         <template #trigger>
           <n-button circle type="primary" size="large" @click="goView('download')" :dashed="active === 'download'" :quaternary="active !== 'download'">
-            <n-icon size="20"><ArrowDown /></n-icon>
+            <n-icon size="20"><ArrowDownCircleOutline /></n-icon>
           </n-button>
         </template>
         <span>{{ $t('download') }}</span>
@@ -82,7 +82,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { PrismSharp, Tv, Play, Search, Heart, Time, ArrowDown, Notifications, Settings } from '@vicons/ionicons5'
+import { PrismSharp, Tv, Play, Search, Heart, Time, ArrowDownCircleOutline, Notifications, Settings } from '@vicons/ionicons5'
 import { useRouter, useRoute, RouteRecordName } from 'vue-router'
 
 const show = ref(true)
