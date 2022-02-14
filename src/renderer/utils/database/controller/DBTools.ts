@@ -6,12 +6,24 @@ export class DBTools {
     this.db = Database.getDB()
   }
 
-  put<T> (tableName:TableSetKey, model:T) {
-    this.db.table(tableName).put(model)
+  async get<T> (tableName: TableSetKey, model: T) {
+    return await this.db.table(tableName).get(model)
   }
 
-  update<T> (tableName:TableSetKey, id:string, params:Partial<T>) {
-    this.db.table(tableName).update(id, params)
+  async all (tableName: TableSetKey) {
+    return await this.db.table(tableName).toArray()
+  }
+
+  async put<T> (tableName:TableSetKey, model:T) {
+    return await this.db.table(tableName).put(model)
+  }
+
+  async update<T> (tableName:TableSetKey, id:string, params:Partial<T>) {
+    return await this.db.table(tableName).update(id, params)
+  }
+
+  async delete (tableName: TableSetKey, id: string) {
+    return await this.db.table(tableName).delete(id)
   }
 }
 

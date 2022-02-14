@@ -123,7 +123,7 @@ const config = ref<IPlayerOptions>({
 })
 
 function init () {
-  player = new HLS(config.value)
+  player = new HLS(config.value as IPlayerOptions)
   nextTick(() => {
     player.src = 'https://v1.cdtlas.com/20210927/cECAezBY/index.m3u8'
     player.play()
