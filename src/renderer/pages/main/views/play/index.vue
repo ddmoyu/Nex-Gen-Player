@@ -5,7 +5,7 @@
     <div id="player" class="player"></div>
   </div>
   <div class="footer">
-    <n-space justify="space-between">
+    <n-space>
       <n-popover trigger="hover" placement="top-start">
         <template #trigger>
           <n-button quaternary type="primary" size="small">
@@ -71,26 +71,6 @@
         <template #trigger>
           <n-button quaternary type="primary" size="small">
             <n-icon size="22">
-              <ShareSocialOutline />
-            </n-icon>
-          </n-button>
-        </template>
-        <span>Share</span>
-      </n-popover>
-      <n-popover trigger="hover" placement="top-start">
-        <template #trigger>
-          <n-button quaternary type="primary" size="small">
-            <n-icon size="22">
-              <PlayCircleOutline />
-            </n-icon>
-          </n-button>
-        </template>
-        <span>Other Player</span>
-      </n-popover>
-      <n-popover trigger="hover" placement="top-start">
-        <template #trigger>
-          <n-button quaternary type="primary" size="small">
-            <n-icon size="22">
               <PlaySkipForwardCircleOutline />
               <PlaySkipForwardCircle />
             </n-icon>
@@ -99,6 +79,11 @@
         <span>Skip</span>
       </n-popover>
     </n-space>
+    <n-space>
+      <n-dropdown :options="menuOptions">
+        <n-button>More</n-button>
+      </n-dropdown>
+    </n-space>
   </div>
 </div>
 </template>
@@ -106,6 +91,7 @@
 import { IPlayerOptions } from 'xgplayer'
 import HLS from 'xgplayer-hls.js'
 import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, PlaySkipForwardCircleOutline, PlaySkipForwardCircle, DocumentTextOutline } from '@vicons/ionicons5'
+import { NIcon } from 'naive-ui'
 
 let player: HLS
 const config = ref<IPlayerOptions>({
@@ -121,6 +107,27 @@ const config = ref<IPlayerOptions>({
   defaultPlaybackRate: 1,
   playbackRate: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 })
+
+const renderIcon = (icon: any) => {
+  return () => {
+    return h(NIcon, null, {
+      default: () => h(icon)
+    })
+  }
+}
+
+const menuOptions = ref([
+  {
+    label: 'Other Player',
+    key: 'otherPlayer',
+    icon: renderIcon(PlayCircleOutline)
+  },
+  {
+    label: 'Share',
+    key: 'share',
+    icon: renderIcon(ShareSocialOutline)
+  }
+])
 
 function init () {
   player = new HLS(config.value as IPlayerOptions)
@@ -149,6 +156,7 @@ onMounted(() => {
   .footer{
     height: 40px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
   }
 }
