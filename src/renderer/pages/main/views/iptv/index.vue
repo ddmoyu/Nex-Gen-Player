@@ -4,10 +4,10 @@
       <n-space vertical>
         <n-space justify="space-between">
           <n-space>
-            <n-select v-model:value="iptv" :options="iptvList" size="small"></n-select>
-            <n-button size="small" @click="handleRequst">Refresh</n-button>
+            <n-select v-model:value="iptv" :options="iptvList"></n-select>
+            <n-button @click="handleRequst">Refresh</n-button>
           </n-space>
-          <n-input placeholder="Search" clearable size="small" v-model:value="value" @input="handleInput">
+          <n-input placeholder="Search" clearable v-model:value="value" @input="handleInput">
             <template #suffix>
               <n-icon><Search /></n-icon>
             </template>
@@ -123,7 +123,7 @@ async function handleRequst () {
   flex-direction: column;
   padding: 10px;
   .header{
-    height: 36px;
+    height: 44px;
   }
   .body{
     flex: 1;

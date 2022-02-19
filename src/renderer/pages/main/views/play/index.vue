@@ -20,16 +20,6 @@
         <template #trigger>
           <n-button quaternary type="primary" size="small">
             <n-icon size="22">
-              <DocumentTextOutline />
-            </n-icon>
-          </n-button>
-        </template>
-        <span>Detail</span>
-      </n-popover>
-      <n-popover trigger="hover" placement="top-start">
-        <template #trigger>
-          <n-button quaternary type="primary" size="small">
-            <n-icon size="22">
               <ListCircleOutline />
             </n-icon>
           </n-button>
@@ -57,31 +47,14 @@
         </template>
         <span>Favorites</span>
       </n-popover>
-      <n-popover trigger="hover" placement="top-start">
-        <template #trigger>
-          <n-button quaternary type="primary" size="small">
-            <n-icon size="22">
-              <ArrowDownCircleOutline />
-            </n-icon>
-          </n-button>
-        </template>
-        <span>Download</span>
-      </n-popover>
-      <n-popover trigger="hover" placement="top-start">
-        <template #trigger>
-          <n-button quaternary type="primary" size="small">
-            <n-icon size="22">
-              <PlaySkipForwardCircleOutline />
-              <PlaySkipForwardCircle />
-            </n-icon>
-          </n-button>
-        </template>
-        <span>Skip</span>
-      </n-popover>
     </n-space>
     <n-space>
       <n-dropdown :options="menuOptions">
-        <n-button>More</n-button>
+        <n-button quaternary type="primary" size="small">
+          <n-icon size="22">
+            <Menu />
+          </n-icon>
+        </n-button>
       </n-dropdown>
     </n-space>
   </div>
@@ -90,7 +63,7 @@
 <script lang="ts" setup>
 import { IPlayerOptions } from 'xgplayer'
 import HLS from 'xgplayer-hls.js'
-import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, PlaySkipForwardCircleOutline, PlaySkipForwardCircle, DocumentTextOutline } from '@vicons/ionicons5'
+import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, PlaySkipForwardCircleOutline, DocumentTextOutline, Menu } from '@vicons/ionicons5'
 import { NIcon } from 'naive-ui'
 
 let player: HLS
@@ -117,6 +90,21 @@ const renderIcon = (icon: any) => {
 }
 
 const menuOptions = ref([
+  {
+    label: 'Detail',
+    key: 'detail',
+    icon: renderIcon(DocumentTextOutline)
+  },
+  {
+    label: 'Download',
+    key: 'download',
+    icon: renderIcon(ArrowDownCircleOutline)
+  },
+  {
+    label: 'Skip',
+    key: 'skip',
+    icon: renderIcon(PlaySkipForwardCircleOutline)
+  },
   {
     label: 'Other Player',
     key: 'otherPlayer',

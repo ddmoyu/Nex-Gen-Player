@@ -27,14 +27,6 @@
       </n-popover>
       <n-popover trigger="hover" placement="right">
         <template #trigger>
-          <n-button circle type="primary" size="large" @click="goView('search')" :dashed="active === 'search'" :quaternary="active !== 'search'">
-            <n-icon size="20"><Search /></n-icon>
-          </n-button>
-        </template>
-        <span>{{ $t('search') }}</span>
-      </n-popover>
-      <n-popover trigger="hover" placement="right">
-        <template #trigger>
           <n-button circle type="primary" size="large" @click="goView('favorites')" :dashed="active === 'favorites'" :quaternary="active !== 'favorites'">
             <n-icon size="20"><Heart /></n-icon>
           </n-button>
@@ -82,7 +74,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { PrismSharp, Tv, Play, Search, Heart, Time, ArrowDownCircleOutline, Notifications, Settings } from '@vicons/ionicons5'
+import { PrismSharp, Tv, Play, Heart, Time, ArrowDownCircleOutline, Notifications, Settings } from '@vicons/ionicons5'
 import { useRouter, useRoute, RouteRecordName } from 'vue-router'
 
 const show = ref(true)
