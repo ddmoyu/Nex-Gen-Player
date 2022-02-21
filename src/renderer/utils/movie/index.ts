@@ -15,6 +15,7 @@ const parser = new XMLParser({
 export async function getClass (url: string) {
   try {
     const xml = await api(url)
+    console.log('xml: ', xml)
     const res = parser.parse(xml)
     console.log('res: ', res)
     const json = res.rss ? res.rss : res
@@ -32,10 +33,12 @@ export async function getClass (url: string) {
 }
 
 // get site video list
-export async function getVideoList (url: string, page = 1, clsId: number) {
+export async function getVideoList (url: string, page?: number, clsId?: number) {
   try {
-    const uri = clsId ? `${url}?ac=videolist&t=${clsId}&pg=${page}` : `${url}?ac=videolist&pg=${page}`
+    const pg = page || 1
+    const uri = clsId ? `${url}?ac=videolist&t=${clsId}&pg=${pg}` : `${url}?ac=videolist&pg=${pg}`
     const xml = await api(uri)
+    console.log('xml: ', xml)
     const res = parser.parse(xml)
     const json = res.rss ? res.rss : res
     const data = json.list.video
@@ -46,8 +49,9 @@ export async function getVideoList (url: string, page = 1, clsId: number) {
 // search video
 export async function search (url: string, wd: string) {
   try {
-    const uri = `${url}?wd=${wd}`
+    const uri = `${url}?wd=${encodeURI(wd)}`
     const xml = await api(uri)
+    console.log('xml: ', xml)
     const res = parser.parse(xml)
     const json = res.rss ? res.rss : res
     const data = json.list.video
@@ -55,11 +59,12 @@ export async function search (url: string, wd: string) {
   } catch (ignore) {}
 }
 
-// search video
+// get video detail
 export async function getDetail (url: string, id: number) {
   try {
-    const uri = `${url}?videolist&ids=${id}`
+    const uri = `${url}?ac=videolist&ids=${id}`
     const xml = await api(uri)
+    console.log('xml: ', xml)
     const res = parser.parse(xml)
     const json = res.rss ? res.rss : res
     const data = json.list.video

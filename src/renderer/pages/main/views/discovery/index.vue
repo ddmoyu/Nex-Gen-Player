@@ -25,8 +25,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-// import { getClass, getVideoList, getDetail, search } from '@/renderer/utils/movie'
-import { getClass } from '@/renderer/utils/movie'
+import { getClass, getVideoList, getDetail, search } from '@/renderer/utils/movie'
 import { Search, Compass } from '@vicons/ionicons5'
 
 const siteVal = ref('site')
@@ -46,9 +45,17 @@ const classOptions = ref([
 const searchAll = ref(false)
 
 async function getClassList () {
-  const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'
+  // const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'
+  const url = 'https://m3u8.bdxapi.com/api.php/provide/vod/at/xml'
+  // const url = 'https://m3u8.bdxapi.com/api.php/Seacms/vod/'
   const res = await getClass(url)
-  console.log(res)
+  console.log('res0: ', res)
+  const res1 = await getVideoList(url)
+  console.log('res1: ', res1)
+  const res2 = await getDetail(url, 44059)
+  console.log('res2: ', res2)
+  const res3 = await search(url, '武林')
+  console.log('res3: ', res3)
 }
 
 onMounted(() => {
