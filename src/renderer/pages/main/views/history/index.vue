@@ -5,7 +5,7 @@
 </template>
 <script lang="ts" setup>
 import { db } from '@/renderer/utils/database/controller/DBTools'
-
+import { History } from '@/renderer/utils/database/models/History'
 async function addHistroy () {
   const d = {
     ids: 466,

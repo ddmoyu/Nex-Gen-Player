@@ -1,31 +1,22 @@
-import { Init, InitAble } from '../decorator'
+import { SetStores } from '../decorator'
 
-@InitAble
+@SetStores('id++, site, ids, name, type, year, index, time, detail')
 export class History {
-  id!: number
+  readonly id?: number
 
-  @Init('')
-  site!: string
+  readonly site?: string
 
-  @Init(0)
-  ids!: number
+  readonly ids?: number
 
-  @Init('')
-  name!: string
+  readonly name?: string
 
-  @Init('')
-  type!: string
+  readonly type?: string
 
-  @Init('')
-  year!: string
+  readonly year?: string
 
-  @Init(-1)
-  index!: number
+  readonly index?: number
 
-  @Init('')
-  time!: number
+  readonly time?: number
 
-  @Init('')
-  detail!: string
+  readonly detail?: string
 }
-export const HistoryStores = 'id++, site, ids, name, type, year, index, time, detail'

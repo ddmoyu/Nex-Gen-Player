@@ -1,23 +1,14 @@
-export class Movie {
-  id!: number
-  key: string
-  logo: string
-  name: string
-  api: string
-  description: string
-  download: boolean
-  active: boolean
-  group: string
-  constructor () {
-    this.key = ''
-    this.logo = ''
-    this.name = ''
-    this.api = ''
-    this.description = ''
-    this.download = false
-    this.active = false
-    this.group = ''
-  }
-}
+import { SetStores } from '../decorator'
 
-export const MovieStores = 'id++, key, logo, name, api, description, download, active, group'
+@SetStores('id++, key, logo, name, api, description, download, active, group')
+export class Movie {
+  readonly id?: number
+  readonly key?: string
+  readonly logo?: string
+  readonly name?: string
+  readonly api?: string
+  readonly description?: string
+  readonly download?: boolean
+  readonly active?: boolean
+  readonly group?: string
+}

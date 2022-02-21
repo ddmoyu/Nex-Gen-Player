@@ -1,21 +1,13 @@
-export class Site {
-  id!: number
-  key: string
-  name: string
-  jiexiUrl: string
-  api: string
-  download: string
-  isActive: boolean
-  group: string
-  constructor () {
-    this.key = ''
-    this.name = ''
-    this.api = ''
-    this.download = ''
-    this.jiexiUrl = ''
-    this.isActive = false
-    this.group = ''
-  }
-}
+import { SetStores } from '../decorator'
 
-export const SiteStores = '++id, key, name, api, download, jiexiUrl, isActive, group'
+@SetStores('++id, key, name, api, download, jiexiUrl, isActive, group')
+export class Site {
+  readonly id?: number
+  readonly key?: string
+  readonly name?: string
+  readonly jiexiUrl?: string
+  readonly api?: string
+  readonly download?: string
+  readonly isActive?: boolean
+  readonly group?: string
+}

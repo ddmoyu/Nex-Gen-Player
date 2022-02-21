@@ -1,24 +1,25 @@
 import Dexie from 'dexie'
 import { initSettings } from './default'
-import { HistoryStores } from '../models/History'
-import { MovieStores } from '../models/Movie'
-import { IpTvStores } from '../models/IpTv'
-import { FavoriteStores } from '../models/Favorite'
-import { SiteStores } from '../models/Site'
-import { SettingStores } from '../models/Setting'
-
+// import { HistoryStores } from '../models/History'
+import { Favorite } from '../models/Favorite'
+import { getStores } from '../decorator'
+import { History } from '../models/History'
+import { Movie } from '../models/Movie'
+import { IpTv } from '../models/IpTv'
+import { Site } from '../models/Site'
+import { Setting } from '../models/Setting'
 export const tableSet = ['favorits', 'history', 'movies', 'iptv', 'settings', 'sites'] as const
 export class Database extends Dexie {
   static db:Database
   constructor () {
     super('Database')
     this.version(1).stores({
-      favorites: FavoriteStores,
-      history: HistoryStores,
-      movies: MovieStores,
-      iptv: IpTvStores,
-      sites: SiteStores,
-      settings: SettingStores
+      favorites: getStores(Favorite),
+      history: getStores(History),
+      movies: getStores(Movie),
+      iptv: getStores(IpTv),
+      sites: getStores(Site),
+      settings: getStores(Setting)
     })
   }
 

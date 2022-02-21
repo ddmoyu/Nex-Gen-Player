@@ -1,15 +1,10 @@
-export class IpTv {
-  id!: number
-  name: string
-  url: string
-  active: boolean
-  group: string
-  constructor () {
-    this.name = ''
-    this.url = ''
-    this.active = false
-    this.group = ''
-  }
-}
+import { SetStores } from '../decorator'
 
-export const IpTvStores = 'id++, name, url, active, group'
+@SetStores('id++, name, url, active, group')
+export class IpTv {
+  readonly id?: number
+  readonly name?: string
+  readonly url?: string
+  readonly active?: boolean
+  readonly group?: string
+}

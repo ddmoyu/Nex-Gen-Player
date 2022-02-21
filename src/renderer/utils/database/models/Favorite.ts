@@ -1,19 +1,12 @@
-export class Favorite {
-  id!: number
-  site: string
-  ids: number
-  name: string
-  index: number
-  detail: string
-  update: boolean
-  constructor () {
-    this.site = ''
-    this.ids = -1
-    this.name = ''
-    this.index = -1
-    this.detail = ''
-    this.update = false
-  }
-}
+import { SetStores } from '../decorator'
 
-export const FavoriteStores = 'id++, site, ids, name, index, update, detail'
+@SetStores('id++, site, ids, name, index, update, detail')
+export class Favorite {
+  readonly id!: number
+  readonly site?: string
+  readonly ids?: number
+  readonly name?: string
+  readonly index?: number
+  readonly detail?: string
+  readonly update?: boolean
+}
