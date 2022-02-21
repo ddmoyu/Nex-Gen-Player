@@ -16,3 +16,16 @@ export type XMLToJSON = {
     recordcount:number
   }
 }
+
+export type ClassType = {
+  class: Array<{
+    _t: string,
+    id: number
+  }>,
+  version: number,
+  list: {
+    pagecount: number,
+    pagesize: number,
+    recordcount: number
+  }
+}

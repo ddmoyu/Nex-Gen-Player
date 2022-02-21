@@ -28,7 +28,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { m3uList } from '../../../../api/iptv'
+import { m3uList } from '@/renderer/utils/iptv'
 import type { PlaylistItem } from 'iptv-playlist-parser'
 import { NButton } from 'naive-ui'
 import { Search } from '@vicons/ionicons5'

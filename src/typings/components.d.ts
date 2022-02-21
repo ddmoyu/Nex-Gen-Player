@@ -12,7 +12,6 @@ declare module 'vue' {
     List: typeof import('./../renderer/components/List.vue')['default']
     NBadge: typeof import('naive-ui')['NBadge']
     NButton: typeof import('naive-ui')['NButton']
-    NCollapseTransition: typeof import('naive-ui')['NCollapseTransition']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
     NDataTable: typeof import('naive-ui')['NDataTable']
     NDropdown: typeof import('naive-ui')['NDropdown']
@@ -27,7 +26,6 @@ declare module 'vue' {
     NPopover: typeof import('naive-ui')['NPopover']
     NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
-    NSwitch: typeof import('naive-ui')['NSwitch']
     Share: typeof import('./../renderer/components/Share.vue')['default']
     Waterfall: typeof import('./../renderer/components/Waterfall.vue')['default']
   }

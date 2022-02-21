@@ -25,7 +25,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { fetchClassByKey } from '@/renderer/api/movie'
+import { getClass } from '@/renderer/utils/movie'
 import { Search, Compass } from '@vicons/ionicons5'
 
 const siteVal = ref('site')
@@ -44,10 +44,15 @@ const classOptions = ref([
 ])
 const searchAll = ref(false)
 
-async function getClass () {
-  const res = await fetchClassByKey()
+async function getClassList () {
+  const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'
+  const res = await getClass(url)
   console.log(res)
 }
+
+onMounted(() => {
+  getClassList()
+})
 </script>
 <style lang="scss" scoped>
 .discovery{
