@@ -38,7 +38,31 @@ export async function getVideoList (url: string, page = 1, clsId: number) {
     const xml = await api(uri)
     const res = parser.parse(xml)
     const json = res.rss ? res.rss : res
-    const data = json
+    const data = json.list.video
+    return data
+  } catch (ignore) {}
+}
+
+// search video
+export async function search (url: string, wd: string) {
+  try {
+    const uri = `${url}?wd=${wd}`
+    const xml = await api(uri)
+    const res = parser.parse(xml)
+    const json = res.rss ? res.rss : res
+    const data = json.list.video
+    return data
+  } catch (ignore) {}
+}
+
+// search video
+export async function getDetail (url: string, id: number) {
+  try {
+    const uri = `${url}?videolist&ids=${id}`
+    const xml = await api(uri)
+    const res = parser.parse(xml)
+    const json = res.rss ? res.rss : res
+    const data = json.list.video
     return data
   } catch (ignore) {}
 }

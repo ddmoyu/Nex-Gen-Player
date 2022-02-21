@@ -25,6 +25,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+// import { getClass, getVideoList, getDetail, search } from '@/renderer/utils/movie'
 import { getClass } from '@/renderer/utils/movie'
 import { Search, Compass } from '@vicons/ionicons5'
 
