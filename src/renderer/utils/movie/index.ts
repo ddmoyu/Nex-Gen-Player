@@ -11,25 +11,55 @@ const parser = new XMLParser({
   parseAttributeValue: true
 })
 
+// check response type
+function checkResType (res: string) {
+  if (res.startsWith('<?xml')) return 'XML'
+  if (res.startsWith('{"code":1')) return 'JSON'
+  return ''
+}
+
+async function getXMLClass (xml: string) {
+  const json = parser.parse(xml)
+  const res = json.rss ? json.rss : json
+  const data: ClassType = {
+    class: res.class.ty,
+    list: {
+      pagecount: res.list.pagecount,
+      pagesize: res.list.pagesize,
+      recordcount: res.list.recordcount
+    }
+  }
+  return data
+}
+
+async function getJSONClass (txt: string) {
+  const json = JSON.parse(txt)
+  const data: ClassType = {
+    class: json.class,
+    list: {
+      pagecount: Number(json.pagecount),
+      pagesize: Number(json.limit),
+      recordcount: Number(json.total)
+    }
+  }
+  return data
+}
+
 // get site class
 export async function getClass (url: string) {
   try {
-    const xml = await api(url)
-    console.log('xml: ', xml)
-    const res = parser.parse(xml)
-    console.log('res: ', res)
-    const json = res.rss ? res.rss : res
-    const data: ClassType = {
-      class: json.class.ty,
-      version: json.version,
-      list: {
-        pagecount: json.list.pagecount,
-        pagesize: json.list.pagesize,
-        recordcount: json.list.recordcount
-      }
+    const res = await api(url)
+    const type = checkResType(res)
+    if (type === 'XML') {
+      return await getXMLClass(res)
     }
-    return data
-  } catch (ignore) {}
+    if (type === 'JSON') {
+      return await getJSONClass(res)
+    }
+    return false
+  } catch (ignore) {
+    return false
+  }
 }
 
 // get site video list

@@ -46,16 +46,29 @@ const searchAll = ref(false)
 
 async function getClassList () {
   // const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'
-  const url = 'https://m3u8.bdxapi.com/api.php/provide/vod/at/xml'
+  // const url = 'https://m3u8.bdxapi.com/api.php/provide/vod/at/xml'
   // const url = 'https://m3u8.bdxapi.com/api.php/Seacms/vod/'
-  const res = await getClass(url)
-  console.log('res0: ', res)
-  const res1 = await getVideoList(url)
-  console.log('res1: ', res1)
-  const res2 = await getDetail(url, 44059)
-  console.log('res2: ', res2)
-  const res3 = await search(url, '武林')
-  console.log('res3: ', res3)
+  // const seacms = 'https://caiji.523zyw.com/inc/seacmsapi.php'
+  // const seacms = 'https://www.siwazyw.tv/api.php/provide/vod/at/xml/'
+  const seacms = 'https://taopianapi.com/home/cjapi/as/sea/vod/xml'
+  const json = 'https://api.kuapi.cc/api.php/provide/vod/?ac=list'
+  // const json2 = 'https://api.kuapi.cc/api.php/provide/vod/?ac=detail'
+  // const maccms10 = 'https://caiji.523zyw.com/inc/api.php'
+  // const maccms10 = 'https://www.siwazyw.tv/api.php/provide/vod/at/xml/'
+  // const maccms10 = 'https://taopianapi.com/home/cjapi/as/mc10/vod/xml'
+  const xmlres = await getClass(seacms)
+  console.log('xml res: ', xmlres)
+  const jsonres = await getClass(json)
+  console.log('json res: ', jsonres)
+  // await getClass(json2)
+  // const res = await getClass(url)
+  // console.log('res0: ', res)
+  // const res1 = await getVideoList(url)
+  // console.log('res1: ', res1)
+  // const res2 = await getDetail(url, 44059)
+  // console.log('res2: ', res2)
+  // const res3 = await search(url, '武林')
+  // console.log('res3: ', res3)
 }
 
 onMounted(() => {

@@ -22,7 +22,6 @@ export type ClassType = {
     _t: string,
     id: number
   }>,
-  version: number,
   list: {
     pagecount: number,
     pagesize: number,
