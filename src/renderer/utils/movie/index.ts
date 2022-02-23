@@ -1,6 +1,6 @@
 import { api } from '../fetch'
 import { XMLParser } from 'fast-xml-parser'
-import type { XMLToJSON, ClassType } from './type'
+import type { ClassType, VideoDetailType } from './type'
 
 // config with XML to JSON
 const parser = new XMLParser({
@@ -18,8 +18,8 @@ function checkResType (res: string) {
   return ''
 }
 
-async function getXMLClass (xml: string) {
-  const json = parser.parse(xml)
+async function getXMLClass (txt: string) {
+  const json = parser.parse(txt)
   const res = json.rss ? json.rss : json
   const data: ClassType = {
     class: res.class.ty,
@@ -62,17 +62,35 @@ export async function getClass (url: string) {
   }
 }
 
+async function getXMLVideoList (txt: string) {
+  const json = parser.parse(txt)
+  const res = json.rss ? json.rss : json
+  console.log('get xml video list: ', res)
+  const data: VideoDetailType[] = []
+  return data
+}
+
+async function getJSONVideoList (txt: string) {
+  const json = JSON.parse(txt)
+  console.log('get json video list: ', json)
+  const data: VideoDetailType[] = []
+  return data
+}
+
 // get site video list
 export async function getVideoList (url: string, page?: number, clsId?: number) {
   try {
     const pg = page || 1
     const uri = clsId ? `${url}?ac=videolist&t=${clsId}&pg=${pg}` : `${url}?ac=videolist&pg=${pg}`
-    const xml = await api(uri)
-    console.log('xml: ', xml)
-    const res = parser.parse(xml)
-    const json = res.rss ? res.rss : res
-    const data = json.list.video
-    return data
+    const res = await api(uri)
+    const type = checkResType(res)
+    if (type === 'XML') {
+      return await getXMLVideoList(res)
+    }
+    if (type === 'JSON') {
+      return await getJSONVideoList(res)
+    }
+    return false
   } catch (ignore) {}
 }
 
@@ -100,20 +118,4 @@ export async function getDetail (url: string, id: number) {
     const data = json.list.video
     return data
   } catch (ignore) {}
-}
-
-export function parserXml (xml: string) {
-  try {
-    const { rss } = parser.parse(xml)
-    console.log('rss: ', rss)
-    const res = {
-      class: rss.class.ty,
-      list: rss.list
-    } as XMLToJSON
-    return res
-  } catch (error) {
-    // TODO:do something processing error
-    console.log('[response parser error]', error)
-  }
-  return { class: [], list: { video: [], page: 0, pagecount: 0, pagesize: 0, recordcount: 0 } } as XMLToJSON
 }

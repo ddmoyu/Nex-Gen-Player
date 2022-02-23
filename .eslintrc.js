@@ -20,7 +20,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': ['off'],
     '@typescript-eslint/no-non-null-assertion': 'off',
     'no-useless-constructor': 'off',
-    '@typescript-eslint/ban-types':'off'
+    '@typescript-eslint/ban-types':'off',
+    'camelcase': 'off'
   },
   globals: {
     defineProps: 'readonly',
