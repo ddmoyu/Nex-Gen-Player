@@ -13,7 +13,7 @@ export type ClassType = {
 export type VideoDetailType = {
   id: number
   name: string
-  type: string
+  class: string
   pic: string
   lang?: string
   area?: string
@@ -23,10 +23,7 @@ export type VideoDetailType = {
   actor?: string
   director?: string
   writer?: string
-  douban_id?: number
-  douban_score?: string
   duration?: string
-  time?: string
   last?: string
   urls: Array<{
     label: string

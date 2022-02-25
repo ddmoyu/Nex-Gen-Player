@@ -45,13 +45,13 @@ const classOptions = ref([
 const searchAll = ref(false)
 
 async function getClassList () {
-  // const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'
+  const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'
   // const url = 'https://m3u8.bdxapi.com/api.php/provide/vod/at/xml'
   // const url = 'https://m3u8.bdxapi.com/api.php/Seacms/vod/'
   // const seacms = 'https://caiji.523zyw.com/inc/seacmsapi.php'
-  const seacms = 'https://www.siwazyw.tv/api.php/provide/vod/at/xml/'
+  // const seacms = 'https://www.siwazyw.tv/api.php/provide/vod/at/xml/'
   // const seacms = 'https://taopianapi.com/home/cjapi/as/sea/vod/xml'
-  const json = 'https://api.kuapi.cc/api.php/provide/vod/'
+  // const json = 'https://api.kuapi.cc/api.php/provide/vod/'
   // const json2 = 'https://api.kuapi.cc/api.php/provide/vod/?ac=detail'
   // const maccms10 = 'https://caiji.523zyw.com/inc/api.php'
   // const maccms10 = 'https://www.siwazyw.tv/api.php/provide/vod/at/xml/'
@@ -63,9 +63,9 @@ async function getClassList () {
   // await getClass(json2)
   // const res = await getClass(url)
   // console.log('res0: ', res)
-  const res1 = await getVideoList(seacms)
-  const res2 = await getVideoList(json)
-  console.log('res1: ', res1, res2)
+  const res1 = await getVideoList(url)
+  // const res2 = await getVideoList(json)
+  console.log('res1: ', res1)
   // const res2 = await getDetail(url, 44059)
   // console.log('res2: ', res2)
   // const res3 = await search(url, '武林')

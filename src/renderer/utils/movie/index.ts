@@ -67,6 +67,43 @@ async function getXMLVideoList (txt: string) {
   const res = json.rss ? json.rss : json
   console.log('get xml video list: ', res)
   const data: VideoDetailType[] = []
+  const list = res.list.video
+  for (let i = 0; i < list.length; i++) {
+    const l = list[i]
+    const item: VideoDetailType = {
+      id: l.id,
+      name: l.name,
+      class: l.class || l.type,
+      pic: l.pic,
+      lang: l.lang,
+      area: l.area,
+      year: l.year,
+      total: l.total,
+      content: l.content,
+      actor: l.actor,
+      director: l.director,
+      writer: l.writer,
+      duration: l.duration,
+      last: l.last,
+      urls: []
+    }
+    const dd = l.dl.dd
+    console.log('== dd ==', dd, dd.length)
+    if (dd.length > 0) {
+      for (const j of dd) {
+        if (j._t.endsWith('m3u8')) {
+          const m = j._t.split('$')
+          console.log('== m ==', l, m)
+          if (m.length > 1) {
+            item.urls.push(m[1])
+          } else {
+            item.urls.push(m[0])
+          }
+        }
+      }
+    }
+    data.push(item)
+  }
   return data
 }
 
