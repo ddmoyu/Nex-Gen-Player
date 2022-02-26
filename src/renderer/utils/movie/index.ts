@@ -18,6 +18,7 @@ function checkResType (res: string) {
   return ''
 }
 
+// get xml site class
 async function getXMLClass (txt: string) {
   const json = parser.parse(txt)
   const res = json.rss ? json.rss : json
@@ -31,7 +32,7 @@ async function getXMLClass (txt: string) {
   }
   return data
 }
-
+// get json site class
 async function getJSONClass (txt: string) {
   const json = JSON.parse(txt)
   const data: ClassType = {
@@ -62,43 +63,61 @@ export async function getClass (url: string) {
   }
 }
 
+// get xml site video list
 async function getXMLVideoList (txt: string) {
   const json = parser.parse(txt)
   const res = json.rss ? json.rss : json
-  console.log('get xml video list: ', res)
   const data: VideoDetailType[] = []
   const list = res.list.video
-  for (let i = 0; i < list.length; i++) {
-    const l = list[i]
-    const item: VideoDetailType = {
-      id: l.id,
-      name: l.name,
-      class: l.class || l.type,
-      pic: l.pic,
-      lang: l.lang,
-      area: l.area,
-      year: l.year,
-      total: l.total,
-      content: l.content,
-      actor: l.actor,
-      director: l.director,
-      writer: l.writer,
-      duration: l.duration,
-      last: l.last,
-      urls: []
-    }
-    const dd = l.dl.dd
-    console.log('== dd ==', dd, dd.length)
-    if (dd.length > 0) {
-      for (const j of dd) {
-        if (j._t.endsWith('m3u8')) {
-          const m = j._t.split('$')
-          console.log('== m ==', l, m)
-          if (m.length > 1) {
-            item.urls.push(m[1])
-          } else {
-            item.urls.push(m[0])
+  if (!res.list.video) return data
+  if (Array.isArray(list)) {
+    for (let i = 0; i < list.length; i++) {
+      const l = list[i]
+      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, urls: [] }
+      const dd = l.dl.dd
+      if (Array.isArray(dd)) {
+        for (const j of dd) {
+          if (j.flag.endsWith('m3u8')) {
+            const m = j._t.split('#')
+            for (const k of m) {
+              const n = k.split('$')
+              item.urls.push(n[1])
+            }
           }
+        }
+      } else {
+        const flag = dd.flag
+        if (flag && flag.endsWith('m3u8') && dd._t) {
+          const m = dd._t.split('#')
+          for (const k of m) {
+            const n = k.split('$')
+            item.urls.push(n[1])
+          }
+        }
+      }
+      data.push(item)
+    }
+  } else {
+    const l = list
+    const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, urls: [] }
+    const dd = l.dl.dd
+    if (Array.isArray(dd)) {
+      for (const j of dd) {
+        if (j.flag.endsWith('m3u8')) {
+          const m = j._t.split('#')
+          for (const k of m) {
+            const n = k.split('$')
+            item.urls.push(n[1])
+          }
+        }
+      }
+    } else {
+      const flag = dd.flag
+      if (flag && flag.endsWith('m3u8') && dd._t) {
+        const m = dd._t.split('#')
+        for (const k of m) {
+          const n = k.split('$')
+          item.urls.push(n[1])
         }
       }
     }
@@ -107,10 +126,30 @@ async function getXMLVideoList (txt: string) {
   return data
 }
 
+// get json site video list
 async function getJSONVideoList (txt: string) {
   const json = JSON.parse(txt)
-  console.log('get json video list: ', json)
   const data: VideoDetailType[] = []
+  if (!json.list || !json.list.length) return data
+  const list = json.list
+  for (let i = 0; i < list.length; i++) {
+    const l = list[i]
+    const item: VideoDetailType = { id: l.vod_id, name: l.vod_name, class: l.type_name, pic: l.vod_pic, lang: l.vod_lang, area: l.vod_area, year: l.vod_time, total: l.vod_total, content: l.vod_content, actor: l.vod_actor, director: l.vod_director, writer: l.vod_writer, duration: l.vod_duration, last: l.vod_pubdate, urls: [] }
+    const u = l.vod_play_url
+    const note = l.vod_play_note
+    if (!u && !note) break
+    const uArr = u.split(note)
+    for (const j of uArr) {
+      if (j.endsWith('m3u8')) {
+        const m = j.split('#')
+        for (const k of m) {
+          const n = k.split('$')
+          item.urls.push(n[1])
+        }
+      }
+    }
+    data.push(item)
+  }
   return data
 }
 
@@ -132,15 +171,19 @@ export async function getVideoList (url: string, page?: number, clsId?: number) 
 }
 
 // search video
-export async function search (url: string, wd: string) {
+export async function search (url: string, wd: string, page?: number) {
   try {
-    const uri = `${url}?wd=${encodeURI(wd)}`
-    const xml = await api(uri)
-    console.log('xml: ', xml)
-    const res = parser.parse(xml)
-    const json = res.rss ? res.rss : res
-    const data = json.list.video
-    return data
+    const pg = page || 1
+    const uri = `${url}?ac=videolist&pg=${pg}&wd=${encodeURI(wd)}`
+    const res = await api(uri)
+    const type = checkResType(res)
+    if (type === 'XML') {
+      return await getXMLVideoList(res)
+    }
+    if (type === 'JSON') {
+      return await getJSONVideoList(res)
+    }
+    return false
   } catch (ignore) {}
 }
 
@@ -148,11 +191,14 @@ export async function search (url: string, wd: string) {
 export async function getDetail (url: string, id: number) {
   try {
     const uri = `${url}?ac=videolist&ids=${id}`
-    const xml = await api(uri)
-    console.log('xml: ', xml)
-    const res = parser.parse(xml)
-    const json = res.rss ? res.rss : res
-    const data = json.list.video
-    return data
+    const res = await api(uri)
+    const type = checkResType(res)
+    if (type === 'XML') {
+      return await getXMLVideoList(res)
+    }
+    if (type === 'JSON') {
+      return await getJSONVideoList(res)
+    }
+    return false
   } catch (ignore) {}
 }
