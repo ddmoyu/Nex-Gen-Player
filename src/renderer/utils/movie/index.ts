@@ -1,6 +1,6 @@
 import { api } from '../fetch'
 import { XMLParser } from 'fast-xml-parser'
-import type { ClassType, VideoDetailType } from './type'
+import type { ClassType, VideoDetailType } from '../../../typings/video'
 
 // config with XML to JSON
 const parser = new XMLParser({
@@ -201,4 +201,8 @@ export async function getDetail (url: string, id: number) {
     }
     return false
   } catch (ignore) {}
+}
+
+export async function checkApi (url: string) {
+  console.log('check api')
 }
