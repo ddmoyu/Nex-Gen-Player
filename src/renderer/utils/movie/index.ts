@@ -204,5 +204,5 @@ export async function getDetail (url: string, id: number) {
 }
 
 export async function checkApi (url: string) {
-  console.log('check api')
+  console.log('check api', url)
 }
