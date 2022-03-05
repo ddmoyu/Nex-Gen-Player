@@ -73,7 +73,7 @@ async function getXMLVideoList (txt: string) {
   if (Array.isArray(list)) {
     for (let i = 0; i < list.length; i++) {
       const l = list[i]
-      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, urls: [] }
+      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, note: l.note, urls: [] }
       const dd = l.dl.dd
       if (Array.isArray(dd)) {
         for (const j of dd) {
@@ -134,7 +134,7 @@ async function getJSONVideoList (txt: string) {
   const list = json.list
   for (let i = 0; i < list.length; i++) {
     const l = list[i]
-    const item: VideoDetailType = { id: l.vod_id, name: l.vod_name, class: l.type_name, pic: l.vod_pic, lang: l.vod_lang, area: l.vod_area, year: l.vod_time, total: l.vod_total, content: l.vod_content, actor: l.vod_actor, director: l.vod_director, writer: l.vod_writer, duration: l.vod_duration, last: l.vod_pubdate, urls: [] }
+    const item: VideoDetailType = { id: l.vod_id, name: l.vod_name, class: l.type_name, pic: l.vod_pic, lang: l.vod_lang, area: l.vod_area, year: l.vod_time, total: l.vod_total, content: l.vod_content, actor: l.vod_actor, director: l.vod_director, writer: l.vod_writer, duration: l.vod_duration, last: l.vod_pubdate, note: l.vod_remarks, urls: [] }
     const u = l.vod_play_url
     const note = l.vod_play_note
     if (!u && !note) break

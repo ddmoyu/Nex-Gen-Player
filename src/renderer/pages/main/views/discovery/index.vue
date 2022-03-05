@@ -21,32 +21,40 @@
         </n-input-group>
       </div>
     </div>
-    <div class="body waterfall-body">
-      <V3waterfall
-        :list="list"
-        :gap="10"
-        :colWidth="200"
-        srcKey="pic"
-        :distanceToScroll="200"
-        :isLoading="loading"
-        scrollBodySelector=".waterfall-body"
-        :isMounted="isMounted"
-        @scrollReachBottom="getMoreVideosList"
-        class="waterfall">
-        <template v-slot:default="slotProp">
-          <div class="card">
-            <div class="box">
-              <div class="img">
-                <img :src="slotProp.item.pic" alt="">
+    <div class="body waterfall-bod">
+      <n-scrollbar>
+        <V3waterfall
+          :list="list"
+          :gap="10"
+          :colWidth="220"
+          srcKey="pic"
+          :distanceToScroll="100"
+          :isLoading="loading"
+          scrollBodySelector=".n-scrollbar-container"
+          :isMounted="isMounted"
+          @scrollReachBottom="getMoreVideosList"
+          class="waterfall">
+          <template v-slot="slot">
+            <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(slot.item)">
+              <template #cover>
+                <img :src="slot.item.pic" alt="">
+                <div class="btns">
+                  <div class="btns-wrapper">
+                    <span @click.stop="handlePlay(slot.item)">Play</span>
+                    <span @click.stop="handleFavorite(slot.item)">Favorite</span>
+                  </div>
+                </div>
+              </template>
+              <div class="name" :title="slot.item.name">{{slot.item.name}}</div>
+              <div class="info">
+                <span>{{slot.item.area}}</span>
+                <span>{{slot.item.class}}</span>
+                <span>{{slot.item.note}}</span>
               </div>
-              <div class="btns"></div>
-            </div>
-            <div class="info">
-              <div class="name">{{slotProp.item.name}}</div>
-            </div>
-          </div>
-        </template>
-      </V3waterfall>
+            </n-card>
+          </template>
+        </V3waterfall>
+      </n-scrollbar>
     </div>
   </div>
 </template>
@@ -104,10 +112,24 @@ async function getClassList () {
   // console.log('res2: ', res2)
   // const res3 = await search(url, '武林')
   // console.log('res3: ', res3)
+  return true
 }
 
 function getMoreVideosList () {
+  loading.value = true
   console.log('getMoreVideosList')
+}
+
+function handleDetail (item: VideoDetailType) {
+  console.log('=== handleDetail item ===', item)
+}
+
+function handlePlay (item: VideoDetailType) {
+  console.log('=== handlePlay item ===', item)
+}
+
+function handleFavorite (item: VideoDetailType) {
+  console.log('=== handleFavorite item ===', item)
 }
 
 onMounted(() => {
@@ -139,18 +161,56 @@ onMounted(() => {
   }
   .body{
     height: calc(100% - 44px);
-    border: 1px solid #fff;
-    overflow-y: auto;
-    overflow-x: hidden;
     .card{
       width: 100%;
-      overflow: hidden;
-      .box{
-        .img{
-          img{
+      cursor: pointer;
+      :deep(.n-card-cover){
+        position: relative;
+        .btns{
+          display: none;
+          position: absolute;
+          bottom: 0;
+          height: 36px;
+          width: 100%;
+          transform: 0.3s;
+          .btns-wrapper{
+            display: flex;
+            height: 100%;
             width: 100%;
+            justify-content: space-between;
+            span{
+              flex: 0.5;
+              display: flex;
+              height: 100%;
+              color: #cdcdcd;
+              align-items: center;
+              justify-content: center;
+              background-color: rgba(45, 45, 45, 0.7);
+              &:hover{
+                color: #dedede;
+                background-color: rgba(7, 7, 7, 0.8);
+              }
+            }
           }
         }
+      }
+      &:hover{
+        .btns{
+          display: block;
+        }
+      }
+      .name{
+        overflow-x: hidden;
+        width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .info{
+        margin-top: 4px;
+        font-size: 12px;
+        opacity: 0.9;
+        display: flex;
+        justify-content: space-between;
       }
     }
   }

@@ -25,6 +25,7 @@ export type VideoDetailType = {
   writer?: string
   duration?: string
   last?: string
+  note?: string
   urls: Array<{
     label: string
     url: string
