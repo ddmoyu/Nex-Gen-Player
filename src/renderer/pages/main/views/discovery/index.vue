@@ -66,6 +66,9 @@ import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
 import V3waterfall from 'v3-waterfall'
 import 'v3-waterfall/dist/style.css'
+import { useStore } from '../../store/video'
+import { useRouter } from 'vue-router'
+import bus from '../../plugins/mitt'
 
 const siteVal = ref('site')
 const siteOptions = ref([
@@ -85,6 +88,9 @@ const searchAll = ref(false)
 const list = ref<VideoDetailType[]>([])
 const loading = ref(false)
 const isMounted = ref(false)
+
+const store = useStore()
+const router = useRouter()
 
 onMounted(() => {
   isMounted.value = true
@@ -123,14 +129,19 @@ function getMoreVideosList () {
 }
 
 function handleDetail (item: VideoDetailType) {
-  console.log('=== handleDetail item ===', item)
+  router.push({ name: 'play' })
+  store.setVideo(item)
 }
 
 function handlePlay (item: VideoDetailType) {
+  store.setVideo(item)
+  router.push({ name: 'play' })
+  bus.emit('bus.video.play', item)
   console.log('=== handlePlay item ===', item)
 }
 
 function handleFavorite (item: VideoDetailType) {
+  router.push({ name: 'play' })
   console.log('=== handleFavorite item ===', item)
 }
 

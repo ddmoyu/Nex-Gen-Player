@@ -64,7 +64,10 @@
 import { IPlayerOptions } from 'xgplayer'
 import HLS from 'xgplayer-hls.js'
 import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, PlaySkipForwardCircleOutline, DocumentTextOutline, Menu } from '@vicons/ionicons5'
-import { NIcon } from 'naive-ui'
+import { NIcon, useMessage } from 'naive-ui'
+import bus from '../../plugins/mitt'
+import { VideoDetailType } from '@/typings/video'
+import { useStore } from '../../store/video'
 
 let player: HLS
 const config = ref<IPlayerOptions>({
@@ -75,11 +78,13 @@ const config = ref<IPlayerOptions>({
   height: '100%',
   pip: true,
   autoplay: true,
-  videoInit: true,
-  airplay: true,
   defaultPlaybackRate: 1,
   playbackRate: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 })
+
+const store = useStore()
+const message = useMessage()
+const detail = ref<VideoDetailType>()
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -118,15 +123,32 @@ const menuOptions = ref([
 ])
 
 function init () {
+  const view = store.view
+  const video = store.video as VideoDetailType
+  if (!video.urls.length) return message.warning('视频地址解析失败，请换源后重新尝试~')
   player = new HLS(config.value as IPlayerOptions)
-  nextTick(() => {
-    player.src = 'https://v1.cdtlas.com/20210927/cECAezBY/index.m3u8'
+  message.success('视频地址解析成功，等待加载播放~')
+  if (view === 'discovery') {
+    const url = video.urls[0]
+    player.src = url
     player.play()
-  })
+  }
+}
+
+function playVideo (item: VideoDetailType) {
+  detail.value = item
+  if (!item.urls.length) return message.warning('视频地址解析失败，请换源后重新尝试~')
+  if (!player) {
+    player = new HLS(config.value as IPlayerOptions)
+  }
+  const url = item.urls[0]
+  player.src = url
+  player.play()
 }
 
 onMounted(() => {
   init()
+  bus.on('bus.video.play', playVideo)
 })
 </script>
 <style lang="scss" scoped>

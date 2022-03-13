@@ -1,22 +1,10 @@
 import { SetStores } from '../decorator'
+import { VideoDetailType } from '@/typings/video'
 
-@SetStores('id++, site, ids, name, type, year, index, time, detail')
+@SetStores('id++, detail, index, time')
 export class History {
-  readonly id?: number
-
-  readonly site?: string
-
-  readonly ids?: number
-
-  readonly name?: string
-
-  readonly type?: string
-
-  readonly year?: string
-
+  readonly id!: number
+  readonly detail?: VideoDetailType
   readonly index?: number
-
   readonly time?: number
-
-  readonly detail?: string
 }

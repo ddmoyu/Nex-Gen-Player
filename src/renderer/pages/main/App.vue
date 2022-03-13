@@ -1,25 +1,27 @@
 <template>
   <n-config-provider :theme="activeTheme">
-    <n-layout class="container">
-      <n-layout-header>
-        <Frame />
-      </n-layout-header>
-      <n-layout has-sider>
-        <n-layout-sider :width="60">
-          <Aside />
-        </n-layout-sider>
-        <n-layout-content>
-          <router-view v-slot="{ Component }">
-            <keep-alive>
-              <component :is="Component"></component>
-            </keep-alive>
-          </router-view>
-        </n-layout-content>
+    <n-message-provider>
+      <n-layout class="container">
+        <n-layout-header>
+          <Frame />
+        </n-layout-header>
+        <n-layout has-sider>
+          <n-layout-sider :width="60">
+            <Aside />
+          </n-layout-sider>
+          <n-layout-content>
+            <router-view v-slot="{ Component }">
+              <keep-alive>
+                <component :is="Component"></component>
+              </keep-alive>
+            </router-view>
+          </n-layout-content>
+        </n-layout>
+        <n-layout-footer>
+          <Footer />
+        </n-layout-footer>
       </n-layout>
-      <n-layout-footer>
-        <Footer />
-      </n-layout-footer>
-    </n-layout>
+    </n-message-provider>
   </n-config-provider>
 </template>
 <script lang="ts" setup>
