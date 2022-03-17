@@ -34,7 +34,7 @@
           :isMounted="isMounted"
           @scrollReachBottom="getMoreVideosList"
           class="waterfall">
-          <template v-slot="slot">
+          <template #default="slot">
             <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(slot.item)">
               <template #cover>
                 <img :src="slot.item.pic" alt="">
