@@ -28,14 +28,40 @@
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 import { darkTheme, lightTheme } from 'naive-ui'
 import bus from './plugins/mitt'
+import { IpcDirective } from '@/main/ipcEnum'
+import { useI18n } from 'vue-i18n'
 
+const { locale } = useI18n()
 const activeTheme = ref(darkTheme)
 
 onMounted(async () => {
-  const res = await settingsDB.getSetting('theme')
-  activeTheme.value = res === 'light' ? lightTheme : darkTheme
+  getSystemLanguage()
+  getSettingsTheme()
   bus.on('bus.settings.theme', changeTheme)
 })
+
+async function getSystemLanguage () {
+  const lang = await settingsDB.getSetting('language')
+  if (!lang) {
+    window.ipc.invoke(IpcDirective.SYS_LANGUAGE)
+    window.ipc.on(IpcDirective.SYS_LANGUAGE_REPLAY, (e, args) => {
+      if (args === 'zh-CN') {
+        locale.value = 'zh-CN'
+      } else {
+        locale.value = 'en-US'
+      }
+      settingsDB.updateSetting({ language: locale.value })
+    })
+  } else {
+    // TODO: lang type
+    locale.value = lang as string
+  }
+}
+
+async function getSettingsTheme () {
+  const res = await settingsDB.getSetting('theme')
+  activeTheme.value = res === 'light' ? lightTheme : darkTheme
+}
 
 function changeTheme (theme: 'dark' | 'light') {
   if (theme === 'dark') {
