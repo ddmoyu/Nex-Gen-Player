@@ -14,11 +14,15 @@ export class DBTools {
     return await this.db.table(tableName).toArray()
   }
 
-  async put<T> (tableName:TableSetKey, model:T) {
+  async put<T> (tableName: TableSetKey, model: T) {
     return await this.db.table(tableName).put(model)
   }
 
-  async update<T> (tableName:TableSetKey, id:string, params:Partial<T>) {
+  async bulkAdd<T> (tableName: TableSetKey, model: T[]) {
+    return await this.db.table(tableName).bulkAdd(model)
+  }
+
+  async update<T> (tableName: TableSetKey, id: string, params: Partial<T>) {
     return await this.db.table(tableName).update(id, params)
   }
 

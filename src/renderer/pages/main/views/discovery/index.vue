@@ -23,6 +23,13 @@
     </div>
     <div class="body waterfall-bod">
       <n-scrollbar>
+        <n-empty v-if="emptyDesc" :description="emptyDesc">
+          <template #extra>
+            <n-button size="small" @click="goSettingsView">
+              load sites url
+            </n-button>
+          </template>
+        </n-empty>
         <V3waterfall
           :list="list"
           :gap="10"
@@ -61,7 +68,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getClass, getVideoList, getDetail, search } from '@/renderer/utils/movie'
+// import { getClass, getVideoList, getDetail, search } from '@/renderer/utils/movie'
+import { getVideoList } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
 import V3waterfall from 'v3-waterfall'
@@ -69,6 +77,7 @@ import 'v3-waterfall/dist/style.css'
 import { useStore } from '../../store/video'
 import { useRouter } from 'vue-router'
 import bus from '../../plugins/mitt'
+import { db } from '@/renderer/utils/database/controller/DBTools'
 
 const siteVal = ref('site')
 const siteOptions = ref([
@@ -88,13 +97,28 @@ const searchAll = ref(false)
 const list = ref<VideoDetailType[]>([])
 const loading = ref(false)
 const isMounted = ref(false)
+const emptyDesc = ref('')
 
 const store = useStore()
 const router = useRouter()
 
 onMounted(() => {
   isMounted.value = true
+  getSites()
 })
+
+async function getSites () {
+  const sites = await db.all('sites')
+  if (!sites.length) {
+    emptyDesc.value = 'site is empty'
+    return false
+  }
+  console.log('=== sites ===', sites)
+}
+
+function goSettingsView () {
+  router.push({ name: 'settings' })
+}
 
 async function getClassList () {
   // const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'

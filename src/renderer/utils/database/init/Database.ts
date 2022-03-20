@@ -1,6 +1,5 @@
 import Dexie from 'dexie'
 import { initSettings } from './default'
-// import { HistoryStores } from '../models/History'
 import { Favorite } from '../models/Favorite'
 import { getStores } from '../decorator'
 import { History } from '../models/History'
