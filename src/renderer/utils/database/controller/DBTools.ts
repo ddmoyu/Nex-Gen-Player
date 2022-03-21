@@ -1,5 +1,4 @@
-import { Database, tableSet } from '../init/Database'
-type TableSetKey = typeof tableSet[number]
+import { Database, TableSetKey } from '../init/Database'
 export class DBTools {
   protected db:Database
   constructor () {
@@ -14,7 +13,7 @@ export class DBTools {
     return await this.db.table(tableName).toArray()
   }
 
-  async put<T> (tableName:TableSetKey, model:T) {
+  async put<T> (tableName:TableSetKey, model:Omit<T, 'id'>) {
     return await this.db.table(tableName).put(model)
   }
 

@@ -69,6 +69,8 @@ import 'v3-waterfall/dist/style.css'
 import { useStore } from '../../store/video'
 import { useRouter } from 'vue-router'
 import bus from '../../plugins/mitt'
+import { db } from '@/renderer/utils/database/controller/DBTools'
+import { Favorite } from '@/renderer/utils/database/models/Favorite'
 
 const siteVal = ref('site')
 const siteOptions = ref([
@@ -129,8 +131,9 @@ function getMoreVideosList () {
 }
 
 function handleDetail (item: VideoDetailType) {
-  router.push({ name: 'play' })
-  store.setVideo(item)
+  console.log(item)
+  // router.push({ name: 'play' })
+  // store.setVideo(item)
 }
 
 function handlePlay (item: VideoDetailType) {
@@ -140,8 +143,13 @@ function handlePlay (item: VideoDetailType) {
   console.log('=== handlePlay item ===', item)
 }
 
-function handleFavorite (item: VideoDetailType) {
-  router.push({ name: 'play' })
+async function handleFavorite (item: VideoDetailType) {
+  const res = await db.put<Favorite>('favorites', {
+    detail: JSON.stringify(item),
+    hasUpdate: false
+  })
+  console.log(res)
+  // router.push({ name: 'play' })
   console.log('=== handleFavorite item ===', item)
 }
 
