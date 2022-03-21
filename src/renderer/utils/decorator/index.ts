@@ -22,7 +22,7 @@ export function CatchError (msg:string) {
       try {
         return await fn.apply(this, args)
       } catch (error) {
-        // window.$message.error(msg)
+        window.$message.error(msg)
         console.log(error)
       }
     }
