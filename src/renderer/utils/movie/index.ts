@@ -167,7 +167,7 @@ export async function getVideoList (url: string, page?: number, clsId?: number) 
       return await getJSONVideoList(res)
     }
     return false
-  } catch (ignore) {}
+  } catch (ignore) { }
 }
 
 // search video
@@ -184,7 +184,7 @@ export async function search (url: string, wd: string, page?: number) {
       return await getJSONVideoList(res)
     }
     return false
-  } catch (ignore) {}
+  } catch (ignore) { }
 }
 
 // get video detail
@@ -200,7 +200,7 @@ export async function getDetail (url: string, id: number) {
       return await getJSONVideoList(res)
     }
     return false
-  } catch (ignore) {}
+  } catch (ignore) { }
 }
 
 export async function checkApi (url: string) {

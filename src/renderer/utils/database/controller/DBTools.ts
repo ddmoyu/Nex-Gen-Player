@@ -15,7 +15,13 @@ export class DBTools {
   }
 
   @CatchError('添加失败')
-  async put<T> (tableName:TableSetKey, model:Omit<T, 'id'>) {
+  async put<T> (tableName:TableSetKey, model:Omit<T, 'id'>, uniCheck?:Partial<T>) {
+    if (uniCheck) {
+      const res = await this.db.table(tableName).where(uniCheck).first()
+      console.log(res)
+      if (res) return res
+    }
+    // if()
     return await this.db.table(tableName).put(model)
   }
 
