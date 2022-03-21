@@ -9,7 +9,8 @@ export const initSettings = [
       switch: false
     },
     theme: 'light',
-    language: 'en',
+    language: 'en-US',
+    os: '',
     shortcut: {
       toggle: false,
       localKey: {

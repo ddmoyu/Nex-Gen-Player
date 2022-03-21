@@ -10,13 +10,11 @@ class Router {
     this.windowSizeStatus = new Map()
   }
 
-  // 【窗口】 最小化-
   mini (name: string) {
     const win = this.get(name)
     win && win.minimize()
   }
 
-  // 【窗口】 最大化
   max (name: string) {
     const status = this.windowSizeStatus.get(name)
     const win = this.get(name)
@@ -25,28 +23,23 @@ class Router {
     this.windowSizeStatus.set(name, !status)
   }
 
-  // 【窗口】 关闭
   close (name?: string) {
     const win = this.get(name)
     win && win.close()
   }
 
-  // 【窗口】 获取单个窗口
   get (name?: string) {
     return name ? this.windows.get(name) ? this.windows.get(name) : BrowserWindow.getFocusedWindow() : BrowserWindow.getFocusedWindow()
   }
 
-  // 获取当前窗口的是否最大化
   getIsMaximize (name:string) {
     return this.windowSizeStatus.get(name)
   }
 
-  // 【窗口】 获取所有窗口
   getAll () {
     return this.windows
   }
 
-  // 【窗口】 关闭所有
   closeAll () {
     BrowserWindow.getAllWindows().forEach(win => {
       win.close()
@@ -54,7 +47,6 @@ class Router {
     process.exit(0)
   }
 
-  // 【窗口】 打开窗口
   async open (name: string, config?: BrowserWindowConstructorOptions) {
     const win = this.windows.get(name)
     if (win) {
@@ -80,7 +72,6 @@ class Router {
   }
 }
 
-// 创建新的窗口
 async function createWindow (name: string, config?: BrowserWindowConstructorOptions) {
   const _config = Object.assign(WinConfig.default, WinConfig[name], config)
   const devPath = name === 'index' ? '' : name

@@ -5,9 +5,9 @@ export class Site {
   readonly id?: number
   readonly key?: string
   readonly name?: string
-  readonly jiexiUrl?: string
   readonly api?: string
-  readonly download?: string
+  readonly jiexi?: string
+  readonly jsonApi?: string
   readonly isActive?: boolean
   readonly group?: string
 }

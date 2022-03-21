@@ -1,11 +1,11 @@
 <template>
   <div class="frame">
-    <div class="mac">
+    <div class="mac" v-if="os !== 'win32'">
       <span class="close" @click="close()"></span>
       <span class="max" @click="maximize()"></span>
       <span class="min" @click="mini()"></span>
     </div>
-    <div class="win">
+    <div class="win" v-if="os === 'win32'">
       <n-button quaternary type="primary" @click="mini()">
         <n-icon size="20"><Remove /></n-icon>
       </n-button>
@@ -21,6 +21,29 @@
 <script lang="ts" setup>
 import { Remove, Add, Close } from '@vicons/ionicons5'
 import { IpcDirective } from '@/main/ipcEnum'
+import { settingsDB } from '../utils/database/controller/settingsDB'
+
+const os = ref<string>('')
+
+onMounted(() => {
+  getOS()
+})
+
+async function getOS () {
+  const s = await settingsDB.getSetting('os')
+  if (!s) {
+    window.ipc.invoke(IpcDirective.SYS_OS)
+    window.ipc.on(IpcDirective.SYS_OS_REPLAY, (e, args) => {
+      os.value = args
+      settingsDB.updateSetting({ os: args })
+      window.ipc.removeAllListeners(IpcDirective.SYS_OS_REPLAY)
+    })
+  } else {
+    // XXX: os type string
+    os.value = s as string
+  }
+}
+
 function mini () {
   window.ipc.invoke(IpcDirective.WIN_MINI)
 }
@@ -36,13 +59,15 @@ function close () {
   height: 40px;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-end;
   -webkit-app-region: drag;
   button{
     -webkit-app-region: no-drag;
   }
   .mac{
-    height: 100%;
+    position: absolute;
+    left: 0;
+    height: 40px;
     display: flex;
     align-items: center;
     span{

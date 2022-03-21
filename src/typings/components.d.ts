@@ -17,6 +17,7 @@ declare module 'vue' {
     NDataTable: typeof import('naive-ui')['NDataTable']
     NDropdown: typeof import('naive-ui')['NDropdown']
     NEllipsis: typeof import('naive-ui')['NEllipsis']
+    NEmpty: typeof import('naive-ui')['NEmpty']
     NIcon: typeof import('naive-ui')['NIcon']
     NInput: typeof import('naive-ui')['NInput']
     NInputGroup: typeof import('naive-ui')['NInputGroup']
