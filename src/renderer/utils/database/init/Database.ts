@@ -1,7 +1,7 @@
 import Dexie from 'dexie'
 import { initSettings } from './default'
 import { Favorite } from '../models/Favorite'
-import { getStores } from '../decorator'
+import { getStores } from '../../decorator'
 import { History } from '../models/History'
 import { Movie } from '../models/Movie'
 import { IpTv } from '../models/IpTv'

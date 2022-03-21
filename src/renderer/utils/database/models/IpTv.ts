@@ -1,4 +1,4 @@
-import { SetStores } from '../decorator'
+import { SetStores } from '../../decorator'
 
 @SetStores('id++, name, url, active, group')
 export class IpTv {

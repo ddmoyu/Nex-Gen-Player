@@ -1,4 +1,4 @@
-import { SetStores } from '../decorator'
+import { SetStores } from '../../decorator'
 import { VideoDetailType } from '@/typings/video'
 
 @SetStores('id++, detail, index, time')

@@ -1,3 +1,4 @@
+import { CatchError } from '../../decorator'
 import { Database, TableSetKey } from '../init/Database'
 export class DBTools {
   protected db:Database
@@ -13,6 +14,7 @@ export class DBTools {
     return await this.db.table(tableName).toArray()
   }
 
+  @CatchError('添加失败')
   async put<T> (tableName:TableSetKey, model:Omit<T, 'id'>) {
     return await this.db.table(tableName).put(model)
   }

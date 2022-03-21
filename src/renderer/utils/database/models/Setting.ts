@@ -1,4 +1,4 @@
-import { SetStores } from '../decorator'
+import { SetStores } from '../../decorator'
 
 @SetStores('id, view, windows, play, theme, language, os, shortcut, search, player, downlaoder, exclude, proxy, password')
 export class Setting {
@@ -6,8 +6,8 @@ export class Setting {
   readonly view?: string
   readonly windows?: boolean
   readonly play?: {[key:string]:any}
-  readonly theme?: 'dark' | 'light'
-  readonly language?: string
+  readonly theme: 'dark' | 'light'
+  readonly language: string
   readonly os?: string
   readonly shortcut?: {[key:string]:any}
   readonly search?: string

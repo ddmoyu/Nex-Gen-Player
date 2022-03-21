@@ -1,4 +1,4 @@
-import { SetStores } from '../decorator'
+import { SetStores } from '../../decorator'
 
 @SetStores('++id, key, name, api, download, jiexiUrl, isActive, group')
 export class Site {

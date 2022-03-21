@@ -3,7 +3,7 @@ import { Setting } from '../models/Setting'
 import { DBTools } from './DBTools'
 
 class SettingsDB extends DBTools {
-  table:Dexie.Table<Setting, number>
+  table: Dexie.Table<Setting, number>
   constructor () {
     super()
     this.table = this.db.table('settings')
@@ -13,12 +13,14 @@ class SettingsDB extends DBTools {
     this.table.put(new Setting())
   }
 
-  async getSetting (key?:keyof Setting) {
-    const s = await this.table.get({ id: 0 }) || {} as Setting
-    return key ? s[key] : s
+  getSetting<T extends keyof Setting>(key: T):Promise<Setting[T]>
+  getSetting():Promise<Setting>
+  async getSetting (key?: string) {
+    const setting = await this.table.get({ id: 0 }) || {} as Setting
+    return key ? setting[key] : setting
   }
 
-  updateSetting (params:Partial<Setting>) {
+  updateSetting (params: Partial<Setting>) {
     return this.table.update(0, params)
   }
 }

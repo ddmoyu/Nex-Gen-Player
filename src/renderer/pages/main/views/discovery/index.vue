@@ -167,13 +167,10 @@ function handlePlay (item: VideoDetailType) {
 }
 
 async function handleFavorite (item: VideoDetailType) {
-  const res = await db.put<Favorite>('favorites', {
-    detail: JSON.stringify(item),
+  await db.put<Favorite>('favorites', {
+    detail: item,
     hasUpdate: false
   })
-  console.log(res)
-  // router.push({ name: 'play' })
-  console.log('=== handleFavorite item ===', item)
 }
 
 onMounted(() => {

@@ -13,6 +13,8 @@
     "experimentalDecorators":true,
     "emitDecoratorMetadata":true,
     "suppressImplicitAnyIndexErrors":true,
+    "strictNullChecks": false,
+    // "strictPropertyInitialization":false,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
