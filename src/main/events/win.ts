@@ -3,6 +3,7 @@ import { IpcDirective } from '../ipcEnum'
 import win from '../router'
 import os from 'os'
 import { OpenDialogOptions } from 'electron/main'
+import { getJSONFile } from './fs'
 
 ipcMain.handle(IpcDirective.WIN_OPEN, (e, params) => {
   win.open(params ? params.name : '')
@@ -35,5 +36,16 @@ ipcMain.handle(IpcDirective.WIN_DIALOG, (e, args: OpenDialogOptions) => {
   if (!w) return false
   dialog.showOpenDialog(w, args).then(res => {
     e.sender.send(IpcDirective.WIN_DIALOG_REPLAY, res)
+  })
+})
+
+ipcMain.handle(IpcDirective.IMPORT_JSON, e => {
+  const w = win.get()
+  if (!w) return false
+  dialog.showOpenDialog(w).then(res => {
+    if (res.canceled) return false
+    const path = res.filePaths[0]
+    const json = getJSONFile(path)
+    e.sender.send(IpcDirective.IMPORT_JSON_REPLAY, json)
   })
 })

@@ -2,8 +2,8 @@
   <div class="discovery">
     <div class="header">
       <div class="left">
-        <n-select class="select" v-model:value="siteVal" :options="siteOptions"/>
-        <n-select class="select" v-model:value="classVal" :options="classOptions"/>
+        <n-select class="select" v-model:value="siteName" :options="siteOptions" @update:value="changeSite"/>
+        <n-select class="select" v-model:value="classVal" :options="classOptions" @update:value="changeClass"/>
       </div>
       <div class="right">
         <n-input-group>
@@ -12,8 +12,8 @@
               <Compass />
             </n-icon>
           </n-button>
-          <n-input class="searchInput" />
-          <n-button tertiary type="primary">
+          <n-input class="searchInput" :clearable="true" @clear="handleClear" v-model:value="searchTxt" type="text" @keydown.enter="handleSearch" />
+          <n-button tertiary type="primary" @click="handleSearch">
             <n-icon size="22">
               <Search />
             </n-icon>
@@ -22,14 +22,11 @@
       </div>
     </div>
     <div class="body waterfall-bod">
-      <n-scrollbar>
+      <n-scrollbar class="custom-scrollbar">
         <n-empty v-if="emptyDesc" :description="emptyDesc">
-          <template #extra>
-            <n-button size="small" @click="goSettingsView">
-              load sites url
-            </n-button>
-          </template>
+          <template #extra><n-button size="small" @click="goSettingsView">Import sites</n-button></template>
         </n-empty>
+        <n-empty v-if="emptyVideoList" :description="emptyVideoList"></n-empty>
         <V3waterfall
           :list="list"
           :gap="10"
@@ -44,8 +41,8 @@
           <template #default="slot">
             <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(slot.item)">
               <template #cover>
-                <img src="../../../../assets/default.png" alt="">
-                <!-- <img :src="slot.item.pic" alt=""> -->
+                <!-- <img src="../../../../assets/default.png" alt=""> -->
+                <img :src="slot.item.pic" alt="">
                 <div class="btns">
                   <div class="btns-wrapper">
                     <span @click.stop="handlePlay(slot.item)">Play</span>
@@ -69,8 +66,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-// import { getClass, getVideoList, getDetail, search } from '@/renderer/utils/movie'
-import { getVideoList } from '@/renderer/utils/movie'
+import { getClass, getSiteById, getVideoList, search } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
 import V3waterfall from 'v3-waterfall'
@@ -80,78 +76,130 @@ import { useRouter } from 'vue-router'
 import bus from '../../plugins/mitt'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { Favorite } from '@/renderer/utils/database/models/Favorite'
+import { Site } from '@/renderer/utils/database/models/Site'
 
-const siteVal = ref('site')
-const siteOptions = ref([
-  {
-    label: 'site',
-    value: 'site'
-  }
-])
-const classVal = ref('class')
-const classOptions = ref([
-  {
-    label: 'class',
-    value: 'class'
-  }
-])
+const site = ref<Site>()
+const sites = ref([])
+const siteName = ref()
+const siteOptions = ref([])
+const emptyDesc = ref('')
+const classVal = ref()
+const classOptions = ref([])
 const searchAll = ref(false)
 const list = ref<VideoDetailType[]>([])
+const emptyVideoList = ref('')
 const loading = ref(false)
 const isMounted = ref(false)
-const emptyDesc = ref('')
+const pages = ref(1)
+const searchTxt = ref('')
 
 const store = useStore()
 const router = useRouter()
 
-onMounted(() => {
-  isMounted.value = true
-  getSites()
-})
-
 async function getSites () {
-  const sites = await db.all('sites')
-  if (!sites.length) {
+  const dbSites = await db.all('sites')
+  if (!dbSites.length) {
     emptyDesc.value = 'site is empty'
     return false
+  } else {
+    sites.value = dbSites
+    const arr = []
+    for (const i of dbSites) {
+      if (i.isActive) {
+        arr.push({ label: i.name, value: i.id })
+      }
+    }
+    siteOptions.value = arr
+    const s = getSiteById(arr[0].value, dbSites)
+    if (s) site.value = s
+    siteName.value = site.value.id
+    getClassList()
   }
-  console.log('=== sites ===', sites)
+}
+
+async function getClassList () {
+  const res = await getClass(site.value.api)
+  if (res) {
+    const arr = []
+    for (const i of res.class) {
+      arr.push({ label: i._t, value: i.id })
+    }
+    classOptions.value = arr
+    classVal.value = arr[0].value
+    list.value = []
+    document.querySelector('.waterfall').scrollIntoView(true)
+    pages.value = 1
+    getMoreVideosList()
+  }
+}
+
+function changeSite () {
+  const s = getSiteById(siteName.value, sites.value)
+  if (s) site.value = s
+  siteName.value = site.value.id
+  getClassList()
+}
+
+function changeClass () {
+  list.value = []
+  document.querySelector('.waterfall').scrollIntoView(true)
+  pages.value = 1
+  getMoreVideosList()
+}
+
+async function getMoreVideosList () {
+  if (searchTxt.value) return getMoreSearchList()
+  loading.value = true
+  const res = await getVideoList(site.value.api, pages.value, classVal.value)
+  if (res) {
+    const arr = [...list.value]
+    arr.push(...res)
+    list.value = arr
+    pages.value++
+    emptyVideoList.value = ''
+  } else {
+    emptyVideoList.value = 'This class no video, Please change class and try again !'
+  }
+  loading.value = false
+}
+
+async function getMoreSearchList () {
+  loading.value = true
+  pages.value++
+  const res = await search(site.value.api, searchTxt.value)
+  if (res) {
+    const arr = [...list.value]
+    arr.push(...res)
+    list.value = arr
+    pages.value++
+  }
+}
+
+async function handleSearch () {
+  if (!searchTxt.value) return changeSite()
+  loading.value = true
+  pages.value = 1
+  list.value = []
+  document.querySelector('.waterfall').scrollIntoView(true)
+  const res = await search(site.value.api, searchTxt.value)
+  if (res) {
+    list.value = res
+    emptyVideoList.value = ''
+  } else {
+    emptyVideoList.value = 'No content found !'
+  }
+  loading.value = false
+}
+
+function handleClear () {
+  pages.value = 1
+  list.value = []
+  document.querySelector('.waterfall').scrollIntoView(true)
+  changeClass()
 }
 
 function goSettingsView () {
   router.push({ name: 'settings' })
-}
-
-async function getClassList () {
-  // const url = 'http://www.kuaibozy.com/api.php/provide/vod/from/kbm3u8/at/xml/'
-  const url = 'https://m3u8.bdxapi.com/api.php/provide/vod/at/xml'
-  // const url = 'https://caiji.523zyw.com/inc/seacmsapi.php'
-  // const url = 'https://www.siwazyw.tv/api.php/provide/vod/at/xml/'
-  // const url = 'https://taopianapi.com/home/cjapi/as/sea/vod/xml'
-  // const json = 'https://api.kuapi.cc/api.php/provide/vod/'
-  // const json2 = 'https://api.kuapi.cc/api.php/provide/vod/?ac=detail'
-  // const xmlres = await getClass(seacms)
-  // console.log('xml res: ', xmlres)
-  // const jsonres = await getClass(json)
-  // console.log('json res: ', jsonres)
-  // await getClass(json2)
-  // const res = await getClass(url)
-  // console.log('res0: ', res)
-  const res1 = await getVideoList(url)
-  list.value = res1 as VideoDetailType[]
-  // const res1 = await getDetail(url, 34750)
-  // const res2 = await search(json, '故事')
-  console.log('res1: ', res1)
-  // const res2 = await getDetail(url, 44059)
-  // console.log('res2: ', res2)
-  // const res3 = await search(url, '武林')
-  // console.log('res3: ', res3)
-  return true
-}
-
-function getMoreVideosList () {
-  loading.value = true
-  console.log('getMoreVideosList')
 }
 
 function handleDetail (item: VideoDetailType) {
@@ -163,8 +211,8 @@ function handleDetail (item: VideoDetailType) {
 function handlePlay (item: VideoDetailType) {
   store.setVideo(item)
   router.push({ name: 'play' })
-  bus.emit('bus.video.play', item)
-  console.log('=== handlePlay item ===', item)
+  // bus.emit('bus.video.play', item)
+  // console.log('=== handlePlay item ===', item)
 }
 
 async function handleFavorite (item: VideoDetailType) {
@@ -177,7 +225,9 @@ async function handleFavorite (item: VideoDetailType) {
 }
 
 onMounted(() => {
-  getClassList()
+  isMounted.value = true
+  getSites()
+  bus.on('bus.sites.change', getSites)
 })
 </script>
 <style lang="scss" scoped>

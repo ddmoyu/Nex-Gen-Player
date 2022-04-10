@@ -18,14 +18,17 @@
       </n-button>
     </div>
     <n-scrollbar>
-      body
+      <div class="list">
+        {{siteList}}
+      </div>
     </n-scrollbar>
   </n-layout>
 </template>
 <script lang="ts" setup>
 import { db } from '@/renderer/utils/database/controller/DBTools'
-import { Site } from '@/renderer/utils/database/models/Site'
 import { ArrowUp, ArrowDown, Add, ShieldCheckmarkOutline, Close } from '@vicons/ionicons5'
+import { IpcDirective } from '@/main/ipcEnum'
+import bus from '../plugins/mitt'
 
 const siteList = ref([])
 const emit = defineEmits(['handleClose'])
@@ -40,8 +43,12 @@ async function getSites () {
 }
 
 async function handleImport () {
-  const json = [] as Site[]
-  const res = db.bulkAdd('sites', json)
+  window.ipc.invoke(IpcDirective.IMPORT_JSON)
+  window.ipc.on(IpcDirective.IMPORT_JSON_REPLAY, async (e, args) => {
+    siteList.value = args
+    await db.bulkAdd('sites', args)
+    bus.emit('bus.sites.change')
+  })
 }
 
 function handleClose () {

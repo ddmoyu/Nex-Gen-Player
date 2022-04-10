@@ -23,7 +23,7 @@
     "pinia": "^2.0.11",
     "reflect-metadata": "^0.1.13",
     "v3-waterfall": "^1.1.2",
-    "vue": "^3.2.30",
+    "vue": "^3.2.31",
     "vue-i18n": "^9.1.9",
     "vue-router": "^4.0.12",
     "xgplayer": "^2.31.4",

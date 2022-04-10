@@ -1,6 +1,7 @@
 import { api } from '../fetch'
 import { XMLParser } from 'fast-xml-parser'
 import type { ClassType, VideoDetailType } from '../../../typings/video'
+import { Site } from '../database/models/Site'
 
 // config with XML to JSON
 const parser = new XMLParser({
@@ -35,8 +36,12 @@ async function getXMLClass (txt: string) {
 // get json site class
 async function getJSONClass (txt: string) {
   const json = JSON.parse(txt)
+  const cls = []
+  for (const i of json.class) {
+    cls.push({ _t: i.type_name, id: i.type_id })
+  }
   const data: ClassType = {
-    class: json.class,
+    class: cls,
     list: {
       pagecount: Number(json.pagecount),
       pagesize: Number(json.limit),
@@ -69,7 +74,7 @@ async function getXMLVideoList (txt: string) {
   const res = json.rss ? json.rss : json
   const data: VideoDetailType[] = []
   const list = res.list.video
-  if (!res.list.video) return data
+  if (!res.list.video) return false
   if (Array.isArray(list)) {
     for (let i = 0; i < list.length; i++) {
       const l = list[i]
@@ -123,6 +128,7 @@ async function getXMLVideoList (txt: string) {
     }
     data.push(item)
   }
+  if (!data.length) return false
   return data
 }
 
@@ -130,7 +136,7 @@ async function getXMLVideoList (txt: string) {
 async function getJSONVideoList (txt: string) {
   const json = JSON.parse(txt)
   const data: VideoDetailType[] = []
-  if (!json.list || !json.list.length) return data
+  if (!json.list || !json.list.length) return false
   const list = json.list
   for (let i = 0; i < list.length; i++) {
     const l = list[i]
@@ -150,6 +156,7 @@ async function getJSONVideoList (txt: string) {
     }
     data.push(item)
   }
+  if (!data.length) return false
   return data
 }
 
@@ -201,6 +208,12 @@ export async function getDetail (url: string, id: number) {
     }
     return false
   } catch (ignore) { }
+}
+
+export function getSiteById (id: number, sites: Site[]) {
+  if (!sites.length) return false
+  const site = sites.find(item => item.id === id)
+  return site
 }
 
 export async function checkApi (url: string) {

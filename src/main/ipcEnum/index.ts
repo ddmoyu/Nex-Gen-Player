@@ -9,5 +9,7 @@ export enum IpcDirective {
   SYS_LANGUAGE = '7',
   SYS_LANGUAGE_REPLAY = '8',
   WIN_DIALOG = '9',
-  WIN_DIALOG_REPLAY = '10'
+  WIN_DIALOG_REPLAY = '10',
+  IMPORT_JSON = '11',
+  IMPORT_JSON_REPLAY = '12'
 }

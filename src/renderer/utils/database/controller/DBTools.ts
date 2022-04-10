@@ -21,7 +21,6 @@ export class DBTools {
       console.log(res)
       if (res) return res
     }
-    // if()
     return await this.db.table(tableName).put(model)
   }
 
