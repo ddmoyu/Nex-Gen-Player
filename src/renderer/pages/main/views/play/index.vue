@@ -85,6 +85,7 @@ const config = ref<IPlayerOptions>({
 const store = useStore()
 const message = useMessage()
 const detail = ref<VideoDetailType>()
+const xg = null
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -123,6 +124,11 @@ const menuOptions = ref([
 ])
 
 function init () {
+  const video = store.video
+  console.log('=== init video ===', video)
+}
+
+function initPlay () {
   const view = store.view
   const video = store.video as VideoDetailType
   if (!video.urls.length) return message.warning('视频地址解析失败，请换源后重新尝试~')
@@ -136,6 +142,7 @@ function init () {
 }
 
 function playVideo (item: VideoDetailType) {
+  console.log('=== item ===', item)
   detail.value = item
   if (!item.urls.length) return message.warning('视频地址解析失败，请换源后重新尝试~')
   if (!player) {

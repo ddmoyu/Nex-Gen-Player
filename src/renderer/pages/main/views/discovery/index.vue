@@ -211,7 +211,7 @@ function handleDetail (item: VideoDetailType) {
 function handlePlay (item: VideoDetailType) {
   store.setVideo(item)
   router.push({ name: 'play' })
-  // bus.emit('bus.video.play', item)
+  bus.emit('bus.video.play', item)
   // console.log('=== handlePlay item ===', item)
 }
 
