@@ -1,5 +1,5 @@
 import path from 'path'
-import { BrowserWindowConstructorOptions } from 'electron'
+import { app, BrowserWindowConstructorOptions } from 'electron'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -10,6 +10,7 @@ interface BWConfig {
 const config: BWConfig = {
   default: {
     webPreferences: {
+      devTools: !app.isPackaged,
       webSecurity: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
