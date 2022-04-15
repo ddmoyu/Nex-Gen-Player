@@ -7,8 +7,10 @@ const routes: RouteRecordRaw[] = [
   { name: 'download', path: '/download', component: () => import('../views/download/index.vue') },
   { name: 'favorites', path: '/favorites', component: () => import('../views/favorites/index.vue') },
   { name: 'history', path: '/history', component: () => import('../views/history/index.vue') },
-  { name: 'settings', path: '/settings', component: () => import('../views/settings/index.vue') },
-  { name: 'player', path: '/player', component: () => import('../views/settings/index.vue') }
+  { name: 'about', path: '/about', component: () => import('../views/menu/about.vue') },
+  { name: 'settings', path: '/settings', component: () => import('../views/menu/settings.vue') },
+  { name: 'siteManager', path: '/siteManager', component: () => import('../views/menu/siteManager.vue') },
+  { name: 'liveManager', path: '/liveManager', component: () => import('../views/menu/liveManager.vue') }
 ]
 
 const router = createRouter({

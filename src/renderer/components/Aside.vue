@@ -62,19 +62,29 @@
         </template>
         <span>{{ $t('notifications') }}</span>
       </n-popover>
-      <n-popover trigger="hover" placement="right">
+      <n-popover trigger="hover" placement="right-end">
         <template #trigger>
-          <n-button circle type="primary" size="large" @click="goView('settings')" :dashed="active === 'settings'" :quaternary="active !== 'settings'">
-            <n-icon size="20"><Settings /></n-icon>
+          <n-button circle type="primary" size="large"
+            :quaternary="!['settings', 'siteManager', 'liveManager'].includes(active)"
+            :dashed="['settings', 'siteManager', 'liveManager'].includes(active)">
+            <n-icon size="20"><Menu /></n-icon>
           </n-button>
         </template>
-        <span>{{ $t('settings') }}</span>
+        <template #default>
+          <n-button @click="goView('settings')" text><template #icon><n-icon size="16"><Settings /></n-icon></template>Settings</n-button>
+          <div style="height: 10px;"></div>
+          <n-button @click="goView('siteManager')" text><template #icon><n-icon size="16"><ConstructOutline /></n-icon></template>Site Manager</n-button>
+          <div style="height: 10px;"></div>
+          <n-button @click="goView('liveManager')" text><template #icon><n-icon size="16"><Build /></n-icon></template>Live Manager</n-button>
+          <div style="height: 10px;"></div>
+          <n-button @click="goView('about')" text><template #icon><n-icon size="16"><WaterOutline /></n-icon></template>About</n-button>
+        </template>
       </n-popover>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { PrismSharp, Tv, Play, Heart, Time, ArrowDownCircleOutline, Notifications, Settings } from '@vicons/ionicons5'
+import { PrismSharp, Tv, Play, Heart, Time, ArrowDownCircleOutline, Notifications, Settings, Menu, ConstructOutline, Build, WaterOutline } from '@vicons/ionicons5'
 import { useRouter, useRoute, RouteRecordName } from 'vue-router'
 
 const show = ref(true)

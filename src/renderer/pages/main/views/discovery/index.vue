@@ -42,8 +42,8 @@
           <template #default="slot">
             <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(slot.item)">
               <template #cover>
-                <img src="../../../../assets/default.png" alt="">
-                <!-- <img :src="slot.item.pic" alt=""> -->
+                <!-- <img src="../../../../assets/default.png" alt=""> -->
+                <img :src="slot.item.pic" alt="">
                 <div class="btns">
                   <div class="btns-wrapper">
                     <span @click.stop="handlePlay(slot.item)">Play</span>
