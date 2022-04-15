@@ -21,15 +21,16 @@
         </n-input-group>
       </div>
     </div>
-    <div class="body waterfall-bod">
+    <div class="body">
       <n-scrollbar class="custom-scrollbar">
         <n-empty v-if="emptyDesc" :description="emptyDesc">
           <template #extra><n-button size="small" @click="goSettingsView">Import sites</n-button></template>
         </n-empty>
         <n-empty v-if="emptyVideoList" :description="emptyVideoList"></n-empty>
-        <V3waterfall
+        <v3-waterfall
           :list="list"
           :gap="10"
+          :bottomGap="10"
           :colWidth="220"
           srcKey="pic"
           :distanceToScroll="100"
@@ -41,8 +42,8 @@
           <template #default="slot">
             <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(slot.item)">
               <template #cover>
-                <!-- <img src="../../../../assets/default.png" alt=""> -->
-                <img :src="slot.item.pic" alt="">
+                <img src="../../../../assets/default.png" alt="">
+                <!-- <img :src="slot.item.pic" alt=""> -->
                 <div class="btns">
                   <div class="btns-wrapper">
                     <span @click.stop="handlePlay(slot.item)">Play</span>
@@ -60,7 +61,7 @@
               </div>
             </n-card>
           </template>
-        </V3waterfall>
+        </v3-waterfall>
       </n-scrollbar>
     </div>
   </div>
@@ -69,14 +70,13 @@
 import { getClass, getSiteById, getVideoList, search } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
-import V3waterfall from 'v3-waterfall'
-import 'v3-waterfall/dist/style.css'
 import { useStore } from '../../store/video'
 import { useRouter } from 'vue-router'
 import bus from '../../plugins/mitt'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { Site } from '@/renderer/utils/database/models/Site'
+import { useMessage } from 'naive-ui'
 
 const site = ref<Site>()
 const sites = ref([])
@@ -95,6 +95,7 @@ const searchTxt = ref('')
 
 const store = useStore()
 const router = useRouter()
+const message = useMessage()
 
 async function getSites () {
   const dbSites = await db.all('sites')
@@ -217,11 +218,9 @@ function handlePlay (item: VideoDetailType) {
 
 async function handleFavorite (item: VideoDetailType) {
   const key = item.name + item.id
-  await db.put<Favorite>('favorites', {
-    detail: toRaw(item),
-    hasUpdate: false,
-    key
-  }, { key })
+  const flag = await db.put<Favorite>('favorites', { detail: toRaw(item), hasUpdate: false, key }, { key })
+  if (!flag) return message.warning('已收藏，请勿重复收藏')
+  message.success('收藏成功')
 }
 
 onMounted(() => {

@@ -18,8 +18,7 @@ export class DBTools {
   async put<T> (tableName:TableSetKey, model:Omit<T, 'id'>, uniCheck?:Partial<T>) {
     if (uniCheck) {
       const res = await this.db.table(tableName).where(uniCheck).first()
-      console.log(res)
-      if (res) return res
+      if (res) return false
     }
     return await this.db.table(tableName).put(model)
   }
@@ -28,11 +27,11 @@ export class DBTools {
     return await this.db.table(tableName).bulkAdd(model)
   }
 
-  async update<T> (tableName: TableSetKey, id: string, params: Partial<T>) {
+  async update<T> (tableName: TableSetKey, id: number, params: Partial<T>) {
     return await this.db.table(tableName).update(id, params)
   }
 
-  async delete (tableName: TableSetKey, id: string) {
+  async delete (tableName: TableSetKey, id: number) {
     return await this.db.table(tableName).delete(id)
   }
 }

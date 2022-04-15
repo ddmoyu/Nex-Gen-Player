@@ -1,7 +1,7 @@
 <template>
   <n-config-provider :theme="activeTheme">
     <n-message-provider>
-      <Home></Home>
+      <home></home>
     </n-message-provider>
   </n-config-provider>
 </template>
