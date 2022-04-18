@@ -14,9 +14,12 @@
           </keep-alive>
         </router-view>
       </n-layout-content>
+      <transition name="slide">
+        <detail v-if="detailShow" :detail="videoDetail" />
+      </transition>
     </n-layout>
     <n-layout-footer>
-      <Footer />
+      <Footer /><n-button @click="detailShow = !detailShow">show</n-button>
     </n-layout-footer>
   </n-layout>
 </template>
@@ -25,14 +28,18 @@ import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 import { useMessage } from 'naive-ui'
 import { IpcDirective } from '@/main/ipcEnum'
 import { useI18n } from 'vue-i18n'
+import bus from '../plugins/mitt'
+import { VideoDetailType } from '@/typings/video'
 
-//  add global message
 window.$message = useMessage()
 
 const { locale } = useI18n()
+const detailShow = ref(false)
+const videoDetail = ref<VideoDetailType>()
 
 onMounted(async () => {
   getSystemLanguage()
+  bus.on('bus.detail.show', handleDetailShow)
 })
 
 async function getSystemLanguage () {
@@ -54,6 +61,11 @@ async function getSystemLanguage () {
   }
 }
 
+function handleDetailShow (detail?: VideoDetailType) {
+  detailShow.value = !detailShow.value
+  if (detail) videoDetail.value = detail
+}
+
 </script>
 <style lang="scss">
 html,
@@ -68,5 +80,31 @@ body,
     display: flex;
     flex-direction: column;
   }
+  .slide-enter-active{
+    animation: slide-in-right 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
+  @keyframes slide-in-right {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  .slide-leave-active{
+    animation: slide-out-right 0.3s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+  }
+  @keyframes slide-out-right {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
 }
 </style>
