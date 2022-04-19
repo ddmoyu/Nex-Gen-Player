@@ -204,9 +204,7 @@ function goSettingsView () {
 }
 
 function handleDetail (item: VideoDetailType) {
-  console.log(item)
-  // router.push({ name: 'play' })
-  // store.setVideo(item)
+  bus.emit('bus.detail.show', item)
 }
 
 function handlePlay (item: VideoDetailType) {

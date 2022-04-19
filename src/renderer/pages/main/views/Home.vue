@@ -14,12 +14,14 @@
           </keep-alive>
         </router-view>
       </n-layout-content>
-      <transition name="slide">
-        <detail v-if="detailShow" :detail="videoDetail" />
-      </transition>
+      <n-drawer v-model:show="detailShow" placement="right" width="90%">
+        <n-drawer-content title="Detail">
+          <detail :detail="videoDetail" />
+        </n-drawer-content>
+      </n-drawer>
     </n-layout>
     <n-layout-footer>
-      <Footer /><n-button @click="detailShow = !detailShow">show</n-button>
+      <Footer />
     </n-layout-footer>
   </n-layout>
 </template>
@@ -62,8 +64,8 @@ async function getSystemLanguage () {
 }
 
 function handleDetailShow (detail?: VideoDetailType) {
-  detailShow.value = !detailShow.value
   if (detail) videoDetail.value = detail
+  detailShow.value = !detailShow.value
 }
 
 </script>
