@@ -92,7 +92,7 @@ async function getXMLVideoList (txt: string) {
         }
       } else {
         const flag = dd.flag
-        if (flag && flag.endsWith('m3u8') && dd._t) {
+        if (flag && dd._t) {
           const m = dd._t.split('#')
           for (const k of m) {
             const n = k.split('$')
@@ -144,17 +144,28 @@ async function getJSONVideoList (txt: string) {
     const u = l.vod_play_url
     const note = l.vod_play_note
     if (!u && !note) break
-    const uArr = u.split(note)
-    for (const j of uArr) {
-      if (j.endsWith('m3u8')) {
-        const m = j.split('#')
-        for (const k of m) {
-          const n = k.split('$')
+    if (note === '') {
+      const uArr = u.split('#')
+      for (const j of uArr) {
+        if (j.endsWith('.m3u8')) {
+          const n = j.split('$')
           item.urls.push(n[1])
         }
       }
+      data.push(item)
+    } else {
+      const uArr = u.split(note)
+      for (const j of uArr) {
+        if (j.endsWith('.m3u8')) {
+          const m = j.split('#')
+          for (const k of m) {
+            const n = k.split('$')
+            item.urls.push(n[1])
+          }
+        }
+      }
+      data.push(item)
     }
-    data.push(item)
   }
   if (!data.length) return false
   return data
