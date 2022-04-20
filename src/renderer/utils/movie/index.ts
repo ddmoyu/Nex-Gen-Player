@@ -207,28 +207,40 @@ export async function search (url: string, wd: string, page?: number) {
   } catch (ignore) { }
 }
 
-// get video detail
-export async function getDetail (url: string, id: number) {
-  try {
-    const uri = `${url}?ac=videolist&ids=${id}`
-    const res = await api(uri)
-    const type = checkResType(res)
-    if (type === 'XML') {
-      return await getXMLVideoList(res)
-    }
-    if (type === 'JSON') {
-      return await getJSONVideoList(res)
-    }
-    return false
-  } catch (ignore) { }
-}
-
 export function getSiteById (id: number, sites: Site[]) {
   if (!sites.length) return false
   const site = sites.find(item => item.id === id)
   return site
 }
 
+export async function getRating (name: string, limit?: number, lang?: string, year?: number) {
+  try {
+    const uri = `https://api.wmdb.tv/api/v1/movie/search?q=${name}&limit=${limit || 10}&skip=0&lang=${lang || 'Cn'}${year ? '&year=' + year : ''}`
+    const res = await api(uri)
+    if (res && res.length) {
+      for (const i of res) {
+        if (i.data && i.data.length) {
+          const d = i.data
+          for (const j of d) {
+            if (j.name === name) {
+              const ratingList = []
+              const douban = { name: 'Douban', rating: i.doubanRating, votes: i.doubanVotes }
+              const imdb = { name: 'IMDB', rating: i.imdbRating, votes: i.imdbVotes }
+              const rotten = { name: 'Rotten', rating: i.rottenRating, votes: i.rottenVotes }
+              ratingList.push(douban, imdb, rotten)
+              return ratingList
+            }
+          }
+        }
+      }
+    }
+    return []
+  } catch (_) {
+    return []
+  }
+}
+
+// TODO: check api normal
 export async function checkApi (url: string) {
   console.log('check api', url)
 }

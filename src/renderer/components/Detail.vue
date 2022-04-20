@@ -23,20 +23,18 @@
               <div class="li">更新: {{video && video.last}}</div>
               <div class="li">备注: {{video && video.note}}</div>
             </div>
-            <div class="right">
-              <div class="li">豆瓣: 10</div>
-              <div class="li">IDMB: 10</div>
-              <div class="li">烂番茄: 10</div>
+            <div class="right" v-if="ratingList">
+              <div class="li" v-for="(i, j) in ratingList" :key="j">{{i.name}}: {{i.rating}} - {{i.votes}}</div>
             </div>
           </div>
           <div class="item operate">
             <n-button>Play</n-button>
           </div>
-          <div class="item description">
+          <div class="item description" v-if="video && video.content">
             {{video && video.content}}
           </div>
-          <div class="item list">
-            {{video && video.urls}}
+          <div class="item list" v-if="video && video.urls.length > 1">
+            <n-button v-for="(i, j) in video.urls" :key="j">第 {{j + 1}} 集</n-button>
           </div>
         </n-scrollbar>
       </div>
@@ -47,17 +45,24 @@
 import { VideoDetailType } from '@/typings/video'
 import { Close } from '@vicons/ionicons5'
 import bus from '../pages/main/plugins/mitt'
+import { getRating } from '../utils/movie'
 
 const video = ref<VideoDetailType>()
 const props = defineProps<{ detail: VideoDetailType }>()
+const ratingList = ref([])
 
 function handleClose () {
   bus.emit('bus.detail.show')
 }
 
+async function getThisVideoRating (name: string) {
+  ratingList.value = await getRating(name)
+}
+
 onMounted(async () => {
   if (props.detail) {
     video.value = props.detail
+    getThisVideoRating(props.detail.name)
   }
 })
 </script>
