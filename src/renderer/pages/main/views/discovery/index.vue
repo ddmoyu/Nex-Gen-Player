@@ -138,6 +138,9 @@ function changeSite () {
   const s = getSiteById(siteName.value, sites.value)
   if (s) site.value = s
   siteName.value = site.value.id
+  classVal.value = ''
+  classOptions.value = []
+  list.value = []
   getClassList()
 }
 

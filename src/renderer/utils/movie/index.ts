@@ -74,6 +74,7 @@ async function getXMLVideoList (txt: string) {
   const res = json.rss ? json.rss : json
   const data: VideoDetailType[] = []
   const list = res.list.video
+  console.log('=== xml list ===', list)
   if (!res.list.video) return false
   if (Array.isArray(list)) {
     for (let i = 0; i < list.length; i++) {
@@ -95,8 +96,10 @@ async function getXMLVideoList (txt: string) {
         if (flag && dd._t) {
           const m = dd._t.split('#')
           for (const k of m) {
-            const n = k.split('$')
-            item.urls.push(n[1])
+            if (k.endsWith('m3u8')) {
+              const n = k.split('$')
+              item.urls.push(n[1])
+            }
           }
         }
       }
