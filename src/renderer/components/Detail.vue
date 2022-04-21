@@ -10,7 +10,6 @@
           <div class="item info">
             <div class="left">
               <img :src="video && video.pic" alt="">
-              <!-- <img src="../assets/default.png" alt=""> -->
             </div>
             <div class="middle">
               <div class="li name">{{video && video.name}}</div>
@@ -24,11 +23,42 @@
               <div class="li">备注: {{video && video.note}}</div>
             </div>
             <div class="right" v-if="ratingList">
-              <div class="li" v-for="(i, j) in ratingList" :key="j">{{i.name}}: {{i.rating}} - {{i.votes}}</div>
+              <div class="li" v-for="(i, j) in ratingList" :key="j">
+                <div class="l name">
+                  <img :src="require(`../assets/img/${i.name}.svg`)" alt="">
+                  <span>{{i.name}}</span>
+                </div>
+                <div class="l rating">{{i.rating || 0}}</div>
+                <div class="l votes">{{i.votes}} votes</div>
+              </div>
             </div>
           </div>
           <div class="item operate">
-            <n-button>Play</n-button>
+            <div class="left">
+              <n-button quaternary type="primary" size="small">
+                <n-icon size="22">
+                  <Play />
+                </n-icon>
+              </n-button>
+              <n-button quaternary type="primary" size="small">
+                <n-icon size="22">
+                  <Heart />
+                  <HeartOutline />
+                </n-icon>
+              </n-button>
+            </div>
+            <div class="right">
+              <n-dropdown :options="onlineOptions" placement="top-end" @select="handleOnlineSelect">
+                <n-button quaternary type="primary" size="small">
+                  <n-icon size="22"><Globe /></n-icon>
+                </n-button>
+              </n-dropdown>
+              <n-dropdown :options="menuOptions" placement="top-end" @select="handleMenuSelect">
+                <n-button quaternary type="primary" size="small">
+                  <n-icon size="22"><Menu /></n-icon>
+                </n-button>
+              </n-dropdown>
+            </div>
           </div>
           <div class="item description" v-if="video && video.content">
             {{video && video.content}}
@@ -43,20 +73,75 @@
 </template>
 <script lang="ts" setup>
 import { VideoDetailType } from '@/typings/video'
-import { Close } from '@vicons/ionicons5'
 import bus from '../pages/main/plugins/mitt'
+import { NIcon } from 'naive-ui'
 import { getRating } from '../utils/movie'
+import { Close, Globe, Heart, HeartOutline, Play, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, Menu } from '@vicons/ionicons5'
 
 const video = ref<VideoDetailType>()
 const props = defineProps<{ detail: VideoDetailType }>()
 const ratingList = ref([])
 
+const renderIcon = (icon: any) => {
+  return () => {
+    return h(NIcon, null, {
+      default: () => h(icon)
+    })
+  }
+}
+
+const onlineOptions = ref([
+  {
+    label: 'Download',
+    key: 'download'
+  },
+  {
+    label: 'Other Player',
+    key: 'otherPlayer'
+  },
+  {
+    label: 'Share',
+    key: 'share'
+  }
+])
+
+const menuOptions = ref([
+  {
+    label: 'Download',
+    key: 'download',
+    icon: renderIcon(ArrowDownCircleOutline)
+  },
+  {
+    label: 'Other Player',
+    key: 'otherPlayer',
+    icon: renderIcon(PlayCircleOutline)
+  },
+  {
+    label: 'Share',
+    key: 'share',
+    icon: renderIcon(ShareSocialOutline)
+  }
+])
+
 function handleClose () {
   bus.emit('bus.detail.show')
 }
 
+function handleOnlineSelect (key: string | number) {
+  console.log('=== key ===', key)
+}
+
+function handleMenuSelect (key: string | number) {
+  console.log('=== key ===', key)
+}
+
 async function getThisVideoRating (name: string) {
-  ratingList.value = await getRating(name)
+  // ratingList.value = await getRating(name)
+  ratingList.value = [
+    { name: 'Douban', rating: 4, votes: 10 },
+    { name: 'IMDB', rating: 5, votes: 21 },
+    { name: 'Rotten', rating: 1, votes: 32 }
+  ]
 }
 
 onMounted(async () => {
@@ -127,13 +212,36 @@ onMounted(async () => {
         .right{
           margin-left: 20px;
           width: 100px;
-          text-align: justify;
-          text-align-last: justify;
-          padding-top: 42px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          align-items: flex-start;
           .li{
-            text-align: justify;
+            .name{
+              display: flex;
+              align-items: center;
+              img{
+                width: 28px;
+              }
+              span{
+                margin-left: 6px;
+              }
+            }
+            .rating{
+              margin: 2px 0;
+              font-size: 20px;
+            }
+            .votes{
+              font-size: 12px;
+              opacity: 0.6;
+            }
           }
         }
+      }
+      .operate{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
     }
   }
