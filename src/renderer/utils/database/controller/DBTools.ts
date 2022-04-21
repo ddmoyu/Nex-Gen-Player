@@ -14,6 +14,12 @@ export class DBTools {
     return await this.db.table(tableName).toArray()
   }
 
+  async find<T> (tableName: TableSetKey, uniCheck: Partial<T>) {
+    const res = await this.db.table(tableName).where(uniCheck).first()
+    if (res) return res
+    return false
+  }
+
   @CatchError('添加失败')
   async put<T> (tableName:TableSetKey, model:Omit<T, 'id'>, uniCheck?:Partial<T>) {
     if (uniCheck) {
