@@ -29,6 +29,12 @@ export type VideoDetailType = {
   urls: string[]
 }
 
+export type VideoBusPlay = {
+  video: VideoDetailType
+  index?: number
+  type?: 'zy' | 'iptv' | 'url'
+}
+
 export type VideoFromType = {
   detail: VideoDetailType
   from: string

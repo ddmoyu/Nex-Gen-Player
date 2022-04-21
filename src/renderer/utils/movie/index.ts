@@ -78,7 +78,7 @@ async function getXMLVideoList (txt: string) {
   if (Array.isArray(list)) {
     for (let i = 0; i < list.length; i++) {
       const l = list[i]
-      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, note: l.note, urls: [] }
+      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content || l.des, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, note: l.note, urls: [] }
       const dd = l.dl.dd
       if (Array.isArray(dd)) {
         for (const j of dd) {
