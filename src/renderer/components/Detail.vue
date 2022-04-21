@@ -82,6 +82,8 @@ import { Close, Globe, Heart, HeartOutline, Play, ArrowDownCircleOutline, ShareS
 import { useRouter } from 'vue-router'
 import { db } from '../utils/database/controller/DBTools'
 import { Favorite } from '../utils/database/models/Favorite'
+import { IpcDirective } from '@/main/ipcEnum'
+import { settingsDB } from '../utils/database/controller/settingsDB'
 
 const router = useRouter()
 const video = ref<VideoDetailType>()
@@ -140,14 +142,23 @@ function handleOnlineSelect (key: string | number) {
 }
 
 function handleMenuSelect (key: string | number) {
-  console.log('=== key ===', key)
   if (key === 'otherPlayer') {
     return handleOtherPlay()
   }
 }
 
-function handleOtherPlay () {
-  console.log('player other')
+async function handleOtherPlay () {
+  const res = await settingsDB.getSetting('player')
+  if (!video.value.urls.length) {
+    message.warning('未发现视频链接')
+    return false
+  }
+  const urls = video.value.urls.toString()
+  if (res) {
+    window.ipc.invoke(IpcDirective.PLAY_WITH, { path: res, urls })
+  } else {
+    message.warning('未设置第三方播放器')
+  }
 }
 
 function filterContent (video: VideoDetailType) {
