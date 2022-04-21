@@ -70,7 +70,6 @@
 import { getClass, getSiteById, getVideoList, search } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
-import { useStore } from '../../store/video'
 import { useRouter } from 'vue-router'
 import bus from '../../plugins/mitt'
 import { db } from '@/renderer/utils/database/controller/DBTools'
@@ -93,7 +92,6 @@ const isMounted = ref(false)
 const pages = ref(1)
 const searchTxt = ref('')
 
-const store = useStore()
 const router = useRouter()
 const message = useMessage()
 
@@ -103,6 +101,7 @@ async function getSites () {
     emptyDesc.value = 'site is empty'
     return false
   } else {
+    emptyDesc.value = ''
     sites.value = dbSites
     const arr = []
     for (const i of dbSites) {
@@ -211,10 +210,9 @@ function handleDetail (item: VideoDetailType) {
 }
 
 function handlePlay (item: VideoDetailType) {
-  store.setVideo(item)
   router.push({ name: 'play' })
-  bus.emit('bus.video.play', item)
-  // console.log('=== handlePlay item ===', item)
+  const data = { video: item, index: 0, type: 'zy' }
+  bus.emit('bus.video.play', data)
 }
 
 async function handleFavorite (item: VideoDetailType) {

@@ -35,15 +35,15 @@
           </div>
           <div class="item operate">
             <div class="left">
-              <n-button quaternary type="primary" size="small">
+              <n-button quaternary type="primary" size="small" @click="handlePlay()">
                 <n-icon size="22">
                   <Play />
                 </n-icon>
               </n-button>
-              <n-button quaternary type="primary" size="small">
+              <n-button quaternary type="primary" size="small" @click="handleFavorite">
                 <n-icon size="22">
-                  <Heart />
-                  <HeartOutline />
+                  <Heart v-show="favShow"/>
+                  <HeartOutline v-show="!favShow"/>
                 </n-icon>
               </n-button>
             </div>
@@ -61,10 +61,12 @@
             </div>
           </div>
           <div class="item description" v-if="video && video.content">
-            {{video && video.content}}
+            {{ filterContent(video) }}
           </div>
           <div class="item list" v-if="video && video.urls.length > 1">
-            <n-button v-for="(i, j) in video.urls" :key="j">第 {{j + 1}} 集</n-button>
+            <n-button quaternary type="primary" size="small" v-for="(i, j) in video.urls" :key="j" @click="handlePlay(j)">
+              第 {{j + 1}} 集
+            </n-button>
           </div>
         </n-scrollbar>
       </div>
@@ -74,13 +76,19 @@
 <script lang="ts" setup>
 import { VideoDetailType } from '@/typings/video'
 import bus from '../pages/main/plugins/mitt'
-import { NIcon } from 'naive-ui'
+import { NIcon, useMessage } from 'naive-ui'
 import { getRating } from '../utils/movie'
 import { Close, Globe, Heart, HeartOutline, Play, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, Menu } from '@vicons/ionicons5'
+import { useRouter } from 'vue-router'
+import { db } from '../utils/database/controller/DBTools'
+import { Favorite } from '../utils/database/models/Favorite'
 
+const router = useRouter()
 const video = ref<VideoDetailType>()
 const props = defineProps<{ detail: VideoDetailType }>()
 const ratingList = ref([])
+const favShow = ref(false)
+const message = useMessage()
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -133,20 +141,72 @@ function handleOnlineSelect (key: string | number) {
 
 function handleMenuSelect (key: string | number) {
   console.log('=== key ===', key)
+  if (key === 'otherPlayer') {
+    return handleOtherPlay()
+  }
 }
 
+function handleOtherPlay () {
+  console.log('player other')
+}
+
+function filterContent (video: VideoDetailType) {
+  if (video && video.content) {
+    let c = video.content
+    c = c.replace(/<\/?.+?>/g, '').trim()
+    c = c.replace(/&nbsp;/g, '')
+    return c
+  }
+}
+
+function handlePlay (index?: number) {
+  handleClose()
+  router.push({ name: 'play' })
+  const data = { video: video.value, index, type: 'zy' }
+  bus.emit('bus.video.play', data)
+}
+
+// TODO
 async function getThisVideoRating (name: string) {
-  // ratingList.value = await getRating(name)
-  ratingList.value = [
-    { name: 'Douban', rating: 4, votes: 10 },
-    { name: 'IMDB', rating: 5, votes: 21 },
-    { name: 'Rotten', rating: 1, votes: 32 }
-  ]
+  console.log(' get rating ')
+  ratingList.value = await getRating(name)
+  // ratingList.value = [
+  //   { name: 'Douban', rating: 4, votes: 10 },
+  //   { name: 'IMDB', rating: 5, votes: 21 },
+  //   { name: 'Rotten', rating: 1, votes: 32 }
+  // ]
+}
+
+async function checkFavorite (): Promise<boolean> {
+  const key = video.value.name + video.value.id
+  const res = await db.find<Favorite>('favorites', { key })
+  if (res) {
+    favShow.value = true
+  } else {
+    favShow.value = false
+  }
+  return favShow.value
+}
+
+async function handleFavorite () {
+  const flag = await checkFavorite()
+  const key = video.value.name + video.value.id
+  if (flag) {
+    const res = await db.find<Favorite>('favorites', { key })
+    await db.delete('favorites', res.id)
+    favShow.value = false
+    message.success('取消收藏成功')
+  } else {
+    await db.put<Favorite>('favorites', { detail: toRaw(video.value), hasUpdate: false, key }, { key })
+    favShow.value = true
+    message.success('收藏成功')
+  }
 }
 
 onMounted(async () => {
   if (props.detail) {
     video.value = props.detail
+    checkFavorite()
     getThisVideoRating(props.detail.name)
   }
 })

@@ -1,11 +1,11 @@
 [
   {
     "id": 0,
-    "name": "卧龙资源站",
-    "key": "wolongzyw",
-    "api": "https://collect.wolongzyw.com/api.php/provide/vod/at/xml/",
-    "jsonApi": "https://collect.wolongzyw.com/api.php/provide/vod/",
-    "jiexi": "https://jx.wolongzywcdn.com:65/m3u8.php?url=",
+    "name": "神速资源",
+    "key": "shensuzy",
+    "api": "https://api.sszyapi.com/api.php/provide/vod/at/xml",
+    "jsonApi": "https://api.sszyapi.com/api.php/provide/vod/",
+    "jiexi": "https://player.sszyplayer.com/dplayer/?url=",
     "isActive": true,
     "group": "常用资源"
   },
@@ -66,6 +66,16 @@
     "api": "https://api.apilyzy.com/api.php/provide/vod/",
     "jsonApi": "https://api.apilyzy.com/api.php/provide/vod/",
     "jiexi": "https://player.77lehuo.com/aliplayer/?url=",
+    "isActive": true,
+    "group": "常用资源"
+  },
+  {
+    "id": 7,
+    "name": "卧龙资源站",
+    "key": "wolongzyw",
+    "api": "https://collect.wolongzyw.com/api.php/provide/vod/at/xml/",
+    "jsonApi": "https://collect.wolongzyw.com/api.php/provide/vod/",
+    "jiexi": "https://jx.wolongzywcdn.com:65/m3u8.php?url=",
     "isActive": true,
     "group": "常用资源"
   }
