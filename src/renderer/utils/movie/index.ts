@@ -82,7 +82,7 @@ async function getXMLVideoList (txt: string) {
       const dd = l.dl.dd
       if (Array.isArray(dd)) {
         for (const j of dd) {
-          if (j.flag.endsWith('.m3u8')) {
+          if (j.flag.endsWith('m3u8')) {
             const m = j._t.split('#')
             for (const k of m) {
               const n = k.split('$')
