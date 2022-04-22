@@ -10,6 +10,7 @@
           <span>更新日志</span>
           <span>常见问题</span>
           <span>问题反馈</span>
+          <span>腾讯兔小巢</span>
         </div>
         <div class="donate">
           捐助

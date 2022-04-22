@@ -4,17 +4,16 @@
       <n-button>
         <template #icon><n-icon size="20"><Add /></n-icon></template>Add
       </n-button>
-      <n-button @click="handleImport">
-        <template #icon><n-icon size="20"><ArrowDown /></n-icon></template>Import
-      </n-button>
+      <n-dropdown :options="importOptions" placement="bottom-end" @select="handleImportSelect">
+        <n-button>
+          <n-icon size="20"><ArrowDown /></n-icon>Import
+        </n-button>
+      </n-dropdown>
       <n-button>
         <template #icon><n-icon size="20"><ArrowUp /></n-icon></template>Export
       </n-button>
       <n-button>
         <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>Check
-      </n-button>
-      <n-button circle @click="handleClose">
-        <template #icon><n-icon size="20"><Close /></n-icon></template>
       </n-button>
     </div>
     <n-scrollbar>
@@ -27,20 +26,34 @@
 </template>
 <script lang="ts" setup>
 import { db } from '@/renderer/utils/database/controller/DBTools'
-import { ArrowUp, ArrowDown, Add, ShieldCheckmarkOutline, Close } from '@vicons/ionicons5'
+import { ArrowUp, ArrowDown, Add, ShieldCheckmarkOutline } from '@vicons/ionicons5'
 import { IpcDirective } from '@/main/ipcEnum'
 import bus from '../../plugins/mitt'
 
 const siteList = ref([])
-const emit = defineEmits(['handleClose'])
 
 onMounted(() => {
   getSites()
 })
 
+const importOptions = ref([
+  {
+    label: 'Online JSON',
+    key: 'online'
+  },
+  {
+    label: 'Local JSON',
+    key: 'local'
+  }
+])
+
 async function getSites () {
   const res = await db.all('sites')
   console.log('=== res ===', res)
+}
+
+function handleImportSelect () {
+  console.log('handleImportSelect')
 }
 
 async function handleImport () {
@@ -50,10 +63,6 @@ async function handleImport () {
     await db.bulkAdd('sites', args)
     bus.emit('bus.sites.change')
   })
-}
-
-function handleClose () {
-  emit('handleClose', 'siteManager')
 }
 </script>
 <style lang="scss" scoped>
