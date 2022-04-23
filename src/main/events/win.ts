@@ -3,7 +3,7 @@ import { IpcDirective } from '../ipcEnum'
 import win from '../router'
 import os from 'os'
 import { OpenDialogOptions } from 'electron/main'
-import { getJSONFile, playWithExternalPlayer } from './fs'
+import { getJSONFile, openLink, playWithExternalPlayer } from './tools'
 
 ipcMain.handle(IpcDirective.WIN_OPEN, (e, params) => {
   win.open(params ? params.name : '')
@@ -52,4 +52,8 @@ ipcMain.handle(IpcDirective.IMPORT_JSON, e => {
 
 ipcMain.handle(IpcDirective.PLAY_WITH, (e, params) => {
   playWithExternalPlayer(params.path, params.urls)
+})
+
+ipcMain.handle(IpcDirective.SHELL, (e, params) => {
+  openLink(params.url)
 })
