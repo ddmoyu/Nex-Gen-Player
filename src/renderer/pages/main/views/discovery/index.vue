@@ -2,7 +2,7 @@
   <div class="discovery">
     <div class="header">
       <div class="left">
-        <n-select class="select" v-model:value="siteName" :options="siteOptions" @update:value="changeSite"/>
+        <n-select class="select" v-model:value="siteName" :options="sitesStore.getSiteOptions" @update:value="changeSite"/>
         <n-select class="select" v-model:value="classVal" :options="classOptions" @update:value="changeClass"/>
       </div>
       <div class="right">
@@ -67,7 +67,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getClass, getSiteById, getVideoList, search } from '@/renderer/utils/movie'
+import { getSiteById, getVideoList, search } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
@@ -76,11 +76,11 @@ import { db } from '@/renderer/utils/database/controller/DBTools'
 import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { Site } from '@/renderer/utils/database/models/Site'
 import { useMessage } from 'naive-ui'
+import { useSites } from '../../store/sites'
 
 const site = ref<Site>()
 const sites = ref([])
 const siteName = ref()
-const siteOptions = ref([])
 const emptyDesc = ref('')
 const classVal = ref()
 const classOptions = ref([])
@@ -95,22 +95,19 @@ const searchTxt = ref('')
 const router = useRouter()
 const message = useMessage()
 
+// sites store
+const sitesStore = useSites()
+const { assignClassList, assignSites } = sitesStore
 async function getSites () {
-  const dbSites = await db.all('sites')
+  const dbSites = await assignSites()
+  // const dbSites = await db.all('sites')
   if (!dbSites.length) {
     emptyDesc.value = 'site is empty'
     return false
   } else {
     emptyDesc.value = ''
     sites.value = dbSites
-    const arr = []
-    for (const i of dbSites) {
-      if (i.isActive) {
-        arr.push({ label: i.name, value: i.id })
-      }
-    }
-    siteOptions.value = arr
-    const s = getSiteById(arr[0].value, dbSites)
+    const s = getSiteById(dbSites[0].id, dbSites)
     if (s) site.value = s
     siteName.value = site.value.id
     getClassList()
@@ -118,19 +115,13 @@ async function getSites () {
 }
 
 async function getClassList () {
-  const res = await getClass(site.value.api)
-  if (res) {
-    const arr = []
-    for (const i of res.class) {
-      arr.push({ label: i._t, value: i.id })
-    }
-    classOptions.value = arr
-    classVal.value = arr[0].value
-    list.value = []
-    document.querySelector('.waterfall').scrollIntoView(true)
-    pages.value = 1
-    getMoreVideosList()
-  }
+  const res = await assignClassList(site.value)
+  classOptions.value = res
+  classVal.value = res[0].value
+  list.value = []
+  document.querySelector('.waterfall').scrollIntoView(true)
+  pages.value = 1
+  getMoreVideosList()
 }
 
 function changeSite () {

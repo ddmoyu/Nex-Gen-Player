@@ -1,7 +1,7 @@
 import { VideoDetailType } from '@/typings/video'
 import { defineStore } from 'pinia'
 
-export const useStore = defineStore('video', {
+export const useStore = defineStore('aap-video', {
   state: () => {
     return {
       view: 'discovery',

@@ -10,8 +10,8 @@ export class DBTools {
     return await this.db.table(tableName).get(model)
   }
 
-  async all (tableName: TableSetKey) {
-    return await this.db.table(tableName).toArray()
+  async all<T = any> (tableName: TableSetKey) {
+    return await this.db.table<T>(tableName).toArray()
   }
 
   async find<T> (tableName: TableSetKey, uniCheck: Partial<T>) {
