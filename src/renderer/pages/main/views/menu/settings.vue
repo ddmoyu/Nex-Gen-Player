@@ -5,7 +5,7 @@
     <div class="main">
       <div class="wrapper">
         <n-scrollbar>
-          <n-collapse :accordion="true">
+          <n-collapse :accordion="true" :default-expanded-names="['0']">
             <n-collapse-item title="Theme" name="1">
               <n-radio-group v-model:value="theme" @change="changeTheme">
                 <n-radio-button :value="'light'" label="light" />
@@ -42,22 +42,32 @@
               <div>快捷键</div>
             </n-collapse-item>
             <n-collapse-item title="Exclude" name="6">
-              <div>开启关闭 过滤分类</div>
-              <div>过滤分类</div>
-              <div>开启关闭 过滤视频</div>
-              <div>过滤视频</div>
+              <div class="exclude">
+                <div class="left">
+                  <div class="toggle">过滤分类：<n-switch v-model:value="filter.class" :round="false" @change="changeFilterClassToggle" /></div>
+                  <div><n-input v-model:value="filter.classValue" type="textarea" /></div>
+                </div>
+                <div class="right">
+                  <div class="toggle">过滤视频：<n-switch v-model:value="filter.video" :round="false" @change="changeFilterClassToggle" /></div>
+                  <div><n-input v-model:value="filter.videoValue" type="textarea" /></div>
+                </div>
+              </div>
             </n-collapse-item>
             <n-collapse-item title="Password" name="7">
               <div>设置密码</div>
               <div>修改密码</div>
             </n-collapse-item>
-            <n-collapse-item title="Clear" name="10">
-              <div>缓存清理</div>
-              <div>清理提示</div>
-            </n-collapse-item>
             <n-collapse-item title="Reset" name="11">
-              <div>软件重置</div>
-              <div>重置提示</div>
+              <n-popconfirm
+                @positive-click="handleResetConfirm"
+                positive-text="确认"
+                negative-text="取消">
+                <template #trigger>
+                  <n-button type="error">软件重置</n-button>
+                </template>
+                确认是否重置软件？
+              </n-popconfirm>
+              <div class="resetTips">软件重置会清空用户所有数据，请谨慎操作。点击确认后，软件会重置并关闭退出。</div>
             </n-collapse-item>
           </n-collapse>
         </n-scrollbar>
@@ -67,6 +77,7 @@
 </template>
 <script lang="ts" setup>
 import { IpcDirective } from '@/main/ipcEnum'
+import { db } from '@/renderer/utils/database/controller/DBTools'
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 import { useI18n } from 'vue-i18n'
 import bus from '../../plugins/mitt'
@@ -76,6 +87,12 @@ const theme = ref('light')
 const language = ref('en-US')
 const player = ref('')
 const downloader = ref('')
+const filter = reactive({
+  class: false,
+  classValue: '',
+  video: false,
+  videoValue: ''
+})
 
 async function initSettings () {
   theme.value = await settingsDB.getSetting('theme')
@@ -108,6 +125,16 @@ function changePath (type: string) {
   })
 }
 
+function handleResetConfirm () {
+  db.reset().then(() => {
+    window.ipc.invoke(IpcDirective.WIN_CLOSE)
+  })
+}
+
+function changeFilterClassToggle () {
+  console.log('class filter toggle')
+}
+
 onMounted(() => {
   initSettings()
 })
@@ -132,6 +159,22 @@ onMounted(() => {
       height: 100%;
       overflow-y: auto;
       user-select: none;
+      .exclude{
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        .left, .right{
+          flex: 0.49;
+          .toggle{
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+      .resetTips{
+        margin-top: 10px;
+      }
     }
   }
 }

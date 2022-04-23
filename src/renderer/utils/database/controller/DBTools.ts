@@ -40,6 +40,10 @@ export class DBTools {
   async delete (tableName: TableSetKey, id: number) {
     return await this.db.table(tableName).delete(id)
   }
+
+  async reset () {
+    return await this.db.delete()
+  }
 }
 
 export const db = new DBTools()
