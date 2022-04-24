@@ -109,21 +109,11 @@ onMounted(() => {
   getSites()
 })
 
-function renderSite () {
-  const list = sortBy(cloneDeep(siteList.value), 'id')
-  siteList.value = list
-  db.clear('sites').then(async () => {
-    await db.bulkAdd('sites', list)
-    bus.emit('bus.sites.change')
-  })
-}
-
 async function handleActive (item: Site) {
   item.isActive = !item.isActive
   await db.update('sites', item.id, item)
   bus.emit('bus.sites.change')
 }
-
 function handleTop (item: Site) {
   const id = item.id
   const list = cloneDeep(siteList.value)
@@ -150,9 +140,8 @@ function handleDelete (item: Site) {
 
 async function getSites () {
   const res = await db.all('sites')
-  siteList.value = res
-  renderSite()
-  console.log('=== res ===', res)
+  const list = sortBy(res, 'id')
+  siteList.value = list
 }
 
 // TODO: check repeat api
