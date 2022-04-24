@@ -242,5 +242,11 @@ export async function getRating (name: string, limit?: number, lang?: string, ye
 
 // TODO: check api normal
 export async function checkApi (url: string) {
-  console.log('check api', url)
+  try {
+    const resp = await api(url)
+    if (resp) return true
+    return false
+  } catch (_) {
+    return false
+  }
 }

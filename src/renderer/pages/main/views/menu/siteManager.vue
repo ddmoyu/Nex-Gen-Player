@@ -1,7 +1,7 @@
 <template>
   <n-layout class="siteManager">
     <div class="header">
-      <n-button>
+      <n-button @click="handleAddSite">
         <template #icon><n-icon size="20"><Add /></n-icon></template>Add
       </n-button>
       <n-dropdown :options="importOptions" placement="bottom-end" @select="handleImportSelect">
@@ -26,6 +26,41 @@
         style="height: 100%;"
       />
     </div>
+    <n-modal v-model:show="addEdit">
+      <n-card style="width: 500px" role="dialog" aria-modal="true">
+        <template #header>
+          {{ site.type === 'add' ? 'Add' : 'Edit' }}
+        </template>
+        <n-spin :show="checking">
+          <n-form ref="formRef" :model="site" label-placement="left" label-width="auto" :rules="rules">
+            <n-form-item label="Name" path="name">
+              <n-input v-model:value="site.name" placeholder="Name" />
+            </n-form-item>
+            <n-form-item label="Key" path="key">
+              <n-input v-model:value="site.key" placeholder="Key" />
+            </n-form-item>
+            <n-form-item label="Api" path="api">
+              <n-input v-model:value="site.api" placeholder="Api" />
+            </n-form-item>
+            <n-form-item label="Jiexi" path="jiexi">
+              <n-input v-model:value="site.jiexi" placeholder="Jiexi" />
+            </n-form-item>
+            <n-form-item label="Group" path="group">
+              <n-select v-model:value="site.group" :options="groupOptions" filterable tag />
+            </n-form-item>
+            <n-form-item label="Active" path="isActive">
+              <n-switch v-model:value="site.isActive" />
+            </n-form-item>
+          </n-form>
+        </n-spin>
+        <template #footer>
+          <div class="btns" style="display: flex; justify-content: flex-end;">
+            <n-button @click="handleFormCancel">cancel</n-button>
+            <n-button @click="handleFormConfirm" style="margin-left: 10px">confirm</n-button>
+          </div>
+        </template>
+      </n-card>
+    </n-modal>
   </n-layout>
 </template>
 <script lang="ts" setup>
@@ -34,10 +69,12 @@ import { ArrowUp, ArrowDown, Add, ShieldCheckmarkOutline } from '@vicons/ionicon
 import { IpcDirective } from '@/main/ipcEnum'
 import bus from '../../plugins/mitt'
 import { Site } from '@/renderer/utils/database/models/Site'
-import { NButton, NSwitch } from 'naive-ui'
+import { NButton, NSwitch, useMessage } from 'naive-ui'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
-import { cloneDeep, sortBy } from 'lodash'
+import { cloneDeep, sortBy, uniqBy } from 'lodash'
+import { checkApi } from '@/renderer/utils/movie'
 
+const message = useMessage()
 const siteList = ref([])
 const columns: TableBaseColumn<Site>[] = [
   {
@@ -93,7 +130,6 @@ const columns: TableBaseColumn<Site>[] = [
     }
   }
 ]
-
 const importOptions = ref([
   {
     label: 'Online JSON',
@@ -104,10 +140,58 @@ const importOptions = ref([
     key: 'local'
   }
 ])
+const addEdit = ref(false)
+const formRef = ref()
+const site = reactive({
+  type: 'add',
+  id: 0,
+  key: '',
+  name: '',
+  api: '',
+  jiexi: '',
+  jsonApi: '',
+  isActive: false,
+  group: '',
+  state: true
+})
+const groupOptions = ref([])
+const checking = ref(false)
+const rules = ref({
+  name: { required: true },
+  key: { required: true },
+  api: { required: true }
+})
 
 onMounted(() => {
   getSites()
 })
+
+function getSitesGroup () {
+  const list = cloneDeep(siteList.value)
+  const groups = []
+  const arr = uniqBy(list, 'group')
+  for (const i of arr) {
+    groups.push(i.group)
+  }
+  if (!groups.length) return false
+  groupOptions.value = groups.map(item => ({
+    label: item,
+    value: item
+  }))
+}
+async function handleAddSite () {
+  getSitesGroup()
+  addEdit.value = true
+  checking.value = false
+  site.type = 'add'
+  site.key = ''
+  site.name = ''
+  site.api = ''
+  site.jiexi = ''
+  site.jsonApi = ''
+  site.isActive = true
+  site.group = ''
+}
 
 async function handleActive (item: Site) {
   item.isActive = !item.isActive
@@ -129,8 +213,65 @@ function handleTop (item: Site) {
   })
 }
 function handleEdit (item: Site) {
-  console.log('item: ', item)
+  getSitesGroup()
+  addEdit.value = true
+  site.type = 'edit'
+  site.id = item.id
+  site.key = item.key
+  site.name = item.name
+  site.api = item.api
+  site.jiexi = item.jiexi
+  site.jsonApi = item.jsonApi
+  site.isActive = item.isActive
+  site.group = item.group
+  site.state = item.state
 }
+
+function handleFormCancel () {
+  addEdit.value = false
+}
+function getId () {
+  const list = sortBy(cloneDeep(siteList.value), 'id')
+  const id = list[list.length - 1].id
+  return id + 1
+}
+
+function handleFormConfirm () {
+  checking.value = false
+  formRef.value.validate(async (err: Promise<any>) => {
+    if (!err) {
+      checking.value = true
+      const flag = await checkApi(site.api)
+      if (flag) {
+        addEdit.value = false
+        checking.value = false
+        const doc = {
+          id: site.type === 'add' ? getId() : site.id,
+          key: site.key,
+          name: site.name,
+          api: site.api,
+          jiexi: site.jiexi,
+          jsonApi: site.jsonApi,
+          isActive: site.isActive,
+          group: site.group,
+          state: true
+        }
+        if (site.type === 'add') {
+          await db.put<Site>('sites', doc)
+          message.success('添加成功')
+        } else {
+          await db.update('sites', site.id, doc)
+          message.success('编辑成功')
+        }
+        await getSites()
+      } else {
+        checking.value = false
+        message.success('接口验证不通过')
+      }
+    }
+  })
+}
+
 function handleCheck (item: Site) {
   console.log('item: ', item)
 }
