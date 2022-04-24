@@ -119,14 +119,14 @@ const columns: TableBaseColumn<Site>[] = [
   {
     title: 'Operator',
     key: 'key',
-    width: 280,
+    width: 300,
     render (row: Site) {
-      return [
+      return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
         h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleTop(row) }, { default: () => 'Top' }),
         h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleEdit(row) }, { default: () => 'Edit' }),
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleCheck(row) }, { default: () => 'Check' }),
+        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleCheck(row) }, { default: () => 'Check' }),
         h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleDelete(row) }, { default: () => 'Delete' })
-      ]
+      ])
     }
   }
 ]
@@ -192,25 +192,10 @@ async function handleAddSite () {
   site.isActive = true
   site.group = ''
 }
-
-async function handleActive (item: Site) {
-  item.isActive = !item.isActive
-  await db.update('sites', item.id, item)
-  bus.emit('bus.sites.change')
-}
-function handleTop (item: Site) {
-  const id = item.id
-  const list = cloneDeep(siteList.value)
-  list.map(li => {
-    if (li.id === 0) li.id = id
-    if (li.name === item.name) li.id = 0
-  })
-  const newList = sortBy(cloneDeep(list), 'id')
-  siteList.value = newList
-  db.clear('sites').then(async () => {
-    await db.bulkAdd('sites', newList)
-    bus.emit('bus.sites.change')
-  })
+function getId () {
+  const list = sortBy(cloneDeep(siteList.value), 'id')
+  const id = list[list.length - 1].id
+  return id + 1
 }
 function handleEdit (item: Site) {
   getSitesGroup()
@@ -226,16 +211,9 @@ function handleEdit (item: Site) {
   site.group = item.group
   site.state = item.state
 }
-
 function handleFormCancel () {
   addEdit.value = false
 }
-function getId () {
-  const list = sortBy(cloneDeep(siteList.value), 'id')
-  const id = list[list.length - 1].id
-  return id + 1
-}
-
 function handleFormConfirm () {
   checking.value = false
   formRef.value.validate(async (err: Promise<any>) => {
@@ -272,11 +250,48 @@ function handleFormConfirm () {
   })
 }
 
-function handleCheck (item: Site) {
-  console.log('item: ', item)
+async function handleActive (item: Site) {
+  item.isActive = !item.isActive
+  await db.update('sites', item.id, item)
+  bus.emit('bus.sites.change')
 }
-function handleDelete (item: Site) {
-  console.log('item: ', item)
+function handleTop (item: Site) {
+  const id = item.id
+  const list = cloneDeep(siteList.value)
+  list.map(li => {
+    if (li.id === 0) li.id = id
+    if (li.name === item.name) li.id = 0
+  })
+  const newList = sortBy(cloneDeep(list), 'id')
+  siteList.value = newList
+  db.clear('sites').then(async () => {
+    await db.bulkAdd('sites', newList)
+    bus.emit('bus.sites.change')
+  })
+}
+function handleBtnLoading (flag: boolean) {
+  if (flag) {
+    return true
+  } else {
+    return false
+  }
+}
+async function handleCheck (item: Site) {
+  item.loading = true
+  const flag = await checkApi(item.api)
+  if (flag) {
+    item.state = true
+    message.success('接口可用')
+  } else {
+    item.state = false
+  }
+  await db.update('sites', item.id, item)
+  item.loading = false
+}
+async function handleDelete (item: Site) {
+  await db.delete('sites', item.id)
+  await getSites()
+  message.success('删除成功')
 }
 
 async function getSites () {

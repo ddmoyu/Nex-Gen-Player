@@ -1,6 +1,6 @@
 import { SetStores } from '../../decorator'
 
-@SetStores('++id, key, name, api, download, jiexiUrl, isActive, group, state')
+@SetStores('++id, key, name, api, download, jiexiUrl, isActive, group, state, loading')
 export class Site {
   readonly id?: number
   readonly key?: string
@@ -10,5 +10,6 @@ export class Site {
   readonly jsonApi?: string
   isActive?: boolean
   readonly group?: string
-  readonly state?: boolean
+  state?: boolean
+  loading?: boolean
 }
