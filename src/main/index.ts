@@ -4,6 +4,7 @@ import { app, protocol, BrowserWindow } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import win from './router'
 import { registerIpcEvent } from './events'
+import { registerShortcut, unregisterShortcut } from './shortcut/shortcut'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -14,6 +15,7 @@ protocol.registerSchemesAsPrivileged([
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
+    unregisterShortcut()
   }
 })
 
@@ -30,6 +32,7 @@ app.on('ready', async () => {
     }
   }
   win.open('main')
+  registerShortcut()
   registerIpcEvent()
   // autoUpdater.checkForUpdatesAndNotify()
 })
