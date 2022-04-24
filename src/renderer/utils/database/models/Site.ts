@@ -9,6 +9,6 @@ export class Site {
   readonly jiexi?: string
   readonly jsonApi?: string
   isActive?: boolean
-  group?: string
-  state?: boolean
+  readonly group?: string
+  readonly state?: boolean
 }

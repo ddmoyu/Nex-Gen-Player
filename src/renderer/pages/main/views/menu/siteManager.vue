@@ -36,14 +36,13 @@ import bus from '../../plugins/mitt'
 import { Site } from '@/renderer/utils/database/models/Site'
 import { NButton, NSwitch } from 'naive-ui'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
-import { cloneDeep, orderBy, sortBy } from 'lodash'
+import { cloneDeep, sortBy } from 'lodash'
 
 const siteList = ref([])
 const columns: TableBaseColumn<Site>[] = [
   {
     title: 'Name',
     key: 'name',
-    width: 80,
     ellipsis: {
       tooltip: true
     }
@@ -59,7 +58,7 @@ const columns: TableBaseColumn<Site>[] = [
   {
     title: 'jiexi',
     key: 'jiexi',
-    width: 100,
+    width: 60,
     render (row: Site) {
       return row.jiexi ? '有' : '无'
     }
@@ -83,7 +82,7 @@ const columns: TableBaseColumn<Site>[] = [
   {
     title: 'Operator',
     key: 'key',
-    width: 180,
+    width: 280,
     render (row: Site) {
       return [
         h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleTop(row) }, { default: () => 'Top' }),
@@ -113,14 +112,16 @@ onMounted(() => {
 function renderSite () {
   const list = sortBy(cloneDeep(siteList.value), 'id')
   siteList.value = list
-  db.clear('sites').then(() => {
-    db.bulkAdd('sites', list)
+  db.clear('sites').then(async () => {
+    await db.bulkAdd('sites', list)
+    bus.emit('bus.sites.change')
   })
-  bus.emit('bus.sites.change')
 }
 
-function handleActive (item: Site) {
+async function handleActive (item: Site) {
   item.isActive = !item.isActive
+  await db.update('sites', item.id, item)
+  bus.emit('bus.sites.change')
 }
 
 function handleTop (item: Site) {
@@ -130,9 +131,12 @@ function handleTop (item: Site) {
     if (li.id === 0) li.id = id
     if (li.name === item.name) li.id = 0
   })
-  siteList.value = list
-  console.log('sitelist', siteList.value)
-  renderSite()
+  const newList = sortBy(cloneDeep(list), 'id')
+  siteList.value = newList
+  db.clear('sites').then(async () => {
+    await db.bulkAdd('sites', newList)
+    bus.emit('bus.sites.change')
+  })
 }
 function handleEdit (item: Site) {
   console.log('item: ', item)

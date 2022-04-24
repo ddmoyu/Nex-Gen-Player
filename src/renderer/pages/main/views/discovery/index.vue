@@ -119,9 +119,11 @@ async function getClassList () {
   classOptions.value = res
   classVal.value = res[0].value
   list.value = []
-  document.querySelector('.waterfall').scrollIntoView(true)
   pages.value = 1
   getMoreVideosList()
+  try {
+    document.querySelector('.waterfall').scrollIntoView(true)
+  } catch (ignore) {}
 }
 
 function changeSite () {
