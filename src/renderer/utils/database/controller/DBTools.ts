@@ -41,6 +41,10 @@ export class DBTools {
     return await this.db.table(tableName).delete(id)
   }
 
+  async clear (tableName: TableSetKey) {
+    return await this.db.table(tableName).clear()
+  }
+
   async reset () {
     return await this.db.delete()
   }
