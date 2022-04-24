@@ -8,3 +8,15 @@ export async function m3uList (): Promise<PlaylistItem[]> {
   const data = parser.parse(res)
   return data.items
 }
+
+// check online m3u url
+export async function checkM3uUrl (url: string) {
+  try {
+    const resp = await api(url, { parseResponse: txt => txt })
+    const data = parser.parse(resp)
+    if (data && data.items.length > 0) return { flag: true, list: data.items }
+    return { flag: false, list: [] }
+  } catch (_) {
+    return { flag: false, list: [] }
+  }
+}

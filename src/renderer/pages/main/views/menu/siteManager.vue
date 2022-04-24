@@ -296,11 +296,8 @@ function handleTop (item: Site) {
   })
 }
 function handleBtnLoading (flag: boolean) {
-  if (flag) {
-    return true
-  } else {
-    return false
-  }
+  if (flag) return true
+  return false
 }
 async function handleCheck (item: Site) {
   if (checkAll.value) return false
@@ -424,7 +421,7 @@ async function mergeSites (list: Site[]) {
   }
   .list{
     height: 100%;
-    padding: 10px;
+    padding: 0 10px 10px;
   }
 }
 </style>
