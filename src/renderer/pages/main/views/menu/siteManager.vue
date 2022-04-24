@@ -309,7 +309,14 @@ async function getSites () {
 
 async function handleExport () {
   if (checkAll.value) return false
-  console.log('handleExport')
+  window.ipc.invoke(IpcDirective.WIN_SAVE_DIALOG, { data: JSON.stringify(siteList.value, null, 4) })
+  window.ipc.once(IpcDirective.WIN_DIALOG_REPLAY, (e, args) => {
+    if (args) {
+      message.success('导出成功')
+    } else {
+      message.warning('导出失败，请重试')
+    }
+  })
 }
 async function handleCheckAll () {
   checkAll.value = true

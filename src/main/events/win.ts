@@ -4,6 +4,7 @@ import win from '../router'
 import os from 'os'
 import { OpenDialogOptions } from 'electron/main'
 import { getJSONFile, openLink, playWithExternalPlayer } from './tools'
+import { writeFile } from 'fs'
 
 ipcMain.handle(IpcDirective.WIN_OPEN, (e, params) => {
   win.open(params ? params.name : '')
@@ -56,4 +57,20 @@ ipcMain.handle(IpcDirective.PLAY_WITH, (e, params) => {
 
 ipcMain.handle(IpcDirective.SHELL, (e, params) => {
   openLink(params.url)
+})
+
+ipcMain.handle(IpcDirective.WIN_SAVE_DIALOG, (e, params) => {
+  const w = win.get()
+  if (!w) return false
+  dialog.showSaveDialog(w, { filters: [{ extensions: ['json'], name: 'json' }] }).then(res => {
+    if (res.canceled) return false
+    const path = res.filePath
+    writeFile(path, params.data, (err) => {
+      if (err) {
+        e.sender.send(IpcDirective.WIN_DIALOG_REPLAY, false)
+      } else {
+        e.sender.send(IpcDirective.WIN_DIALOG_REPLAY, true)
+      }
+    })
+  })
 })

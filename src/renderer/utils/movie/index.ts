@@ -1,6 +1,7 @@
 import { api } from '../fetch'
 import { XMLParser } from 'fast-xml-parser'
 import type { ClassType, VideoDetailType } from '../../../typings/video'
+import { Site } from '../database/models/Site'
 
 // config with XML to JSON
 const parser = new XMLParser({
@@ -204,6 +205,13 @@ export async function search (url: string, wd: string, page?: number) {
     }
     return false
   } catch (ignore) { }
+}
+
+// get site by id
+export function getSiteById (id: number, sites: Site[]) {
+  if (!sites.length) return false
+  const site = sites.find(item => item.id === id)
+  return site
 }
 
 // get douban IMDB Rotten rating

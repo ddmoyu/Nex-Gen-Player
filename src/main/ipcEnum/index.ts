@@ -13,5 +13,6 @@ export enum IpcDirective {
   IMPORT_JSON = '11',
   IMPORT_JSON_REPLAY = '12',
   PLAY_WITH = '13',
-  SHELL = '14'
+  SHELL = '14',
+  WIN_SAVE_DIALOG = '15'
 }
