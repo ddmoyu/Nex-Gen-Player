@@ -58,7 +58,7 @@ function handleImportSelect () {
 
 async function handleImport () {
   window.ipc.invoke(IpcDirective.IMPORT_JSON)
-  window.ipc.on(IpcDirective.IMPORT_JSON_REPLAY, async (e, args) => {
+  window.ipc.once(IpcDirective.IMPORT_JSON_REPLAY, async (e, args) => {
     siteList.value = args
     await db.bulkAdd('sites', args)
     bus.emit('bus.sites.change')

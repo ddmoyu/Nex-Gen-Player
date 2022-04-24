@@ -33,7 +33,7 @@ async function getOS () {
   const s = await settingsDB.getSetting('os')
   if (!s) {
     window.ipc.invoke(IpcDirective.SYS_OS)
-    window.ipc.on(IpcDirective.SYS_OS_REPLAY, (e, args) => {
+    window.ipc.once(IpcDirective.SYS_OS_REPLAY, (e, args) => {
       os.value = args
       settingsDB.updateSetting({ os: args })
       window.ipc.removeAllListeners(IpcDirective.SYS_OS_REPLAY)

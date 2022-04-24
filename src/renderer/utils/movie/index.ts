@@ -252,3 +252,13 @@ export async function checkApi (url: string) {
     return false
   }
 }
+
+// get online sites json
+export async function getOnlineJSON (url: string) {
+  try {
+    const res = await api(url)
+    return res
+  } catch (_) {
+    return false
+  }
+}

@@ -49,7 +49,7 @@ async function getSystemLanguage () {
   if (!lang) {
     // debugger
     window.ipc.invoke(IpcDirective.SYS_LANGUAGE)
-    window.ipc.on(IpcDirective.SYS_LANGUAGE_REPLAY, (e, args) => {
+    window.ipc.once(IpcDirective.SYS_LANGUAGE_REPLAY, (e, args) => {
       if (args === 'zh-CN') {
         locale.value = 'zh-CN'
       } else {

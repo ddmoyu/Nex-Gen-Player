@@ -61,6 +61,26 @@
         </template>
       </n-card>
     </n-modal>
+    <n-modal v-model:show="onlineShow">
+      <n-card style="width: 500px" role="dialog" aria-modal="true">
+        <template #header>
+          Import Online Json File
+        </template>
+        <n-spin :show="checking">
+          <n-form ref="formRef" :model="site" label-placement="left" label-width="auto">
+            <n-form-item label="Url">
+              <n-input v-model:value="jsonUrl" placeholder="URL" />
+            </n-form-item>
+          </n-form>
+        </n-spin>
+        <template #footer>
+          <div class="btns" style="display: flex; justify-content: flex-end;">
+            <n-button @click="handleJsonCancel">cancel</n-button>
+            <n-button @click="handleJsonConfirm" style="margin-left: 10px">confirm</n-button>
+          </div>
+        </template>
+      </n-card>
+    </n-modal>
   </n-layout>
 </template>
 <script lang="ts" setup>
@@ -72,7 +92,7 @@ import { Site } from '@/renderer/utils/database/models/Site'
 import { NButton, NSwitch, useMessage } from 'naive-ui'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
 import { cloneDeep, sortBy, uniqBy } from 'lodash'
-import { checkApi } from '@/renderer/utils/movie'
+import { checkApi, getOnlineJSON } from '@/renderer/utils/movie'
 
 const message = useMessage()
 const siteList = ref([])
@@ -162,6 +182,8 @@ const rules = ref({
   api: { required: true }
 })
 const checkAll = ref(false)
+const onlineShow = ref(false)
+const jsonUrl = ref('')
 
 onMounted(() => {
   getSites()
@@ -289,9 +311,11 @@ async function handleCheck (item: Site) {
     message.success('接口可用')
   } else {
     item.state = false
+    item.isActive = false
   }
   await db.update('sites', item.id, item)
   item.loading = false
+  getSites()
 }
 async function handleDelete (item: Site) {
   if (checkAll.value) return false
@@ -331,18 +355,53 @@ async function handleCheckAll () {
   message.info('检测完毕')
 }
 
-// TODO: check repeat api
-function handleImportSelect (key: string | number) {
+async function handleImportSelect (key: string | number) {
   if (key === 'local') {
     window.ipc.invoke(IpcDirective.IMPORT_JSON)
-    window.ipc.on(IpcDirective.IMPORT_JSON_REPLAY, async (e, args) => {
-      siteList.value = args
-      await db.bulkAdd('sites', args)
-      bus.emit('bus.sites.change')
+    window.ipc.once(IpcDirective.IMPORT_JSON_REPLAY, async (e, args) => {
+      await mergeSites(args)
     })
   } else if (key === 'online') {
-    console.log('todo')
+    onlineShow.value = true
+    checking.value = false
   }
+}
+async function handleJsonCancel () {
+  onlineShow.value = false
+  checking.value = false
+}
+async function handleJsonConfirm () {
+  if (!jsonUrl.value.trim()) {
+    return message.warning('请输入链接')
+  }
+  checking.value = true
+  const res = await getOnlineJSON(jsonUrl.value)
+  if (res) {
+    try {
+      const json = JSON.parse(res)
+      await mergeSites(json)
+      onlineShow.value = false
+    } catch (_) {
+      message.warning('导入失败')
+    }
+  } else {
+    message.warning('导入失败')
+  }
+  checking.value = false
+}
+async function mergeSites (list: Site[]) {
+  if (!list.length) return message.warning('数据为空，导入失败')
+  const oList = siteList.value
+  for (const i of list) {
+    const flag = oList.findIndex(item => item.api === i.api)
+    if (flag < 0) {
+      const d = { key: i.key, name: i.name, api: i.api, jiexi: i.jiexi, jsonApi: i.jsonApi, isActive: i.isActive, group: i.group, state: i.state }
+      await db.put<Site>('sites', d)
+    }
+  }
+  await getSites()
+  message.success('导入完毕')
+  bus.emit('bus.sites.change')
 }
 
 </script>
