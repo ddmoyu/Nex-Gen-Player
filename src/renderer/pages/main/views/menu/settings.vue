@@ -44,11 +44,11 @@
             <n-collapse-item title="Exclude" name="6">
               <div class="exclude">
                 <div class="left">
-                  <div class="toggle">过滤分类：<n-switch v-model:value="filter.class" :round="false" @change="changeFilterClassToggle" /></div>
+                  <div class="toggle">过滤分类：<n-switch v-model:value="filter.class" :round="false" @on-update:value="changeFilterClassToggle" /></div>
                   <div><n-input v-model:value="filter.classValue" type="textarea" /></div>
                 </div>
                 <div class="right">
-                  <div class="toggle">过滤视频：<n-switch v-model:value="filter.video" :round="false" @change="changeFilterClassToggle" /></div>
+                  <div class="toggle">过滤视频：<n-switch v-model:value="filter.video" :round="false" @on-update:value="changeFilterClassToggle" /></div>
                   <div><n-input v-model:value="filter.videoValue" type="textarea" /></div>
                 </div>
               </div>
