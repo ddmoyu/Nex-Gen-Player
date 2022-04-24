@@ -29,7 +29,7 @@
                   <span>{{i.name}}</span>
                 </div>
                 <div class="l rating">{{i.rating || 0}}</div>
-                <div class="l votes">{{i.votes}} votes</div>
+                <div class="l votes">{{i.votes || 0}} votes</div>
               </div>
             </div>
           </div>
