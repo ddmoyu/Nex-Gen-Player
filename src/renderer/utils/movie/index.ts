@@ -1,7 +1,6 @@
 import { api } from '../fetch'
 import { XMLParser } from 'fast-xml-parser'
 import type { ClassType, VideoDetailType } from '../../../typings/video'
-import { Site } from '../database/models/Site'
 
 // config with XML to JSON
 const parser = new XMLParser({
@@ -207,12 +206,7 @@ export async function search (url: string, wd: string, page?: number) {
   } catch (ignore) { }
 }
 
-export function getSiteById (id: number, sites: Site[]) {
-  if (!sites.length) return false
-  const site = sites.find(item => item.id === id)
-  return site
-}
-
+// get douban IMDB Rotten rating
 export async function getRating (name: string, limit?: number, lang?: string, year?: number) {
   try {
     const uri = `https://api.wmdb.tv/api/v1/movie/search?q=${name}&limit=${limit || 10}&skip=0&lang=${lang || 'Cn'}${year ? '&year=' + year : ''}`
@@ -240,7 +234,7 @@ export async function getRating (name: string, limit?: number, lang?: string, ye
   }
 }
 
-// TODO: check api normal
+// check single api normal
 export async function checkApi (url: string) {
   try {
     const resp = await api(url)

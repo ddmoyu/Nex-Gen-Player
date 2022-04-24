@@ -9,10 +9,10 @@
           <n-icon size="20"><ArrowDown /></n-icon>Import
         </n-button>
       </n-dropdown>
-      <n-button>
+      <n-button @click="handleExport">
         <template #icon><n-icon size="20"><ArrowUp /></n-icon></template>Export
       </n-button>
-      <n-button>
+      <n-button @click="handleCheckAll">
         <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>Check
       </n-button>
     </div>
@@ -161,6 +161,7 @@ const rules = ref({
   key: { required: true },
   api: { required: true }
 })
+const checkAll = ref(false)
 
 onMounted(() => {
   getSites()
@@ -180,6 +181,7 @@ function getSitesGroup () {
   }))
 }
 async function handleAddSite () {
+  if (checkAll.value) return false
   getSitesGroup()
   addEdit.value = true
   checking.value = false
@@ -198,6 +200,7 @@ function getId () {
   return id + 1
 }
 function handleEdit (item: Site) {
+  if (checkAll.value) return false
   getSitesGroup()
   addEdit.value = true
   site.type = 'edit'
@@ -256,6 +259,7 @@ async function handleActive (item: Site) {
   bus.emit('bus.sites.change')
 }
 function handleTop (item: Site) {
+  if (checkAll.value) return false
   const id = item.id
   const list = cloneDeep(siteList.value)
   list.map(li => {
@@ -277,6 +281,7 @@ function handleBtnLoading (flag: boolean) {
   }
 }
 async function handleCheck (item: Site) {
+  if (checkAll.value) return false
   item.loading = true
   const flag = await checkApi(item.api)
   if (flag) {
@@ -289,6 +294,7 @@ async function handleCheck (item: Site) {
   item.loading = false
 }
 async function handleDelete (item: Site) {
+  if (checkAll.value) return false
   await db.delete('sites', item.id)
   await getSites()
   message.success('删除成功')
@@ -297,7 +303,25 @@ async function handleDelete (item: Site) {
 async function getSites () {
   const res = await db.all('sites')
   const list = sortBy(res, 'id')
+  list.forEach(item => { item.loading = false })
   siteList.value = list
+}
+
+async function handleExport () {
+  if (checkAll.value) return false
+  console.log('handleExport')
+}
+async function handleCheckAll () {
+  checkAll.value = true
+  await Promise.all(siteList.value.map(async site => {
+    site.loading = true
+    const flag = await checkApi(site.api)
+    site.state = flag
+    await db.update('sites', site.id, site)
+    site.loading = false
+  }))
+  checkAll.value = false
+  message.info('检测完毕')
 }
 
 // TODO: check repeat api
