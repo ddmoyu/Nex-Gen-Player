@@ -4,8 +4,12 @@
       <n-space vertical>
         <n-space justify="space-between">
           <n-space>
-            <n-select v-model:value="iptv" :options="iptvList"></n-select>
-            <n-button @click="handleRequst">Refresh</n-button>
+            <n-select v-model:value="iptv" :options="iptvList" @update:value="getTvList"></n-select>
+            <n-button tertiary type="primary" @click="handleRefresh">
+              <n-icon size="22">
+                <RefreshCircle />
+              </n-icon>
+            </n-button>
           </n-space>
           <n-input placeholder="Search" clearable v-model:value="value" @input="handleInput">
             <template #suffix>
@@ -22,22 +26,26 @@
         :columns="columns"
         :data="data"
         flex-height
+        virtual-scroll
         style="height: 100%;"
       />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { m3uList } from '@/renderer/utils/iptv'
+import { checkM3uUrl, m3uList } from '@/renderer/utils/iptv'
 import type { PlaylistItem } from 'iptv-playlist-parser'
 import { NButton } from 'naive-ui'
-import { Search } from '@vicons/ionicons5'
+import { Search, RefreshCircle } from '@vicons/ionicons5'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
+import { db } from '@/renderer/utils/database/controller/DBTools'
+import bus from '../../plugins/mitt'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-const iptv = ref('awesome')
-const iptvList = ref([
-  { label: 'Awesome-iptv', value: 'awesome' }
-])
+const iptv = ref(1)
+const iptvList = ref([])
+const iptvRaw = ref([])
 
 const data = ref<PlaylistItem[]>()
 const table = ref()
@@ -97,6 +105,36 @@ const columns: TableBaseColumn<PlaylistItem>[] = [
   }
 ]
 
+onMounted(() => {
+  getIptvList()
+  bus.on('bus.sites.change', getIptvList)
+})
+
+async function getIptvList () {
+  const res = await db.all('iptv')
+  if (res) {
+    iptvRaw.value = res
+    const arr = []
+    for (const i of res) {
+      arr.push({ label: i.name, value: i.id })
+    }
+    iptvList.value = arr
+    iptv.value = res[0].id
+    getTvList()
+  }
+}
+
+async function getTvList () {
+  let list = []
+  for (const i of iptvRaw.value) {
+    if (i.id === iptv.value) {
+      list = i.list
+      break
+    }
+  }
+  data.value = list
+}
+
 function handleInput () {
   const txt = value.value.trim()
   if (txt !== '') {
@@ -107,13 +145,21 @@ function handleInput () {
 }
 
 function handlePlay (row: PlaylistItem): void {
-  console.log('play: ', row)
+  router.push({ name: 'play' })
+  const data = { video: row, type: 'iptv' }
+  bus.emit('bus.video.play', data)
 }
 
-async function handleRequst () {
-  const list = await m3uList()
-  console.log('list', list)
-  data.value = list
+async function handleRefresh () {
+  for (const i of iptvList.value) {
+    if (i.id === iptv.value) {
+      const { flag, list } = await checkM3uUrl(i.url)
+      if (flag) {
+        data.value = list
+      }
+      break
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
