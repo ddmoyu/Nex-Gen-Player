@@ -1,10 +1,11 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, session } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import win from './router'
 import { registerIpcEvent } from './events'
 import { registerShortcut, unregisterShortcut } from './shortcut/shortcut'
+import path from 'path'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -26,7 +27,8 @@ app.on('activate', () => {
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     try {
-      await installExtension(VUEJS3_DEVTOOLS)
+      // await installExtension(VUEJS3_DEVTOOLS)
+      await session.defaultSession.loadExtension('C:/Users/zlwapjj/AppData/Local/Google/Chrome/User Data/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.1.4_0')
     } catch (err) {
       console.error('Vue Devtools failed to install:', JSON.stringify(err))
     }
