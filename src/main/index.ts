@@ -15,8 +15,8 @@ protocol.registerSchemesAsPrivileged([
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
     unregisterShortcut()
+    app.quit()
   }
 })
 
