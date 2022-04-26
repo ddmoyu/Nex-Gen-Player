@@ -27,7 +27,8 @@ app.on('activate', () => {
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     try {
-      await installExtension(VUEJS3_DEVTOOLS)
+      // await installExtension(VUEJS3_DEVTOOLS)
+      await session.defaultSession.loadExtension('C:/Users/zlwapjj/AppData/Local/Google/Chrome/User Data/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.1.4_0')
     } catch (err) {
       console.error('Vue Devtools failed to install:', JSON.stringify(err))
     }

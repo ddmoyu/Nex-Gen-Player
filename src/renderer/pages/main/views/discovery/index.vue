@@ -2,8 +2,9 @@
   <div class="discovery">
     <div class="header">
       <div class="left">
-        <n-select class="select" v-model:value="siteName" :options="sitesStore.getSiteOptions" @update:value="changeSite"/>
-        <n-select class="select" v-model:value="classVal" :options="classOptions" @update:value="changeClass"/>
+        <n-select class="select" v-model:value="siteName" :options="sitesStore.getSiteOptions"
+          @update:value="changeSite" />
+        <n-select class="select" v-model:value="classVal" :options="classOptions" @update:value="changeClass" />
       </div>
       <div class="right">
         <n-input-group>
@@ -12,7 +13,8 @@
               <Compass />
             </n-icon>
           </n-button>
-          <n-input class="searchInput" :clearable="true" @clear="handleClear" v-model:value="searchTxt" type="text" @keydown.enter="handleSearch" />
+          <n-input class="searchInput" :clearable="true" @clear="handleClear" v-model:value="searchTxt" type="text"
+            @keydown.enter="handleSearch" />
           <n-button tertiary type="primary" @click="handleSearch">
             <n-icon size="22">
               <Search />
@@ -24,9 +26,33 @@
     <div class="body">
       <n-scrollbar class="custom-scrollbar">
         <n-empty v-if="emptyDesc" :description="emptyDesc">
-          <template #extra><n-button size="small" @click="goSettingsView">Import sites</n-button></template>
+          <template #extra>
+            <n-button size="small" @click="goSettingsView">Import sites</n-button>
+          </template>
         </n-empty>
         <n-empty v-if="emptyVideoList" :description="emptyVideoList"></n-empty>
+        <!-- <MasonryLayout :list="list">
+          <template #supernatant="item">
+            <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item)">
+              <template #cover>
+                <div class="btns">
+                  <div class="btns-wrapper">
+                    <span @click.stop="handlePlay(item)">Play</span>
+                    <span @click.stop="handleFavorite(item)">Favorite</span>
+                  </div>
+                </div>
+              </template>
+              <n-ellipsis class="name" style="max-width: 100%">
+                {{ item.name }}
+              </n-ellipsis>
+              <div class="info">
+                <span>{{ item.area }}</span>
+                <span>{{ item.class }}</span>
+                <span>{{ item.note }}</span>
+              </div>
+            </n-card>
+          </template>
+        </MasonryLayout> -->
         <v3-waterfall
           :list="list"
           :gap="10"
@@ -42,7 +68,6 @@
           <template #default="slot">
             <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(slot.item)">
               <template #cover>
-                <!-- <img src="../../../../assets/default.png" alt=""> -->
                 <img :src="slot.item.pic" alt="">
                 <div class="btns">
                   <div class="btns-wrapper">
@@ -67,6 +92,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import MasonryLayout from '../../components/masonry-layout/MasonryLayout.vue'
 import { getSiteById, getVideoList, search } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
@@ -123,7 +149,7 @@ async function getClassList () {
   getMoreVideosList()
   try {
     document.querySelector('.waterfall').scrollIntoView(true)
-  } catch (ignore) {}
+  } catch (ignore) { }
 }
 
 function changeSite () {
@@ -222,48 +248,58 @@ onMounted(() => {
 })
 </script>
 <style lang="scss" scoped>
-.discovery{
+.discovery {
   display: flex;
   flex-direction: column;
   height: calc(100% - 20px);
   padding: 10px;
-  .header{
+
+  .header {
     height: 44px;
     display: flex;
     justify-content: space-between;
-    .left{
+
+    .left {
       display: flex;
-      .select{
+
+      .select {
         width: 180px;
         margin-right: 20px;
       }
     }
-    .right{
-      .searchInput{
+
+    .right {
+      .searchInput {
         width: 220px;
       }
     }
   }
-  .body{
+
+  .body {
     height: calc(100% - 44px);
-    .card{
+
+    .card {
       width: 100%;
       cursor: pointer;
-      :deep(.n-card-cover){
+
+      :deep(.n-card-cover) {
         position: relative;
-        .btns{
+
+        .btns {
           display: none;
           position: absolute;
           bottom: 0;
           height: 36px;
           width: 100%;
           transform: 0.3s;
-          .btns-wrapper{
+
+          .btns-wrapper {
             display: flex;
             height: 100%;
             width: 100%;
             justify-content: space-between;
-            span{
+
+            span {
               flex: 0.5;
               display: flex;
               height: 100%;
@@ -271,7 +307,8 @@ onMounted(() => {
               align-items: center;
               justify-content: center;
               background-color: rgba(45, 45, 45, 0.7);
-              &:hover{
+
+              &:hover {
                 color: #dedede;
                 background-color: rgba(7, 7, 7, 0.8);
               }
@@ -279,12 +316,14 @@ onMounted(() => {
           }
         }
       }
-      &:hover{
-        .btns{
+
+      &:hover {
+        .btns {
           display: block;
         }
       }
-      .info{
+
+      .info {
         margin-top: 4px;
         font-size: 12px;
         opacity: 0.9;
