@@ -29,6 +29,11 @@ export type VideoDetailType = {
   urls: string[]
 }
 
+export type HistroyDetailType = {
+  name: string
+  url: string
+}
+
 export type VideoBusPlay = {
   video: VideoDetailType
   index?: number

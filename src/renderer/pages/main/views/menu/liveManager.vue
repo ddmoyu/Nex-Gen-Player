@@ -10,13 +10,13 @@
     </div>
     <div class="list">
       <n-data-table
-      ref="table"
-      size="small"
-      :columns="columns"
-      :data="iptvList"
-      flex-height
-      style="height: 100%;"
-    />
+        ref="table"
+        size="small"
+        :columns="columns"
+        :data="iptvList"
+        flex-height
+        style="height: 100%;"
+      />
     </div>
     <n-modal v-model:show="addEdit">
       <n-card style="width: 500px" role="dialog" aria-modal="true">
