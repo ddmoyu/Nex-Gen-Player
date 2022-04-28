@@ -38,6 +38,7 @@ body,
 #app,
 .n-config-provider {
   height: 100%;
+  overflow-x: hidden;
 }
 .container {
   height: 100%;

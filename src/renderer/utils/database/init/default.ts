@@ -17,11 +17,12 @@ export const initSettings = [
         play: 'space'
       }
     },
-    search: false,
     player: '',
     downloader: '',
     exclude: {
-      type: ['伦理', '福利'],
+      classToggle: false,
+      class: ['伦理', '福利'],
+      txtToggle: false,
       txt: ['激情']
     },
     proxy: {
@@ -34,6 +35,9 @@ export const initSettings = [
       toggle: false,
       tips: '',
       password: ''
-    }
+    },
+    siteUrls: [
+      { id: 0, url: 'https://gist.githubusercontent.com/ddmoyu/cbc89ccc52a5b10e6371c418a5c5135b/raw/04f46b54d4aebd0cf464191d346e3325ea862209/tv.json', active: true, state: true, loading: false }
+    ]
   }
 ]

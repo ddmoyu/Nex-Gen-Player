@@ -1,27 +1,48 @@
 <template>
   <n-layout class="siteManager">
     <div class="header">
-      <n-button @click="handleAddSite">
-        <template #icon><n-icon size="20"><Add /></n-icon></template>Add
-      </n-button>
-      <n-dropdown :options="importOptions" placement="bottom-end" @select="handleImportSelect">
-        <n-button>
-          <n-icon size="20"><ArrowDown /></n-icon>Import
+      <div class="left">
+        <n-switch :round="false" v-model:value="toggle" @update:value="handleToggle" />
+      </div>
+      <div class="right">
+        <n-button @click="handleUpdateSiteUrls" v-show="toggle">
+          <template #icon><n-icon size="20"><CloudDownloadOutline /></n-icon></template>Update
         </n-button>
-      </n-dropdown>
-      <n-button @click="handleExport">
-        <template #icon><n-icon size="20"><ArrowUp /></n-icon></template>Export
-      </n-button>
-      <n-button @click="handleCheckAll">
-        <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>Check
-      </n-button>
+        <n-button @click="handleAddSiteUrl" v-show="toggle">
+          <template #icon><n-icon size="20"><Add /></n-icon></template>Add
+        </n-button>
+        <n-button @click="handleAddSite" v-show="!toggle">
+          <template #icon><n-icon size="20"><Add /></n-icon></template>Add
+        </n-button>
+        <n-dropdown :options="importOptions" placement="bottom-end" @select="handleImportSelect">
+          <n-button v-show="!toggle">
+            <n-icon size="20"><ArrowDown /></n-icon>Import
+          </n-button>
+        </n-dropdown>
+        <n-button @click="handleExport" v-show="!toggle">
+          <template #icon><n-icon size="20"><ArrowUp /></n-icon></template>Export
+        </n-button>
+        <n-button @click="handleCheckAll">
+          <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>Check
+        </n-button>
+      </div>
     </div>
     <div class="list">
       <n-data-table
+        v-if="!toggle"
         ref="table"
         size="small"
         :columns="columns"
         :data="siteList"
+        flex-height
+        style="height: 100%;"
+      />
+      <n-data-table
+        v-if="toggle"
+        ref="table"
+        size="small"
+        :columns="siteUrlsCol"
+        :data="siteUrls"
         flex-height
         style="height: 100%;"
       />
@@ -64,7 +85,7 @@
     <n-modal v-model:show="onlineShow">
       <n-card style="width: 500px" role="dialog" aria-modal="true">
         <template #header>
-          Import Online Json File
+          Import from online json url
         </template>
         <n-spin :show="checking">
           <n-form ref="formRef" :model="site" label-placement="left" label-width="auto">
@@ -81,11 +102,31 @@
         </template>
       </n-card>
     </n-modal>
+    <n-modal v-model:show="addEditSiteUrl">
+      <n-card style="width: 500px" role="dialog" aria-modal="true">
+        <template #header>
+          Online json url
+        </template>
+        <n-spin :show="checking">
+          <n-form ref="formRef" label-placement="left" label-width="auto">
+            <n-form-item label="Url">
+              <n-input v-model:value="siteUrl" placeholder="URL" />
+            </n-form-item>
+          </n-form>
+        </n-spin>
+        <template #footer>
+          <div class="btns" style="display: flex; justify-content: flex-end;">
+            <n-button @click="handleSiteUrlCancel">cancel</n-button>
+            <n-button @click="handleSiteUrlConfirm" style="margin-left: 10px">confirm</n-button>
+          </div>
+        </template>
+      </n-card>
+    </n-modal>
   </n-layout>
 </template>
 <script lang="ts" setup>
 import { db } from '@/renderer/utils/database/controller/DBTools'
-import { ArrowUp, ArrowDown, Add, ShieldCheckmarkOutline } from '@vicons/ionicons5'
+import { ArrowUp, ArrowDown, Add, ShieldCheckmarkOutline, CloudDownloadOutline } from '@vicons/ionicons5'
 import { IpcDirective } from '@/main/ipcEnum'
 import bus from '../../plugins/mitt'
 import { Site } from '@/renderer/utils/database/models/Site'
@@ -93,8 +134,153 @@ import { NButton, NSwitch, useMessage } from 'naive-ui'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
 import { cloneDeep, sortBy, uniqBy } from 'lodash'
 import { checkApi, getOnlineJSON } from '@/renderer/utils/movie'
+import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
+import { SiteUrlsType } from '@/typings/video'
 
 const message = useMessage()
+const toggle = ref(false)
+const checking = ref(false)
+
+onMounted(() => {
+  getSites()
+})
+
+const siteUrls = ref([])
+const addEditSiteUrl = ref(false)
+const siteUrl = ref('')
+const siteUrlType = ref('add')
+const siteItem = ref()
+const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
+  {
+    title: 'Url',
+    key: 'url',
+    ellipsis: {
+      tooltip: true
+    }
+  },
+  {
+    title: 'State',
+    key: 'state',
+    width: 100,
+    render (row: SiteUrlsType) {
+      return row.state ? '可用' : '失效'
+    }
+  },
+  {
+    title: 'Active',
+    key: 'active',
+    width: 100,
+    render (row: SiteUrlsType) {
+      return h(NSwitch, { defaultValue: row.active, onClick: () => handleSiteUrlsActive(row) })
+    }
+  },
+  {
+    title: 'Operator',
+    key: 'url',
+    width: 200,
+    render (row: SiteUrlsType) {
+      return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsEdit(row) }, { default: () => 'Edit' }),
+        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsCheck(row) }, { default: () => 'Check' }),
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsDelete(row) }, { default: () => 'Delete' })
+      ])
+    }
+  }
+]
+async function handleUpdateSiteUrls () {
+  try {
+    await Promise.all(siteUrls.value.map(async item => {
+      if (item.active) {
+        const res = await getOnlineJSON(item.url)
+        if (res) {
+          const json = JSON.parse(res)
+          await mergeSites(json)
+        }
+      }
+    }))
+  } catch (ignore) {}
+}
+async function handleToggle () {
+  const list = await settingsDB.getSetting('siteUrls')
+  siteUrls.value = list
+}
+function handleAddSiteUrl () {
+  addEditSiteUrl.value = true
+  siteUrlType.value = 'add'
+}
+async function handleSiteUrlCancel () {
+  addEditSiteUrl.value = false
+  siteUrlType.value = ''
+  siteItem.value = null
+  checking.value = false
+}
+async function handleSiteUrlConfirm () {
+  if (!siteUrl.value.trim()) {
+    return message.warning('请输入链接')
+  }
+  checking.value = true
+  const res = await getOnlineJSON(siteUrl.value)
+  if (res) {
+    addEditSiteUrl.value = false
+    if (siteUrlType.value === 'add') {
+      const d = {
+        id: new Date().getTime(),
+        url: siteUrl.value,
+        active: true,
+        state: true,
+        loading: false
+      }
+      siteUrls.value.push(d)
+    }
+    if (siteUrlType.value === 'edit') {
+      for (const i of siteUrls.value) {
+        if (i.id === siteItem.value.id) {
+          i.url = siteUrl.value
+          break
+        }
+      }
+    }
+    await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
+  } else {
+    message.warning('链接失效')
+  }
+  checking.value = false
+}
+async function handleSiteUrlsActive (item: SiteUrlsType) {
+  item.active = !item.active
+  await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
+}
+async function handleSiteUrlsEdit (item: SiteUrlsType) {
+  siteItem.value = item
+  siteUrlType.value = 'edit'
+  siteUrl.value = item.url
+  addEditSiteUrl.value = true
+}
+async function handleSiteUrlsCheck (item: SiteUrlsType) {
+  if (checkAll.value) return false
+  item.loading = true
+  const flag = await checkApi(item.url)
+  if (flag) {
+    item.state = true
+    message.success('链接可用')
+  } else {
+    item.state = false
+    item.active = false
+  }
+  await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
+  item.loading = false
+}
+async function handleSiteUrlsDelete (item: SiteUrlsType) {
+  if (checkAll.value) return false
+  for (let i = 0; i < siteUrls.value.length; i++) {
+    if (siteUrls.value[i].url === item.url) {
+      siteUrls.value.splice(i, 1)
+      break
+    }
+  }
+  await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
+}
+
 const siteList = ref([])
 const columns: TableBaseColumn<Site>[] = [
   {
@@ -175,7 +361,6 @@ const site = reactive({
   state: true
 })
 const groupOptions = ref([])
-const checking = ref(false)
 const rules = ref({
   name: { required: true },
   key: { required: true },
@@ -184,11 +369,6 @@ const rules = ref({
 const checkAll = ref(false)
 const onlineShow = ref(false)
 const jsonUrl = ref('')
-
-onMounted(() => {
-  getSites()
-})
-
 function getSitesGroup () {
   const list = cloneDeep(siteList.value)
   const groups = []
@@ -274,7 +454,6 @@ function handleFormConfirm () {
     }
   })
 }
-
 async function handleActive (item: Site) {
   item.isActive = !item.isActive
   await db.update('sites', item.id, item)
@@ -320,14 +499,12 @@ async function handleDelete (item: Site) {
   await getSites()
   message.success('删除成功')
 }
-
 async function getSites () {
   const res = await db.all('sites')
   const list = sortBy(res, 'id')
   list.forEach(item => { item.loading = false })
   siteList.value = list
 }
-
 async function handleExport () {
   if (checkAll.value) return false
   window.ipc.invoke(IpcDirective.WIN_SAVE_DIALOG, { data: JSON.stringify(siteList.value, null, 4) })
@@ -339,19 +516,6 @@ async function handleExport () {
     }
   })
 }
-async function handleCheckAll () {
-  checkAll.value = true
-  await Promise.all(siteList.value.map(async site => {
-    site.loading = true
-    const flag = await checkApi(site.api)
-    site.state = flag
-    await db.update('sites', site.id, site)
-    site.loading = false
-  }))
-  checkAll.value = false
-  message.info('检测完毕')
-}
-
 async function handleImportSelect (key: string | number) {
   if (key === 'local') {
     window.ipc.invoke(IpcDirective.IMPORT_JSON)
@@ -401,6 +565,29 @@ async function mergeSites (list: Site[]) {
   bus.emit('bus.sites.change')
 }
 
+async function handleCheckAll () {
+  checkAll.value = true
+  if (toggle.value) {
+    await Promise.all(siteUrls.value.map(async item => {
+      item.loading = true
+      const flag = await checkApi(item.url)
+      item.state = flag
+      item.loading = false
+      await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
+    }))
+  } else {
+    await Promise.all(siteList.value.map(async site => {
+      site.loading = true
+      const flag = await checkApi(site.api)
+      site.state = flag
+      await db.update('sites', site.id, site)
+      site.loading = false
+    }))
+  }
+  checkAll.value = false
+  message.info('检测完毕')
+}
+
 </script>
 <style lang="scss" scoped>
 .siteManager{
@@ -412,7 +599,7 @@ async function mergeSites (list: Site[]) {
   z-index: 1;
   .header{
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding: 10px;
     button{

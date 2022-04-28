@@ -39,3 +39,10 @@ export type VideoFromType = {
   detail: VideoDetailType
   from: string
 }
+
+export type SiteUrlsType = {
+  url: string
+  active: boolean
+  state: boolean
+  loading: boolean
+}
