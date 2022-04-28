@@ -4,14 +4,19 @@
       <n-space vertical>
         <n-space justify="space-between">
           <n-space>
-            <n-select v-model:value="iptv" :options="iptvList" @update:value="getTvList"></n-select>
-            <n-button tertiary type="primary" @click="handleRefresh">
+            <n-button tertiary type="primary" @click="handleManager" v-if="!iptv">
+              <n-icon size="22">
+                <Build />
+              </n-icon>
+            </n-button>
+            <n-select v-if="iptv || iptv === 0" v-model:value="iptv" :options="iptvList" @update:value="getTvList"></n-select>
+            <n-button v-if="iptv || iptv === 0" tertiary type="primary" @click="handleRefresh">
               <n-icon size="22">
                 <RefreshCircle />
               </n-icon>
             </n-button>
           </n-space>
-          <n-input placeholder="Search" clearable v-model:value="value" @input="handleInput">
+          <n-input v-if="iptv" placeholder="Search" clearable v-model:value="value" @input="handleInput">
             <template #suffix>
               <n-icon><Search /></n-icon>
             </template>
@@ -33,17 +38,17 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { checkM3uUrl, m3uList } from '@/renderer/utils/iptv'
+import { checkM3uUrl } from '@/renderer/utils/iptv'
 import type { PlaylistItem } from 'iptv-playlist-parser'
 import { NButton } from 'naive-ui'
-import { Search, RefreshCircle } from '@vicons/ionicons5'
+import { Search, RefreshCircle, Build } from '@vicons/ionicons5'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import bus from '../../plugins/mitt'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-const iptv = ref(1)
+const iptv = ref()
 const iptvList = ref([])
 const iptvRaw = ref([])
 
@@ -107,12 +112,12 @@ const columns: TableBaseColumn<PlaylistItem>[] = [
 
 onMounted(() => {
   getIptvList()
-  bus.on('bus.sites.change', getIptvList)
+  bus.on('bus.iptv.change', getIptvList)
 })
 
 async function getIptvList () {
   const res = await db.all('iptv')
-  if (res) {
+  if (res.length) {
     iptvRaw.value = res
     const arr = []
     for (const i of res) {
@@ -160,6 +165,10 @@ async function handleRefresh () {
       break
     }
   }
+}
+
+async function handleManager () {
+  router.push({ name: 'liveManager' })
 }
 </script>
 <style lang="scss" scoped>

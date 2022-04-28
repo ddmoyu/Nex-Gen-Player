@@ -235,12 +235,14 @@ async function handleCheck (item: IpTv) {
   item.loading = false
   await db.update<IpTv>('iptv', item.id, { state: item.state, active: item.active })
   getIptvList()
+  bus.emit('bus.iptv.change')
 }
 async function handleDelete (item: IpTv) {
   if (checkAll.value) return false
   await db.delete('iptv', item.id)
   await getIptvList()
   message.success('删除成功')
+  bus.emit('bus.iptv.change')
 }
 
 function checkRepeat (url: string) {
@@ -264,6 +266,7 @@ async function handleCheckAll () {
   }))
   checkAll.value = false
   message.info('检测完毕')
+  bus.emit('bus.iptv.change')
 }
 
 </script>
