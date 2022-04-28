@@ -79,22 +79,6 @@ async function handleClear () {
   await db.clear('history')
   await getHistory()
 }
-
-async function addHistroy () {
-  const d = {
-    type: 'iptv',
-    detail: {
-      name: 'name123',
-      url: 'url123'
-    },
-    index: 0,
-    time: 113
-  }
-  const res = await db.put<History>('history', d)
-  console.log('res: ', res)
-  await getHistory()
-}
-
 </script>
 <style lang="scss" scoped>
 .history{
