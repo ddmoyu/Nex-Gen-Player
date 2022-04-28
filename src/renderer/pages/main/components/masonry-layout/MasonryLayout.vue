@@ -1,57 +1,104 @@
 <template>
-  <div class="waterfall-container">
-    <div class="column-container" v-for="(column, c) in imgColumn" :key="c + 'column'">
-      <div class="img-container" v-for="(imgItem, i ) in column" :key="'img' + c + i">
-        <span class="mark">{{ i * 4 + c + 1 }}</span>
-        <img class="column-img" :src="imgItem[srcKey]" @load="loaded" alt="">
-        <div class="supernatant">
-          <slot name="supernatant" v-bind="imgItem"></slot>
+  <div class="waterfall-container" ref="waterfallContainer">
+    <div class="loading top" v-if="isLoading && list.length === 0">
+      <div class="dot-falling"></div>
+    </div>
+    <template v-if="imgColumn.length > 0">
+      <div class="column-container" v-for="(columnItem, c) in imgColumn"
+        :style="`width:calc(${100 / column}% - ${gap}px)`" :key="c + 'column'">
+        <div class="img-container" v-for="(imgItem, i ) in columnItem" :key="'img' + c + i"
+          :style="`height:${imgItem.height}px`">
+          <span class="mark">{{ i * 4 + c + 1 }}</span>
+          <img class="column-img" :src="imgItem.target[srcKey]" :data-index="[c, i]"
+            :data-origin="imgItem.target[srcKey]" @load="loaded">
+          <div class="supernatant" :style="`height:${imgItem.height}px`">
+            <slot name="supernatant" v-bind="imgItem"></slot>
+          </div>
         </div>
       </div>
+    </template>
+    <div :class="['loading', 'bottom', { opacity: isLoading && list.length > 0 }]" ref="obTarget">
+      <div class="dot-falling"></div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import 'three-dots/dist/three-dots.css'
 type Props = {
   column?: number,
-  list?:any[]
-  srcKey?:string
+  list?: any[]
+  srcKey?: string,
+  gap?: number,
+  isLoading: boolean,
 }
 const props = withDefaults(defineProps<Props>(), {
   srcKey: 'pic',
   column: 4,
+  isLoading: false,
+  gap: 10,
   list: () => []
 })
-/** computed data --s */
-const imgColumn = computed(() => {
-  const arr: any[][] = []
+
+const emits = defineEmits(['scrollReachBottom'])
+
+const imgColumn: any[][] = reactive([])
+watchEffect(() => {
   for (let index = 0; index < props.column; index++) {
-    arr.push([])
+    imgColumn.push([])
   }
-  return arr
 })
 
-/** compted data --e */
-// const imgList = reactive([])
-// for (let index = 1; index <= 15; index++) {
-//   imgList.push(require(`./img/${index}.png`))
-// }
 watchEffect(() => {
-  props.list.forEach((item, index) => {
+  if (props.list.length === 0) {
+    imgColumn.forEach(item => { item.length = 0 })
+  }
+  const length = imgColumn.reduce((a, b) => a + b.length, 0)
+  for (let index = length; index < props.list.length; index++) {
     const i = index % props.column
-    imgColumn.value[i].push(item)
-  })
+    imgColumn[i].push({
+      target: props.list[index],
+      height: 0
+    })
+  }
 })
-function loaded () {
-  console.log(111)
+
+function loaded (e: Event) {
+  const target = e.target as HTMLImageElement
+  const { dataset, height } = target
+  const [c, i] = dataset.index.split(',')
+  imgColumn[c][i].height = height
 }
+
+const waterfallContainer = ref<HTMLDivElement>()
+const obTarget = ref<HTMLDivElement>()
+function observerDom () {
+  if (!obTarget.value) return
+  const options = {
+    threshold: 1
+  }
+  const observer = new IntersectionObserver((enters) => {
+    enters.forEach(item => {
+      if (item.isIntersecting) {
+        if (props.list.length === 0 || props.isLoading) return
+        emits('scrollReachBottom')
+      }
+    })
+  }, options)
+  observer.observe(obTarget.value)
+}
+onMounted(() => {
+  observerDom()
+})
 </script>
 <style lang="scss" scoped>
 .waterfall-container {
   display: flex;
+  overflow: unset;
+  padding: 0 60px 20px 60px;
+  min-height: 100%;
+  position: relative;
 
   .column-container {
-    width: 24%;
     display: flex;
     flex-direction: column;
 
@@ -62,30 +109,57 @@ function loaded () {
     .img-container {
       position: relative;
       margin-bottom: 10px;
+      transition: height ease-in 0.7s;
+      overflow: hidden;
+
       .mark {
         position: absolute;
         right: 0;
         top: 0;
         padding: 5px;
         background-color: #000;
-
-        img {
-          width: 100%;
-        }
       }
 
       .column-img {
         width: 100%;
         object-fit: contain;
       }
-      .supernatant{
+
+      .supernatant {
         position: absolute;
-        left: 0;
-        right: 0;
+        z-index: 10;
+        width: 100%;
         bottom: 0;
       }
     }
 
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 20px;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    overflow: hidden;
+  }
+
+  .top {
+    top: 20px;
+  }
+
+  .bottom {
+    bottom: 20px;
+    opacity: 0;
+
+  }
+
+  .opacity {
+    opacity: 1;
   }
 }
 </style>
