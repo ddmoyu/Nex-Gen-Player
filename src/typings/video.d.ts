@@ -35,9 +35,9 @@ export type HistroyDetailType = {
 }
 
 export type VideoBusPlay = {
-  video: VideoDetailType
+  video: VideoDetailType | HistroyDetailType | PlaylistItem
   index?: number
-  type?: 'zy' | 'iptv' | 'url'
+  type?: string
 }
 
 export type VideoFromType = {

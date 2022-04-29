@@ -36,8 +36,8 @@
             <div class="masonry-layout">
               <div class="btns">
                 <div class="btns-wrapper">
-                  <span @click.stop="handlePlay(item)">Play</span>
-                  <span @click.stop="handleFavorite(item)">Favorite</span>
+                  <span @click.stop="handlePlay(item.target)">Play</span>
+                  <span @click.stop="handleFavorite(item.target)">Favorite</span>
                 </div>
               </div>
               <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item.target)">
@@ -69,6 +69,7 @@ import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { Site } from '@/renderer/utils/database/models/Site'
 import { ScrollbarInst, useMessage } from 'naive-ui'
 import { useSites } from '../../store/sites'
+import { useStore } from '../../store/video'
 
 const site = ref<Site>()
 const sites = ref([])
@@ -199,9 +200,11 @@ function handleDetail (item: VideoDetailType) {
 }
 
 function handlePlay (item: VideoDetailType) {
-  router.push({ name: 'play' })
+  const videoStore = useStore()
+  const { setVideo } = videoStore
   const data = { video: item, index: 0, type: 'zy' }
-  bus.emit('bus.video.play', data)
+  setVideo(data)
+  router.push({ name: 'play' })
 }
 
 async function handleFavorite (item: VideoDetailType) {

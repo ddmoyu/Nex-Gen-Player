@@ -46,6 +46,8 @@ import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import bus from '../../plugins/mitt'
 import { useRouter } from 'vue-router'
+import { useStore } from '../../store/video'
+
 const router = useRouter()
 
 const iptv = ref()
@@ -149,10 +151,12 @@ function handleInput () {
   }
 }
 
-function handlePlay (row: PlaylistItem): void {
+function handlePlay (row: PlaylistItem) {
+  const videoStore = useStore()
+  const { setVideo } = videoStore
+  const data = { video: row, index: 0, type: 'iptv' }
+  setVideo(data)
   router.push({ name: 'play' })
-  const data = { video: row, type: 'iptv' }
-  bus.emit('bus.video.play', data)
 }
 
 async function handleRefresh () {

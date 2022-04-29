@@ -20,11 +20,10 @@ import { db } from '@/renderer/utils/database/controller/DBTools'
 import { History } from '@/renderer/utils/database/models/History'
 import { NButton } from 'naive-ui'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
+import { useRouter } from 'vue-router'
+import { useStore } from '../../store/video'
 
-onMounted(() => {
-  getHistory()
-})
-
+const router = useRouter()
 const historyList = ref([])
 const columns: TableBaseColumn<History>[] = [
   {
@@ -57,6 +56,10 @@ const columns: TableBaseColumn<History>[] = [
   }
 ]
 
+onMounted(() => {
+  getHistory()
+})
+
 async function getHistory () {
   const list = await db.all('history')
   if (list && list.length) {
@@ -67,7 +70,11 @@ async function getHistory () {
 }
 
 async function handlePlay (item: History) {
-  console.log('item', item)
+  const videoStore = useStore()
+  const { setVideo } = videoStore
+  const data = { video: item.detail, index: 0, type: 'url' }
+  setVideo(data)
+  router.push({ name: 'play' })
 }
 
 async function handleDelete (item: History) {

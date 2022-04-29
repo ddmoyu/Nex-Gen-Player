@@ -1,11 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, session } from 'electron'
+import { app, protocol, BrowserWindow } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import win from './router'
 import { registerIpcEvent } from './events'
 import { registerShortcut, unregisterShortcut } from './shortcut/shortcut'
-import path from 'path'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 

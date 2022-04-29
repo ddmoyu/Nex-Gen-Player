@@ -14,8 +14,9 @@
   "main": "background.js",
   "dependencies": {
     "core-js": "^3.21.1",
-    "dexie": "^3.2.1",
+    "dexie": "^3.2.2",
     "fast-xml-parser": "^4.0.7",
+    "hls.js": "^1.1.5",
     "iptv-playlist-parser": "^0.11.0",
     "mitt": "^3.0.0",
     "ohmyfetch": "^0.4.15",
@@ -25,9 +26,7 @@
     "v3-waterfall": "^1.1.2",
     "vue": "^3.2.31",
     "vue-i18n": "^9.1.9",
-    "vue-router": "^4.0.14",
-    "xgplayer": "^2.31.6",
-    "xgplayer-hls.js": "^2.6.1"
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@types/core-js": "^2.5.5",

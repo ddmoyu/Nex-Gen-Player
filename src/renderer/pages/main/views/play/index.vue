@@ -2,7 +2,7 @@
 <div class="play">
   <div class="header"></div>
   <div class="body">
-    <div id="player" class="player"></div>
+    <video id="video" controls></video>
   </div>
   <div class="footer">
     <n-space>
@@ -61,31 +61,23 @@
 </div>
 </template>
 <script lang="ts" setup>
-import { IPlayerOptions } from 'xgplayer'
-import HLS from 'xgplayer-hls.js'
 import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, PlaySkipForwardCircleOutline, DocumentTextOutline, Menu } from '@vicons/ionicons5'
-import { NIcon, useMessage } from 'naive-ui'
+import { NIcon } from 'naive-ui'
 import bus from '../../plugins/mitt'
-import { VideoDetailType } from '@/typings/video'
+import { VideoBusPlay, VideoDetailType, HistroyDetailType } from '@/typings/video'
 import { useStore } from '../../store/video'
+// import { useRoute } from 'vue-router'
+import type { PlaylistItem } from 'iptv-playlist-parser'
+import Hls from 'hls.js'
 
-let player: HLS
-const config = ref<IPlayerOptions>({
-  id: 'player',
-  url: '',
-  lang: 'en',
-  width: '100%',
-  height: '100%',
-  pip: true,
-  autoplay: true,
-  defaultPlaybackRate: 1,
-  playbackRate: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
-})
+// const route = useRoute()
+// const message = useMessage()
+const videoStore = useStore()
 
-const store = useStore()
-const message = useMessage()
-const detail = ref<VideoDetailType>()
-const xg = null
+let player: Hls = null
+let video: HTMLMediaElement = null
+const detail = ref<VideoBusPlay>()
+let oldType = ''
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -124,33 +116,89 @@ const menuOptions = ref([
 ])
 
 function init () {
-  const video = store.video
-  console.log('=== init video ===', video)
+  if (Hls.isSupported() && !player) {
+    video = document.getElementById('video') as HTMLMediaElement
+    player = new Hls()
+  }
+  detail.value = videoStore.video
+  playVideo(detail.value)
 }
 
-function initPlay () {
-  const view = store.view
-  const video = store.video as VideoDetailType
-  if (!video.urls.length) return message.warning('视频地址解析失败，请换源后重新尝试~')
-  player = new HLS(config.value as IPlayerOptions)
-  message.success('视频地址解析成功，等待加载播放~')
-  if (view === 'discovery') {
-    const url = video.urls[0]
-    player.src = url
-    player.play()
+function playVideo (item: VideoBusPlay) {
+  const type = item.type
+  if (type === 'zy') {
+    return playFromZY(item.video as VideoDetailType, oldType === type)
+  }
+  if (type === 'iptv') {
+    return playFromIPTV(item.video as PlaylistItem, oldType === type)
+  }
+  if (type === 'url') {
+    return playFromURL(item.video as HistroyDetailType, oldType === type)
   }
 }
 
-function playVideo (item: VideoDetailType) {
-  console.log('=== item ===', item)
-  detail.value = item
-  if (!item.urls.length) return message.warning('视频地址解析失败，请换源后重新尝试~')
-  if (!player) {
-    player = new HLS(config.value as IPlayerOptions)
-  }
+function playError () {
+  player.once(Hls.Events.ERROR, (e, d) => {
+    console.log('=== playError ===', e, d)
+    if (d.fatal) {
+      switch (d.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          player.startLoad()
+          break
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          player.recoverMediaError()
+          break
+        default:
+          player.destroy()
+          console.log('=== player error ===', player)
+          break
+      }
+    }
+  })
+}
+
+async function playFromZY (item: VideoDetailType, flag: boolean) {
+  console.log('playFromZY video', item)
   const url = item.urls[0]
-  player.src = url
-  player.play()
+  if (!url) return false
+  if (!flag && oldType !== '') {
+    console.log('0000')
+    video.pause()
+    player.destroy()
+    player = new Hls()
+  }
+  nextTick(() => {
+    player.attachMedia(video)
+    player.once(Hls.Events.MEDIA_ATTACHED, () => {
+      player.loadSource(url)
+      video.play()
+      oldType = 'zy'
+    })
+    playError()
+  })
+}
+async function playFromIPTV (item: HistroyDetailType, flag: boolean) {
+  console.log('playFromIPTV item', item)
+  const url = item.url
+  if (!url) return false
+  if (!flag && oldType !== '') {
+    console.log('1111')
+    video.pause()
+    player.destroy()
+    player = new Hls()
+  }
+  nextTick(() => {
+    player.attachMedia(video)
+    player.once(Hls.Events.MEDIA_ATTACHED, () => {
+      player.loadSource(url)
+      video.play()
+      oldType = 'iptv'
+    })
+    playError()
+  })
+}
+async function playFromURL (video: HistroyDetailType, flag: boolean) {
+  console.log('playFromURL video', video, flag)
 }
 
 onMounted(() => {
@@ -169,8 +217,13 @@ onMounted(() => {
   }
   .body{
     flex: 1;
+    #video{
+      width: 100%;
+      height: 100%;
+    }
   }
   .footer{
+    margin-top: 10px;
     height: 40px;
     display: flex;
     justify-content: space-between;
