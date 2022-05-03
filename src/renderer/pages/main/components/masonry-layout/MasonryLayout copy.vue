@@ -3,19 +3,19 @@
     <div class="loading top" v-if="isLoading && list.length === 0">
       <div class="dot-falling"></div>
     </div>
-    <template v-if="columnNum.length > 0">
-      <div class="column-container" v-for="(columnItem, c) in columns" :style="`width:calc(${100 / columns}% - ${gap}px)`"
-        :key="c + 'column'">
-        <template v-for="(imgItem, i ) in columnNum[c]" :key="'img' + c + i">
-          <div class="img-container">
-            <img class=" column-img" v-lazy :data-origin="list[i * columns + c][srcKey]" style="transform: scale(0);"
-              :data-index="i * columns + c" @load="loaded" @error="loadError">
-            <div class="supernatant">
-              <slot name="supernatant" v-bind="list[i * columns + c]"></slot>
-            </div>
+    <template v-if="imgColumn.length > 0">
+      <div class="column-container" v-for="(columnItem, c) in imgColumn"
+        :style="`width:calc(${100 / column}% - ${gap}px)`" :key="c + 'column'">
+        <div class="img-container" v-for="(imgItem, i ) in columnItem" :key="'img' + c + i">
+          <!-- <div class="img-container" v-for="(imgItem, i ) in columnItem" :key="'img' + c + i"
+          :style="`height:${imgItem.height}px`"> -->
+          <span class="mark">{{ i * 4 + c + 1 }}</span>
+          <img class="column-img" :src="imgItem.target[srcKey]" :data-index="[c, i]"
+            :data-origin="imgItem.target[srcKey]" @load="loaded">
+          <div class="supernatant">
+            <slot name="supernatant" v-bind="imgItem"></slot>
           </div>
-        </template>
-
+        </div>
       </div>
     </template>
     <div :class="['loading', 'bottom', { opacity: isLoading && list.length > 0 }]" ref="obTarget">
@@ -26,35 +26,53 @@
 <script lang="ts" setup>
 import 'three-dots/dist/three-dots.css'
 import { useDebounceFn } from '@vueuse/core'
-import { vLazy } from '@/renderer/directives/vLazy'
+
 type Props = {
+  column?: number,
   list?: any[]
   srcKey?: string,
   gap?: number,
   isLoading: boolean,
-  breakWidth?: number
 }
 const props = withDefaults(defineProps<Props>(), {
   srcKey: 'pic',
+  column: 4,
   isLoading: false,
   gap: 10,
-  breakWidth: 250,
   list: () => []
 })
 
 const emits = defineEmits(['scrollReachBottom'])
-/** 图片每列的排列状态 */
-const columnNum = reactive([])
-/** 图片的加载状态 */
-const columns = ref(0)
-const loadState = reactive([])
+
+const imgColumn: any[][] = reactive([])
 watchEffect(() => {
-  const length = props.list.length
-  columnNum.length = 0
-  if (length === 0) return
-  let rem = length % columns.value
-  const num = (length - rem) / columns.value
-  for (let index = 0; index < columns.value; index++) {
+  for (let index = 0; index < props.column; index++) {
+    imgColumn.push([])
+  }
+})
+
+// watchEffect(() => {
+//   if (props.list.length === 0) {
+//     imgColumn.forEach(item => { item.length = 0 })
+//   }
+//   const length = imgColumn.reduce((a, b) => a + b.length, 0)
+//   for (let index = length; index < props.list.length; index++) {
+//     const i = index % props.column
+//     imgColumn[i].push({
+//       target: props.list[index],
+//       height: 0
+//     })
+//   }
+// })
+const columnNum = []
+watchEffect(() => {
+  if (props.list.length === 0) {
+    columnNum.length = 0
+  }
+  const length = imgColumn.reduce((a, b) => a + b.length, 0)
+  let rem = length % props.column
+  const num = (length - rem) / props.column
+  for (let index = 0; index < props.column; index++) {
     if (rem > 0) {
       columnNum.push(num + 1)
     } else {
@@ -62,67 +80,44 @@ watchEffect(() => {
     }
     rem--
   }
-  loadState.length = length
 })
 
 function loaded (e: Event) {
   const target = e.target as HTMLImageElement
-  target.setAttribute('style', 'transform: scale(1)')
+  const { dataset, height } = target
+  const [c, i] = dataset.index.split(',')
+  imgColumn[c][i].height = height
 }
 
-function loadError (e: Event) {
-  const target = e.target as HTMLImageElement
-  // const { index } = target.dataset
-}
-
+const waterfallContainer = ref<HTMLDivElement>()
 const obTarget = ref<HTMLDivElement>()
-let disconnectCb: Function | null = null
 function observerDom () {
   if (!obTarget.value) return
-  const root = document.querySelector('#v_lazy_root')
   const options = {
-    root: root || null,
     threshold: 1
   }
   const observer = new IntersectionObserver((enters) => {
     enters.forEach(item => {
       if (item.isIntersecting) {
-        const { top } = item.boundingClientRect
-        const { height } = item.rootBounds
-        if (top < height) return
         if (props.list.length === 0 || props.isLoading) return
         emits('scrollReachBottom')
       }
     })
   }, options)
   observer.observe(obTarget.value)
-  disconnectCb = () => {
-    observer.disconnect()
-  }
 }
 
 /** watch resize event   */
-const waterfallContainer = ref<HTMLDivElement>()
-function computedColumns () {
-  if (!waterfallContainer.value) return
-  columns.value = Math.floor(waterfallContainer.value.clientWidth / props.breakWidth)
-  console.log(columns.value)
-}
 function watchResize (watch = true) {
   const resizeHandle = useDebounceFn(() => {
-    computedColumns()
+    console.log([waterfallContainer.value])
   }, 500)
   watch ? window.addEventListener('resize', resizeHandle) : window.removeEventListener('resize', resizeHandle)
 }
 
 onMounted(() => {
-  computedColumns()
   observerDom()
   watchResize()
-})
-onUnmounted(() => {
-  watchResize(false)
-  disconnectCb()
 })
 </script>
 <style lang="scss" scoped>
@@ -133,7 +128,6 @@ onUnmounted(() => {
   min-height: 100%;
   position: relative;
 
-  // transform: translateZ(0);
   .column-container {
     display: flex;
     flex-direction: column;
@@ -145,22 +139,21 @@ onUnmounted(() => {
     .img-container {
       position: relative;
       margin-bottom: 10px;
+      transition: height ease-in 0.7s;
       overflow: hidden;
+
+      .mark {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 5px;
+        background-color: #000;
+      }
 
       .column-img {
         width: 100%;
-        min-height: 300px;
         object-fit: contain;
         vertical-align: bottom;
-        transition: all ease-in 0.3s;
-        position: relative;
-        z-index: 44;
-        // position: absolute;
-        // top: 0;
-        // bottom: 0;
-        // left: 0;
-        // right: 0;
-        // z-index: 11;
       }
 
       .supernatant {
@@ -168,13 +161,6 @@ onUnmounted(() => {
         z-index: 10;
         width: 100%;
         bottom: 0;
-      }
-
-      .img-loading {
-        min-height: 300px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
       }
     }
 
@@ -198,7 +184,7 @@ onUnmounted(() => {
   }
 
   .bottom {
-    bottom: 5px;
+    bottom: 20px;
     opacity: 0;
 
   }

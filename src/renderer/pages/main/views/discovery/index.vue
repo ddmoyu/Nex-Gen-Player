@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="body">
-      <n-scrollbar class="custom-scrollbar" ref="scrollbar">
+      <n-scrollbar id="v_lazy_root" class="custom-scrollbar" ref="scrollbar">
         <n-empty v-if="emptyDesc" :description="emptyDesc">
           <template #extra>
             <n-button size="small" @click="goSettingsView">Import sites</n-button>
@@ -36,18 +36,18 @@
             <div class="masonry-layout">
               <div class="btns">
                 <div class="btns-wrapper">
-                  <span @click.stop="handlePlay(item.target)">Play</span>
-                  <span @click.stop="handleFavorite(item.target)">Favorite</span>
+                  <span @click.stop="handlePlay(item)">Play</span>
+                  <span @click.stop="handleFavorite(item)">Favorite</span>
                 </div>
               </div>
-              <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item.target)">
+              <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item)">
                 <n-ellipsis class="name" style="max-width: 100%">
-                  {{ item.target.name }}
+                  {{ item.name }}
                 </n-ellipsis>
                 <div class="info">
-                  <span>{{ item.target.area }}</span>
-                  <span>{{ item.target.class }}</span>
-                  <span>{{ item.target.note }}</span>
+                  <span>{{ item.area }}</span>
+                  <span>{{ item.class }}</span>
+                  <span>{{ item.note }}</span>
                 </div>
               </n-card>
             </div>
@@ -262,6 +262,7 @@ onMounted(() => {
       align-items: flex-end;
       position: relative;
       cursor: pointer;
+
       .btns {
         display: none;
         position: absolute;
@@ -284,6 +285,7 @@ onMounted(() => {
             align-items: center;
             justify-content: center;
             background-color: rgba(45, 45, 45, 0.7);
+
             &:hover {
               color: #dedede;
               background-color: rgba(7, 7, 7, 0.8);
@@ -291,7 +293,9 @@ onMounted(() => {
           }
         }
       }
+    }
 
+    :deep(.img-container) {
       &:hover {
         .btns {
           display: block;
