@@ -15,7 +15,6 @@
             </div>
           </div>
         </template>
-
       </div>
     </template>
     <div :class="['loading', 'bottom', { opacity: isLoading && list.length > 0 }]" ref="obTarget">
@@ -154,7 +153,7 @@ onUnmounted(() => {
         vertical-align: bottom;
         transition: all ease-in 0.3s;
         position: relative;
-        z-index: 44;
+        z-index: 2;
         // position: absolute;
         // top: 0;
         // bottom: 0;

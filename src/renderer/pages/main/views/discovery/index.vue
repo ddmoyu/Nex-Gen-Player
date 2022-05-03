@@ -266,10 +266,11 @@ onMounted(() => {
       .btns {
         display: none;
         position: absolute;
-        bottom: 66px;
+        bottom: 65px;
         height: 36px;
         width: 100%;
-        transform: 0.3s;
+        z-index: 10;
+        transition:all 0.3s ease;
 
         .btns-wrapper {
           display: flex;
