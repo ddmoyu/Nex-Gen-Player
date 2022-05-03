@@ -10,8 +10,7 @@ const routes: RouteRecordRaw[] = [
   { name: 'about', path: '/about', component: () => import('../views/menu/about.vue') },
   { name: 'settings', path: '/settings', component: () => import('../views/menu/settings.vue') },
   { name: 'siteManager', path: '/siteManager', component: () => import('../views/menu/siteManager.vue') },
-  { name: 'liveManager', path: '/liveManager', component: () => import('../views/menu/liveManager.vue') },
-  { name: 'masonryLayout', path: '/masonryLayout', component: () => import('../components/masonry-layout/MasonryLayout.vue') }
+  { name: 'liveManager', path: '/liveManager', component: () => import('../views/menu/liveManager.vue') }
 ]
 
 const router = createRouter({

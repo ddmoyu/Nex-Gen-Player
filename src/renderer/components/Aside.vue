@@ -65,17 +65,6 @@
         </template>
         <span>{{ $t('download') }}</span>
       </n-popover>
-      <n-popover trigger="hover" placement="right">
-        <template #trigger>
-          <n-button circle type="primary" size="large" @click="goView('masonryLayout')"
-            :dashed="active === 'masonryLayout'" :quaternary="active !== 'masonryLayout'">
-            <n-icon size="20">
-              <ArrowDownCircleOutline />
-            </n-icon>
-          </n-button>
-        </template>
-        <span>瀑布流测试</span>
-      </n-popover>
     </div>
     <div class="bottom">
       <n-popover trigger="hover" placement="right">

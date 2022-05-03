@@ -58,7 +58,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import MasonryLayout from '../../components/masonry-layout/MasonryLayout.vue'
+import MasonryLayout from '@/renderer/components/MasonryLayout.vue'
 import { getSiteById, getVideoList, search } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
