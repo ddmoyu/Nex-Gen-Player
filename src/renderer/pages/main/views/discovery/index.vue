@@ -31,7 +31,7 @@
           </template>
         </n-empty>
         <n-empty v-if="emptyVideoList" :description="emptyVideoList"></n-empty>
-        <MasonryLayout :list="list" @scrollReachBottom="getMoreVideosList" :isLoading="loading">
+        <MasonryLayout :list="list" @scrollReachBottom="getMoreVideosList" :isLoading="loading" srcKey="pic" rootId="v_lazy_root">
           <template #supernatant="item">
             <div class="masonry-layout">
               <div class="btns">
@@ -58,7 +58,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import MasonryLayout from '@/renderer/components/MasonryLayout.vue'
 import { getSiteById, getVideoList, search } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
@@ -81,7 +80,6 @@ const searchAll = ref(false)
 const list = ref<VideoDetailType[]>([])
 const emptyVideoList = ref('')
 const loading = ref(false)
-const isMounted = ref(false)
 const pages = ref(1)
 const searchTxt = ref('')
 
@@ -115,6 +113,7 @@ function resetValue () {
 }
 
 async function getClassList () {
+  console.log('getClassList')
   const res = await assignClassList(site.value)
   scrollbar.value.scrollTo({ top: 0 })
   classOptions.value = res
@@ -144,7 +143,6 @@ async function getMoreVideosList () {
   loading.value = true
   const res = await getVideoList(site.value.api, pages.value, classVal.value)
   if (res) {
-    console.log(res)
     const arr = [...list.value]
     arr.push(...res)
     list.value = arr
@@ -209,13 +207,12 @@ function handlePlay (item: VideoDetailType) {
 
 async function handleFavorite (item: VideoDetailType) {
   const key = item.name + item.id
-  const flag = await db.put<Favorite>('favorites', { detail: toRaw(item), hasUpdate: false, key }, { key })
+  const flag = await db.put<Favorite>('favorites', { detail: item, hasUpdate: false, key }, { key })
   if (!flag) return message.warning('已收藏，请勿重复收藏')
   message.success('收藏成功')
 }
 
 onMounted(() => {
-  isMounted.value = true
   getSites()
   bus.on('bus.sites.change', getSites)
 })

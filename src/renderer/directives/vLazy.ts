@@ -1,20 +1,20 @@
 import type { Directive } from 'vue'
-let observe: IntersectionObserver
-function initObserve () {
-  const root = document.querySelector('#v_lazy_root')
+const observeMap: Map<string, IntersectionObserver> = new Map()
+export function initImgObserve (root: Element, id: string) {
   if (!root) {
-    throw new Error("no root element,please add id 'v_lazy_root' in your root element")
+    throw new Error('no root element,please pass rootId  in your root element')
   }
   const baseOptions: IntersectionObserverInit = {
     root,
     threshold: 0.1
   }
-  observe = new IntersectionObserver((enters) => {
+  const observe = new IntersectionObserver((enters) => {
     enters.forEach(item => {
       if (item.intersectionRatio > 0) {
         requestIdleCallback(() => {
           const target = item.target as HTMLImageElement
           if (target.getAttribute('src')) {
+            observe.unobserve(target)
             return
           }
           const { origin } = target.dataset
@@ -23,14 +23,27 @@ function initObserve () {
       }
     })
   }, baseOptions)
+  observeMap.set(id, observe)
 }
 
 export const vLazy: Directive<HTMLImageElement, string> = {
-  mounted (el) {
+  mounted (el, binding) {
+    const { value } = binding
     if (!el) {
       throw new Error('no root element,please check it')
     }
-    if (!observe) initObserve()
-    observe.observe(el)
+    const observe = observeMap.get(value)
+    if (observe) {
+      observe.observe(el)
+    } else {
+      throw new Error('no root observe can use')
+    }
+  },
+  unmounted (el, binding) {
+    const { value } = binding
+    const observe = observeMap.get(value)
+    if (observe) {
+      observe.unobserve(el)
+    }
   }
 }

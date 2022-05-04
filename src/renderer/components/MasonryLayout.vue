@@ -4,14 +4,15 @@
       <div class="dot-falling"></div>
     </div>
     <template v-if="columnNum.length > 0">
-      <div class="column-container" v-for="(columnItem, c) in columns" :style="`width:calc(${100 / columns}% - ${gap}px)`"
-        :key="c + 'column'">
-        <template v-for="(imgItem, i ) in columnNum[c]" :key="'img' + c + i">
+      <div class="column-container" v-for="(_columnItem, c) in columns"
+        :style="`width:calc(${100 / columns}% - ${gap}px)`" :key="c + 'column'">
+        <template v-for="(_imgItem, i ) in columnNum[c]" :key="'img' + c + i">
           <div class="img-container">
-            <img class=" column-img" v-lazy :data-origin="list[i * columns + c][srcKey]" style="transform: scale(0);"
-              :data-index="i * columns + c" @load="loaded" @error="loadError">
+            <img class=" column-img" v-lazy="rootId" :data-origin="getValBySrcKey(c,i)"
+              :key="getValBySrcKey(c,i)" style="transform: scale(0);" :data-index="i * columns + c"
+              @load="loaded" @error="loadError">
             <div class="supernatant">
-              <slot name="supernatant" v-bind="list[i * columns + c]"></slot>
+              <slot name="supernatant" v-bind="toRawData(list[i * columns + c])"></slot>
             </div>
           </div>
         </template>
@@ -25,16 +26,16 @@
 <script lang="ts" setup>
 import 'three-dots/dist/three-dots.css'
 import { useDebounceFn } from '@vueuse/core'
-import { vLazy } from '@/renderer/directives/vLazy'
+import { vLazy, initImgObserve } from '@/renderer/directives/vLazy'
 type Props = {
   list?: any[]
-  srcKey?: string,
+  srcKey: string,
   gap?: number,
   isLoading: boolean,
-  breakWidth?: number
+  breakWidth?: number,
+  rootId:string
 }
 const props = withDefaults(defineProps<Props>(), {
-  srcKey: 'pic',
   isLoading: false,
   gap: 10,
   breakWidth: 250,
@@ -64,6 +65,18 @@ watchEffect(() => {
   loadState.length = length
 })
 
+function toRawData (data:any) {
+  return toRaw(data)
+}
+
+const keys = computed(() => {
+  return props.srcKey.split('.')
+})
+
+function getValBySrcKey (c:number, i:number) {
+  return keys.value.reduce((a, b) => a[b], props.list[i * columns.value + c])
+}
+
 function loaded (e: Event) {
   const target = e.target as HTMLImageElement
   target.setAttribute('style', 'transform: scale(1)')
@@ -71,6 +84,7 @@ function loaded (e: Event) {
 
 function loadError (e: Event) {
   const target = e.target as HTMLImageElement
+  target.setAttribute('src', require('../assets/img/img-error.png'))
   // const { index } = target.dataset
 }
 
@@ -78,7 +92,9 @@ const obTarget = ref<HTMLDivElement>()
 let disconnectCb: Function | null = null
 function observerDom () {
   if (!obTarget.value) return
-  const root = document.querySelector('#v_lazy_root')
+  const root = document.querySelector(`#${props.rootId}`)
+  console.log(root)
+  initImgObserve(root, props.rootId)
   const options = {
     root: root || null,
     threshold: 1
@@ -105,7 +121,6 @@ const waterfallContainer = ref<HTMLDivElement>()
 function computedColumns () {
   if (!waterfallContainer.value) return
   columns.value = Math.floor(waterfallContainer.value.clientWidth / props.breakWidth)
-  console.log(columns.value)
 }
 function watchResize (watch = true) {
   const resizeHandle = useDebounceFn(() => {
@@ -132,7 +147,6 @@ onUnmounted(() => {
   min-height: 100%;
   position: relative;
 
-  // transform: translateZ(0);
   .column-container {
     display: flex;
     flex-direction: column;
@@ -154,16 +168,9 @@ onUnmounted(() => {
         transition: all ease-in 0.3s;
         position: relative;
         z-index: 2;
-        // position: absolute;
-        // top: 0;
-        // bottom: 0;
-        // left: 0;
-        // right: 0;
-        // z-index: 11;
       }
 
       .supernatant {
-        // position: absolute;
         z-index: 10;
         width: 100%;
         bottom: 0;
