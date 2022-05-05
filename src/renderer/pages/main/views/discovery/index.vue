@@ -31,7 +31,7 @@
           </template>
         </n-empty>
         <n-empty v-if="emptyVideoList" :description="emptyVideoList"></n-empty>
-        <MasonryLayout :list="list" @scrollReachBottom="getMoreVideosList" :isLoading="loading" srcKey="pic" rootId="v_lazy_root">
+        <MasonryLayout :list="list" @scrollReachBottom="getMoreVideosList" @itemClick="handleDetail" :breakWidth="200" :isLoading="loading" srcKey="pic" rootId="v_lazy_root">
           <template #supernatant="item">
             <div class="masonry-layout">
               <div class="btns">
@@ -40,7 +40,7 @@
                   <span @click.stop="handleFavorite(item)">Favorite</span>
                 </div>
               </div>
-              <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item)">
+              <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @itemClick="handleDetail(item)">
                 <n-ellipsis class="name" style="max-width: 100%">
                   {{ item.name }}
                 </n-ellipsis>
@@ -113,7 +113,6 @@ function resetValue () {
 }
 
 async function getClassList () {
-  console.log('getClassList')
   const res = await assignClassList(site.value)
   scrollbar.value.scrollTo({ top: 0 })
   classOptions.value = res

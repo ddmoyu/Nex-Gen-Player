@@ -4,12 +4,19 @@
       <div class="dot-falling"></div>
     </div>
     <template v-if="columnNum.length > 0">
-      <div class="column-container" v-for="(_columnItem, c) in columns"
-        :style="`width:calc(${100 / columns}% - ${gap}px)`" :key="c + 'column'">
+      <div class="column-container"
+        v-for="(_columnItem, c) in columns"
+        :style="`width:calc(${100 / columns}% - ${gap}px)`"
+        :key="c + 'column'">
         <template v-for="(_imgItem, i ) in columnNum[c]" :key="'img' + c + i">
           <div class="img-container">
-            <img class=" column-img" v-lazy="rootId" :data-origin="getValBySrcKey(c,i)"
-              :key="getValBySrcKey(c,i)" style="transform: scale(0);" :data-index="i * columns + c"
+            <img class="column-img"
+              v-lazy="rootId"
+              :data-origin="getValBySrcKey(c,i)"
+              :key="getValBySrcKey(c,i)"
+              style="transform: scale(0);"
+              :data-index="i * columns + c"
+              @click="handleItemClick(list[i * columns + c])"
               @load="loaded" @error="loadError">
             <div class="supernatant">
               <slot name="supernatant" v-bind="toRawData(list[i * columns + c])"></slot>
@@ -27,6 +34,7 @@
 import 'three-dots/dist/three-dots.css'
 import { useDebounceFn } from '@vueuse/core'
 import { vLazy, initImgObserve } from '@/renderer/directives/vLazy'
+import { VideoDetailType } from '@/typings/video'
 type Props = {
   list?: any[]
   srcKey: string,
@@ -42,7 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   list: () => []
 })
 
-const emits = defineEmits(['scrollReachBottom'])
+const emits = defineEmits(['scrollReachBottom', 'itemClick'])
 /** 图片每列的排列状态 */
 const columnNum = reactive([])
 /** 图片的加载状态 */
@@ -64,6 +72,10 @@ watchEffect(() => {
   }
   loadState.length = length
 })
+
+function handleItemClick (item: VideoDetailType) {
+  emits('itemClick', item)
+}
 
 function toRawData (data:any) {
   return toRaw(data)
@@ -93,7 +105,6 @@ let disconnectCb: Function | null = null
 function observerDom () {
   if (!obTarget.value) return
   const root = document.querySelector(`#${props.rootId}`)
-  console.log(root)
   initImgObserve(root, props.rootId)
   const options = {
     root: root || null,
@@ -143,7 +154,7 @@ onUnmounted(() => {
 .waterfall-container {
   display: flex;
   overflow: unset;
-  padding: 0 60px 20px 60px;
+  padding: 0 0 20px 0;
   min-height: 100%;
   position: relative;
 
@@ -168,6 +179,7 @@ onUnmounted(() => {
         transition: all ease-in 0.3s;
         position: relative;
         z-index: 2;
+        cursor: pointer;
       }
 
       .supernatant {
