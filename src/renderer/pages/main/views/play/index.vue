@@ -1,6 +1,7 @@
 <template>
 <div class="play">
-  <div class="header">{{name}}</div>
+  <!-- <div class="header">{{name}}<span class="index" v-show="index !== 0">{{index}}</span></div> -->
+  <div class="header">{{name}}<span class="index">{{index}}</span></div>
   <div class="body">
     <video id="video" controls></video>
   </div>
@@ -38,10 +39,10 @@
       </n-popover>
       <n-popover trigger="hover" placement="top-start">
         <template #trigger>
-          <n-button quaternary type="primary" size="small">
+          <n-button quaternary type="primary" size="small" @click="handleFavorite">
             <n-icon size="22">
-              <Heart />
-              <HeartOutline />
+              <Heart v-show="isFave" />
+              <HeartOutline v-show="!isFave" />
             </n-icon>
           </n-button>
         </template>
@@ -62,7 +63,7 @@
 </template>
 <script lang="ts" setup>
 import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, PlaySkipForwardCircleOutline, DocumentTextOutline, Menu } from '@vicons/ionicons5'
-import { NIcon } from 'naive-ui'
+import { NIcon, useMessage } from 'naive-ui'
 import bus from '../../plugins/mitt'
 import { VideoBusPlay, VideoDetailType, HistroyDetailType } from '@/typings/video'
 import { useStore } from '../../store/video'
@@ -72,15 +73,19 @@ import Hls from 'hls.js'
 import { useThrottleFn } from '@vueuse/shared'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { History } from '@/renderer/utils/database/models/History'
+import { Favorite } from '@/renderer/utils/database/models/Favorite'
+import { cloneDeep } from 'lodash'
+import { getRealUrl } from '@/renderer/utils/movie'
 
 // const route = useRoute()
-// const message = useMessage()
+const message = useMessage()
 const videoStore = useStore()
 
 let player: Hls = null
 let video: HTMLMediaElement = null
-const detail = ref<VideoBusPlay>()
 const name = ref('')
+const isFave = ref(false)
+const index = ref(0)
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -124,8 +129,7 @@ function init () {
     player = new Hls()
   }
   name.value = ''
-  detail.value = videoStore.video
-  playVideo(detail.value)
+  playVideo(videoStore.video)
 }
 
 async function checkHistoryTime (item: VideoBusPlay) {
@@ -139,11 +143,36 @@ async function checkHistoryTime (item: VideoBusPlay) {
   return 0
 }
 
+async function checkFavorite () {
+  const vs = videoStore.video
+  const key = vs.video.name + vs.video.id
+  const res = await db.find<Favorite>('favorites', { key })
+  if (res) {
+    isFave.value = true
+  } else {
+    isFave.value = false
+  }
+}
+
+async function handleFavorite () {
+  const vs = videoStore.video
+  const key = vs.video.name + vs.video.id
+  const res = await db.find<Favorite>('favorites', { key })
+  if (res) {
+    await db.delete('favorites', res.id)
+    isFave.value = false
+  } else {
+    await db.put<Favorite>('favorites', { detail: cloneDeep(vs.video), hasUpdate: false, key }, { key })
+    isFave.value = true
+  }
+}
+
 async function playVideo (item: VideoBusPlay) {
+  console.log('videoStore.video', videoStore.video)
   const type = item.type
   if (type === 'zy') {
     const time = await checkHistoryTime(item)
-    detail.value = item
+    await checkFavorite()
     return playFromZY(item.video as VideoDetailType, item.index, time)
   }
   if (type === 'iptv') {
@@ -182,15 +211,32 @@ function playing () {
 
 const recordTime = useThrottleFn(async () => {
   const time = video.currentTime
-  const key = detail.value.video.name + detail.value.video.id
+  const vs = videoStore.video
+  const key = vs.video.name + vs.video.id
   const res = await db.find<History>('history', { key })
-  await db.update<History>('history', res.id, { time })
+  if (res) await db.update<History>('history', res.id, { time })
 }, 5000)
 
 async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
   console.log('playFromZY video', item)
-  const url = item.urls[index]
-  if (!url) return false
+  let list = []
+  let urlType = 'm3u8'
+  if (item.urls.length) {
+    list = item.urls
+  } else {
+    if (!item.jxUrls.length) return false
+    list = item.jxUrls
+    urlType = 'jiexi'
+  }
+  let url = list[index]
+  console.log('url: ', url)
+  if (!url) {
+    message.warning('未发现视频链接')
+    return false
+  }
+  if (urlType === 'jiexi') {
+    url = await getRealUrl(url)
+  }
   reset()
   name.value = item.name
   player.destroy()

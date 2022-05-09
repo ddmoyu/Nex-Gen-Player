@@ -271,6 +271,12 @@ export async function getRating (name: string, limit?: number, lang?: string, ye
   }
 }
 
+// get real by jiexi api
+export async function getRealUrl (url: string) {
+  console.log('url', url)
+  return ''
+}
+
 // check single api normal
 export async function checkApi (url: string) {
   try {
