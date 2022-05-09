@@ -68,8 +68,8 @@ async function getFavorites () {
   isLoading.value = false
 }
 
-function handleDetail (item: VideoDetailType | Favorite) {
-  const d = item.detail as VideoDetailType
+function handleDetail (item: Favorite) {
+  const d = item.detail
   if (d) {
     bus.emit('bus.detail.show', d)
   } else {
