@@ -1,6 +1,6 @@
 <template>
 <div class="play">
-  <div class="header"></div>
+  <div class="header">{{name}}</div>
   <div class="body">
     <video id="video" controls></video>
   </div>
@@ -80,6 +80,7 @@ const videoStore = useStore()
 let player: Hls = null
 let video: HTMLMediaElement = null
 const detail = ref<VideoBusPlay>()
+const name = ref('')
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -122,6 +123,7 @@ function init () {
     video = document.getElementById('video') as HTMLMediaElement
     player = new Hls()
   }
+  name.value = ''
   detail.value = videoStore.video
   playVideo(detail.value)
 }
@@ -190,6 +192,7 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
   const url = item.urls[index]
   if (!url) return false
   reset()
+  name.value = item.name
   player.destroy()
   player = new Hls()
   player.attachMedia(video)
@@ -206,6 +209,7 @@ async function playFromIPTV (item: HistroyDetailType) {
   const url = item.url
   if (!url) return false
   reset()
+  name.value = item.name
   player.destroy()
   player = new Hls()
   player.attachMedia(video)
@@ -245,6 +249,8 @@ onMounted(() => {
   flex-direction: column;
   .header{
     height: 40px;
+    display: flex;
+    align-items: center;
   }
   .body{
     flex: 1;
