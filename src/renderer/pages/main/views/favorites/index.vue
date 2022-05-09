@@ -2,23 +2,26 @@
   <div class="favorites">
     <div class="header">
       <div class="left">
-        <!-- <n-button @click="getFavorites">getFavorites</n-button> -->
+        <n-button tertiary type="primary" @click="getFavorites">Import</n-button>
+        <n-button tertiary type="primary" @click="getFavorites">Export</n-button>
       </div>
-      <div class="right"></div>
+      <div class="right">
+        <n-button tertiary type="primary" @click="getFavorites">Clear</n-button>
+      </div>
     </div>
     <div class="body">
       <n-scrollbar id="v_lazy_root_f" class="custom-scrollbar">
         <n-empty v-if="emptyVideoList" :description="emptyVideoList"></n-empty>
-        <MasonryLayout :list="list" :isLoading="isLoading" srcKey="detail.pic" rootId="v_lazy_root_f">
+        <MasonryLayout :list="list" :isLoading="isLoading" @itemClick="handleDetail" :breakWidth="200" srcKey="detail.pic" rootId="v_lazy_root_f">
           <template #supernatant="item">
             <div class="masonry-layout">
               <div class="btns">
                 <div class="btns-wrapper">
-                  <span @click.stop="handlePlay(item)">Play</span>
-                  <span @click.stop="handleDelete(item)">Delete</span>
+                  <span @click.stop="handlePlay(item.detail)">Play</span>
+                  <span @click.stop="handleDelete(item.detail)">Delete</span>
                 </div>
               </div>
-              <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item)">
+              <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item.detail)">
                 <n-ellipsis class="name" style="max-width: 100%">
                   {{ item.detail.name }}
                 </n-ellipsis>
@@ -44,12 +47,11 @@ import { db } from '@/renderer/utils/database/controller/DBTools'
 import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { useMessage } from 'naive-ui'
 
-const list = ref<VideoDetailType[]>([])
+const list = ref<Favorite[]>([])
 const emptyVideoList = ref('')
 const isLoading = ref(false)
 const isOver = ref(false)
 
-const store = useStore()
 const router = useRouter()
 const message = useMessage()
 
@@ -66,17 +68,21 @@ async function getFavorites () {
   isLoading.value = false
 }
 
-function handleDetail (item: VideoDetailType) {
-  console.log(item)
-  // router.push({ name: 'play' })
-  // store.setVideo(item)
+function handleDetail (item: VideoDetailType | Favorite) {
+  const d = item.detail as VideoDetailType
+  if (d) {
+    bus.emit('bus.detail.show', d)
+  } else {
+    bus.emit('bus.detail.show', item)
+  }
 }
 
 function handlePlay (item: VideoDetailType) {
-  // store.setVideo(item)
+  const videoStore = useStore()
+  const { setVideo } = videoStore
+  const data = { video: item, index: 0, type: 'zy' }
+  setVideo(data)
   router.push({ name: 'play' })
-  bus.emit('bus.video.play', item)
-  // console.log('=== handlePlay item ===', item)
 }
 
 async function handleDelete (item: Favorite) {

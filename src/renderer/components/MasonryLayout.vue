@@ -173,7 +173,7 @@ onUnmounted(() => {
 
       .column-img {
         width: 100%;
-        min-height: 300px;
+        min-height: 100px;
         object-fit: contain;
         vertical-align: bottom;
         transition: all ease-in 0.3s;
