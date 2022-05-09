@@ -54,9 +54,10 @@
         </template>
         <span>{{ $t('history') }}</span>
       </n-popover>
-      <n-popover trigger="hover" placement="right" v-show="false">
+      <n-popover trigger="hover" placement="right">
         <template #trigger>
           <n-button circle type="primary" size="large" @click="goView('download')" :dashed="active === 'download'"
+            v-show="false"
             :quaternary="active !== 'download'">
             <n-icon size="20">
               <ArrowDownCircleOutline />

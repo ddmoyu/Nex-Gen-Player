@@ -56,7 +56,7 @@ const columns: TableBaseColumn<History>[] = [
   }
 ]
 
-onMounted(() => {
+onActivated(() => {
   getHistory()
 })
 
@@ -72,7 +72,7 @@ async function getHistory () {
 async function handlePlay (item: History) {
   const videoStore = useStore()
   const { setVideo } = videoStore
-  const data = { video: item.detail, index: 0, type: 'url' }
+  const data = { video: item.detail, index: item.index, type: item.type }
   setVideo(data)
   router.push({ name: 'play' })
 }

@@ -69,6 +69,9 @@ import { useStore } from '../../store/video'
 // import { useRoute } from 'vue-router'
 import type { PlaylistItem } from 'iptv-playlist-parser'
 import Hls from 'hls.js'
+import { useThrottleFn } from '@vueuse/shared'
+import { db } from '@/renderer/utils/database/controller/DBTools'
+import { History } from '@/renderer/utils/database/models/History'
 
 // const route = useRoute()
 // const message = useMessage()
@@ -77,7 +80,6 @@ const videoStore = useStore()
 let player: Hls = null
 let video: HTMLMediaElement = null
 const detail = ref<VideoBusPlay>()
-let oldType = ''
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -124,22 +126,34 @@ function init () {
   playVideo(detail.value)
 }
 
-function playVideo (item: VideoBusPlay) {
+async function checkHistoryTime (item: VideoBusPlay) {
+  const key = item.video.name + item.video.id
+  const res = await db.find<History>('history', { key })
+  if (res) {
+    return res.time
+  } else {
+    await db.put<History>('history', { type: item.type, detail: item.video, index: item.index, time: 0, key })
+  }
+  return 0
+}
+
+async function playVideo (item: VideoBusPlay) {
   const type = item.type
   if (type === 'zy') {
-    return playFromZY(item.video as VideoDetailType, oldType === type)
+    const time = await checkHistoryTime(item)
+    detail.value = item
+    return playFromZY(item.video as VideoDetailType, item.index, time)
   }
   if (type === 'iptv') {
-    return playFromIPTV(item.video as PlaylistItem, oldType === type)
+    return playFromIPTV(item.video as PlaylistItem)
   }
   if (type === 'url') {
-    return playFromURL(item.video as HistroyDetailType, oldType === type)
+    return playFromURL(item.video as HistroyDetailType)
   }
 }
 
 function playError () {
   player.once(Hls.Events.ERROR, (e, d) => {
-    console.log('=== playError ===', e, d)
     if (d.fatal) {
       switch (d.type) {
         case Hls.ErrorTypes.NETWORK_ERROR:
@@ -157,48 +171,65 @@ function playError () {
   })
 }
 
-async function playFromZY (item: VideoDetailType, flag: boolean) {
-  console.log('playFromZY video', item)
-  const url = item.urls[0]
-  if (!url) return false
-  if (!flag && oldType !== '') {
-    console.log('0000')
-    video.pause()
-    player.destroy()
-    player = new Hls()
-  }
-  nextTick(() => {
-    player.attachMedia(video)
-    player.once(Hls.Events.MEDIA_ATTACHED, () => {
-      player.loadSource(url)
-      video.play()
-      oldType = 'zy'
-    })
-    playError()
-  })
+function reset () {
+  video.removeEventListener('timeupdate', recordTime)
 }
-async function playFromIPTV (item: HistroyDetailType, flag: boolean) {
+function playing () {
+  video.addEventListener('timeupdate', recordTime)
+}
+
+const recordTime = useThrottleFn(async () => {
+  const time = video.currentTime
+  const key = detail.value.video.name + detail.value.video.id
+  const res = await db.find<History>('history', { key })
+  await db.update<History>('history', res.id, { time })
+}, 5000)
+
+async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
+  console.log('playFromZY video', item)
+  const url = item.urls[index]
+  if (!url) return false
+  reset()
+  player.destroy()
+  player = new Hls()
+  player.attachMedia(video)
+  player.once(Hls.Events.MEDIA_ATTACHED, () => {
+    player.loadSource(url)
+    if (time) video.currentTime = time
+    video.play()
+    playing()
+  })
+  playError()
+}
+async function playFromIPTV (item: HistroyDetailType) {
   console.log('playFromIPTV item', item)
   const url = item.url
   if (!url) return false
-  if (!flag && oldType !== '') {
-    console.log('1111')
-    video.pause()
-    player.destroy()
-    player = new Hls()
-  }
-  nextTick(() => {
-    player.attachMedia(video)
-    player.once(Hls.Events.MEDIA_ATTACHED, () => {
-      player.loadSource(url)
-      video.play()
-      oldType = 'iptv'
-    })
-    playError()
+  reset()
+  player.destroy()
+  player = new Hls()
+  player.attachMedia(video)
+  player.once(Hls.Events.MEDIA_ATTACHED, () => {
+    player.loadSource(url)
+    video.play()
+    playing()
   })
+  playError()
 }
-async function playFromURL (video: HistroyDetailType, flag: boolean) {
-  console.log('playFromURL video', video, flag)
+async function playFromURL (item: HistroyDetailType) {
+  console.log('playFromURL video', item)
+  const url = item.url
+  if (!url) return false
+  reset()
+  player.destroy()
+  player = new Hls()
+  player.attachMedia(video)
+  player.once(Hls.Events.MEDIA_ATTACHED, () => {
+    player.loadSource(url)
+    video.play()
+    playing()
+  })
+  playError()
 }
 
 onMounted(() => {
