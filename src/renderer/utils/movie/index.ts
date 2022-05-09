@@ -78,27 +78,38 @@ async function getXMLVideoList (txt: string) {
   if (Array.isArray(list)) {
     for (let i = 0; i < list.length; i++) {
       const l = list[i]
-      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content || l.des, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, note: l.note, urls: [] }
+      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content || l.des, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, note: l.note, urls: [], jxUrls: [] }
       const dd = l.dl.dd
       if (Array.isArray(dd)) {
         for (const j of dd) {
-          if (j.flag.endsWith('m3u8')) {
-            const m = j._t.split('#')
-            for (const k of m) {
+          if (!j._t) break
+          const all = j._t.split('#')
+          for (const k of all) {
+            try {
               const n = k.split('$')
-              item.urls.push(n[1])
+              if (k.endsWith('.m3u8')) {
+                item.urls.push(n[1])
+              } else {
+                item.jxUrls.push(n[1])
+              }
+            } catch (_) {
+              break
             }
           }
         }
       } else {
-        const flag = dd.flag
-        if (flag && dd._t) {
-          const m = dd._t.split('#')
-          for (const k of m) {
+        if (!dd._t) break
+        const m = dd._t.split('#')
+        for (const k of m) {
+          try {
+            const n = k.split('$')
             if (k.endsWith('.m3u8')) {
-              const n = k.split('$')
               item.urls.push(n[1])
+            } else {
+              item.jxUrls.push(n[1])
             }
+          } catch (_) {
+            break
           }
         }
       }
@@ -106,26 +117,35 @@ async function getXMLVideoList (txt: string) {
     }
   } else {
     const l = list
-    const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, urls: [] }
+    const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, urls: [], jxUrls: [] }
     const dd = l.dl.dd
     if (Array.isArray(dd)) {
       for (const j of dd) {
-        if (j.flag.endsWith('m3u8')) {
-          const m = j._t.split('#')
-          for (const k of m) {
+        if (!j._t) break
+        const all = j._t.split('#')
+        for (const k of all) {
+          try {
             const n = k.split('$')
-            item.urls.push(n[1])
-          }
+            if (k.endsWith('.m3u8')) {
+              item.urls.push(n[1])
+            } else {
+              item.jxUrls.push(n[1])
+            }
+          } catch (_) { break }
         }
       }
     } else {
-      const flag = dd.flag
-      if (flag && flag.endsWith('m3u8') && dd._t) {
-        const m = dd._t.split('#')
-        for (const k of m) {
+      if (!dd._t) return data
+      const m = dd._t.split('#')
+      for (const k of m) {
+        try {
           const n = k.split('$')
-          item.urls.push(n[1])
-        }
+          if (k.endsWith('.m3u8')) {
+            item.urls.push(n[1])
+          } else {
+            item.jxUrls.push(n[1])
+          }
+        } catch (_) { return data }
       }
     }
     data.push(item)
@@ -142,29 +162,38 @@ async function getJSONVideoList (txt: string) {
   const list = json.list
   for (let i = 0; i < list.length; i++) {
     const l = list[i]
-    const item: VideoDetailType = { id: l.vod_id, name: l.vod_name, class: l.type_name, pic: l.vod_pic, lang: l.vod_lang, area: l.vod_area, year: l.vod_time, total: l.vod_total, content: l.vod_content, actor: l.vod_actor, director: l.vod_director, writer: l.vod_writer, duration: l.vod_duration, last: l.vod_pubdate, note: l.vod_remarks, urls: [] }
+    const item: VideoDetailType = { id: l.vod_id, name: l.vod_name, class: l.type_name, pic: l.vod_pic, lang: l.vod_lang, area: l.vod_area, year: l.vod_time, total: l.vod_total, content: l.vod_content, actor: l.vod_actor, director: l.vod_director, writer: l.vod_writer, duration: l.vod_duration, last: l.vod_pubdate, note: l.vod_remarks, urls: [], jxUrls: [] }
     const u = l.vod_play_url
     const note = l.vod_play_note
     if (!u && !note) break
     if (note === '') {
       const uArr = u.split('#')
       for (const j of uArr) {
-        if (j.endsWith('.m3u8')) {
+        try {
           const n = j.split('$')
-          item.urls.push(n[1])
-        }
+          if (j.endsWith('.m3u8')) {
+            item.urls.push(n[1])
+          } else {
+            item.jxUrls.push(n[1])
+          }
+        } catch (_) { break }
       }
       data.push(item)
     } else {
       const uArr = u.split(note)
       for (const j of uArr) {
-        if (j.endsWith('.m3u8')) {
+        try {
           const m = j.split('#')
+          let n = ''
           for (const k of m) {
-            const n = k.split('$')
-            item.urls.push(n[1])
+            n = k.split('$')
           }
-        }
+          if (j.endsWith('.m3u8')) {
+            item.urls.push(n[1])
+          } else {
+            item.jxUrls.push(n[1])
+          }
+        } catch (_) { break }
       }
       data.push(item)
     }

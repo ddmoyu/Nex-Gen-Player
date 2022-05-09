@@ -26,7 +26,8 @@ export type VideoDetailType = {
   duration?: string
   last?: string
   note?: string
-  urls: string[]
+  urls?: string[]
+  jxUrls?: string[]
 }
 
 export type HistroyDetailType = {
