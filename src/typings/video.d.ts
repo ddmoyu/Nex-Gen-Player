@@ -28,6 +28,7 @@ export type VideoDetailType = {
   note?: string
   urls?: string[]
   jxUrls?: string[]
+  jiexi?: string
 }
 
 export type HistroyDetailType = {

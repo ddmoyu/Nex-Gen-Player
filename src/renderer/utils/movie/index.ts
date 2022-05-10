@@ -2,6 +2,7 @@ import { api } from '../fetch'
 import { XMLParser } from 'fast-xml-parser'
 import type { ClassType, VideoDetailType } from '../../../typings/video'
 import { Site } from '../database/models/Site'
+import { db } from '../database/controller/DBTools'
 
 // config with XML to JSON
 const parser = new XMLParser({
@@ -69,7 +70,7 @@ export async function getClass (url: string) {
 }
 
 // get xml site video list
-async function getXMLVideoList (txt: string) {
+async function getXMLVideoList (txt: string, jiexi: string) {
   const json = parser.parse(txt)
   const res = json.rss ? json.rss : json
   const data: VideoDetailType[] = []
@@ -78,7 +79,7 @@ async function getXMLVideoList (txt: string) {
   if (Array.isArray(list)) {
     for (let i = 0; i < list.length; i++) {
       const l = list[i]
-      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content || l.des, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, note: l.note, urls: [], jxUrls: [] }
+      const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content || l.des, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, note: l.note, urls: [], jxUrls: [], jiexi }
       const dd = l.dl.dd
       if (Array.isArray(dd)) {
         for (const j of dd) {
@@ -117,7 +118,7 @@ async function getXMLVideoList (txt: string) {
     }
   } else {
     const l = list
-    const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, urls: [], jxUrls: [] }
+    const item: VideoDetailType = { id: l.id, name: l.name, class: l.class || l.type, pic: l.pic, lang: l.lang, area: l.area, year: l.year, total: l.total, content: l.content, actor: l.actor, director: l.director, writer: l.writer, duration: l.duration, last: l.last, urls: [], jxUrls: [], jiexi }
     const dd = l.dl.dd
     if (Array.isArray(dd)) {
       for (const j of dd) {
@@ -155,14 +156,14 @@ async function getXMLVideoList (txt: string) {
 }
 
 // get json site video list
-async function getJSONVideoList (txt: string) {
+async function getJSONVideoList (txt: string, jiexi: string) {
   const json = JSON.parse(txt)
   const data: VideoDetailType[] = []
   if (!json.list || !json.list.length) return false
   const list = json.list
   for (let i = 0; i < list.length; i++) {
     const l = list[i]
-    const item: VideoDetailType = { id: l.vod_id, name: l.vod_name, class: l.type_name, pic: l.vod_pic, lang: l.vod_lang, area: l.vod_area, year: l.vod_time, total: l.vod_total, content: l.vod_content, actor: l.vod_actor, director: l.vod_director, writer: l.vod_writer, duration: l.vod_duration, last: l.vod_pubdate, note: l.vod_remarks, urls: [], jxUrls: [] }
+    const item: VideoDetailType = { id: l.vod_id, name: l.vod_name, class: l.type_name, pic: l.vod_pic, lang: l.vod_lang, area: l.vod_area, year: l.vod_time, total: l.vod_total, content: l.vod_content, actor: l.vod_actor, director: l.vod_director, writer: l.vod_writer, duration: l.vod_duration, last: l.vod_pubdate, note: l.vod_remarks, urls: [], jxUrls: [], jiexi }
     const u = l.vod_play_url
     const note = l.vod_play_note
     if (!u && !note) break
@@ -209,14 +210,15 @@ export async function getVideoList (url: string, page?: number, clsId?: number) 
     const uri = clsId ? `${url}?ac=videolist&t=${clsId}&pg=${pg}` : `${url}?ac=videolist&pg=${pg}`
     const res = await api(uri)
     const type = checkResType(res)
+    const jiexi = await getJiexiByUrl(url)
     if (type === 'XML') {
-      return await getXMLVideoList(res)
+      return await getXMLVideoList(res, jiexi)
     }
     if (type === 'JSON') {
-      return await getJSONVideoList(res)
+      return await getJSONVideoList(res, jiexi)
     }
-    return false
-  } catch (ignore) { }
+    return []
+  } catch (ignore) { return [] }
 }
 
 // search video
@@ -226,14 +228,15 @@ export async function search (url: string, wd: string, page?: number) {
     const uri = `${url}?ac=videolist&pg=${pg}&wd=${encodeURI(wd)}`
     const res = await api(uri)
     const type = checkResType(res)
+    const jiexi = await getJiexiByUrl(url)
     if (type === 'XML') {
-      return await getXMLVideoList(res)
+      return await getXMLVideoList(res, jiexi)
     }
     if (type === 'JSON') {
-      return await getJSONVideoList(res)
+      return await getJSONVideoList(res, jiexi)
     }
-    return false
-  } catch (ignore) { }
+    return []
+  } catch (ignore) { return [] }
 }
 
 // get site by id
@@ -241,6 +244,17 @@ export function getSiteById (id: number, sites: Site[]) {
   if (!sites.length) return false
   const site = sites.find(item => item.id === id)
   return site
+}
+
+async function getJiexiByUrl (url: string) {
+  const sites = await db.all('sites')
+  if (!sites.length) return ''
+  for (const i of sites) {
+    if (i.api === url) {
+      return i.jiexi
+    }
+  }
+  return ''
 }
 
 // get douban IMDB Rotten rating
