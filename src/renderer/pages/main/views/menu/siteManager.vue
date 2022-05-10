@@ -156,6 +156,12 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     key: 'url',
     ellipsis: {
       tooltip: true
+    },
+    render (row: SiteUrlsType) {
+      const url = row.url
+      const arr = url.split('/')
+      const name = arr[arr.length - 1]
+      return name
     }
   },
   {

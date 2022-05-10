@@ -3,7 +3,8 @@
   <!-- <div class="header">{{name}}<span class="index" v-show="index !== 0">{{index}}</span></div> -->
   <div class="header">{{name}}<span class="index">{{index}}</span></div>
   <div class="body">
-    <video id="video" controls></video>
+    <video v-show="type === 'player'" id="video" controls></video>
+    <iframe v-show="type === 'iframe'" :src="iframeSrc" frameborder="0" width="100%" height="100%"></iframe>
   </div>
   <div class="footer">
     <n-space>
@@ -86,6 +87,8 @@ let video: HTMLMediaElement = null
 const name = ref('')
 const isFave = ref(false)
 const index = ref(0)
+const type = ref('player') // player || iframe
+const iframeSrc = ref('')
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -168,7 +171,6 @@ async function handleFavorite () {
 }
 
 async function playVideo (item: VideoBusPlay) {
-  console.log('videoStore.video', videoStore.video)
   const type = item.type
   if (type === 'zy') {
     const time = await checkHistoryTime(item)
@@ -195,7 +197,6 @@ function playError () {
           break
         default:
           player.destroy()
-          console.log('=== player error ===', player)
           break
       }
     }
@@ -221,6 +222,7 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
   console.log('playFromZY video', item)
   let list = []
   let urlType = 'm3u8'
+  type.value = 'player'
   if (item.urls.length) {
     list = item.urls
   } else {
@@ -229,13 +231,18 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
     urlType = 'jiexi'
   }
   let url = list[index]
-  console.log('url: ', url)
   if (!url) {
     message.warning('未发现视频链接')
     return false
   }
   if (urlType === 'jiexi') {
-    url = await getRealUrl(url)
+    const res = await getRealUrl(url, item.jiexi)
+    if (!res) {
+      url = res
+    } else {
+      type.value = 'iframe'
+      iframeSrc.value = item.jiexi + url
+    }
   }
   reset()
   name.value = item.name
@@ -254,6 +261,7 @@ async function playFromIPTV (item: HistroyDetailType) {
   console.log('playFromIPTV item', item)
   const url = item.url
   if (!url) return false
+  type.value = 'player'
   reset()
   name.value = item.name
   player.destroy()
@@ -270,6 +278,7 @@ async function playFromURL (item: HistroyDetailType) {
   console.log('playFromURL video', item)
   const url = item.url
   if (!url) return false
+  type.value = 'player'
   reset()
   player.destroy()
   player = new Hls()
