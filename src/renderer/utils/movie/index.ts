@@ -322,6 +322,7 @@ export async function getSearchSuggest (wd: string) {
   const s5 = await suggest555dy(wd)
   const sd = await suggestDouban(wd)
   const list = [...s5, ...sd]
+  list.unshift({ label: wd, value: wd })
   const data = uniqBy(list, 'value')
   return data
 }

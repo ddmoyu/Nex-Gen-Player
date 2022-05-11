@@ -19,12 +19,13 @@
             placeholder="Search"
             filterable
             :options="searchOptions"
+            :loading="searchLoading"
             clearable
             remote
             :clear-filter-after-select="false"
             @clear="handleClear"
             @search="handleSuggest"
-            @on-update:value="handleSearch"
+            @update:value="handleSearch"
           />
           <n-button tertiary type="primary" @click="handleSearch">
             <n-icon size="22">
@@ -99,6 +100,7 @@ const message = useMessage()
 
 const scrollbar = ref<ScrollbarInst>()
 const searchOptions = ref([])
+const searchLoading = ref(false)
 
 const sitesStore = useSites()
 const { assignClassList, assignSites } = sitesStore
@@ -176,8 +178,10 @@ async function getMoreSearchList () {
 }
 
 async function handleSuggest (wd: string) {
+  searchLoading.value = true
   const w = wd.trim()
   if (w) searchOptions.value = await getSearchSuggest(wd)
+  searchLoading.value = false
 }
 
 async function handleSearch () {
@@ -196,8 +200,7 @@ async function handleSearch () {
 }
 
 function handleClear () {
-  pages.value = 1
-  list.value = []
+  searchTxt.value = ''
   searchOptions.value = []
   changeClass()
 }
