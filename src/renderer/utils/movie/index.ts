@@ -3,6 +3,7 @@ import { XMLParser } from 'fast-xml-parser'
 import type { ClassType, VideoDetailType } from '../../../typings/video'
 import { Site } from '../database/models/Site'
 import { db } from '../database/controller/DBTools'
+import { uniqBy } from 'lodash'
 
 // config with XML to JSON
 const parser = new XMLParser({
@@ -315,4 +316,34 @@ export async function getOnlineJSON (url: string) {
   } catch (_) {
     return false
   }
+}
+
+export async function getSearchSuggest (wd: string) {
+  const s5 = await suggest555dy(wd)
+  const sd = await suggestDouban(wd)
+  const list = [...s5, ...sd]
+  const data = uniqBy(list, 'value')
+  return data
+}
+
+async function suggest555dy (wd: string) {
+  const res = await api(`https://www.555dy3.com/index.php/ajax/suggest?mid=1&wd=${encodeURI(wd)}`)
+  if (!res || !res.list.length) return []
+  const arr = []
+  for (const i of res.list) {
+    const item = { label: i.name, value: i.name }
+    arr.push(item)
+  }
+  return arr
+}
+
+async function suggestDouban (wd: string) {
+  const res = await api(`https://movie.douban.com/j/subject_suggest?q=${encodeURI(wd)}`)
+  if (!res || !res.length) return []
+  const arr = []
+  for (const i of res) {
+    const item = { label: i.title, value: i.title }
+    arr.push(item)
+  }
+  return arr
 }

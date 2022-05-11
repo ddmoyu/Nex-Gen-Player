@@ -177,15 +177,8 @@ function handlePlay (index?: number) {
   bus.emit('bus.video.play', data)
 }
 
-// TODO
 async function getThisVideoRating (name: string) {
-  console.log(' get rating ')
   ratingList.value = await getRating(name)
-  // ratingList.value = [
-  //   { name: 'Douban', rating: 4, votes: 10 },
-  //   { name: 'IMDB', rating: 5, votes: 21 },
-  //   { name: 'Rotten', rating: 1, votes: 32 }
-  // ]
 }
 
 async function checkFavorite (): Promise<boolean> {

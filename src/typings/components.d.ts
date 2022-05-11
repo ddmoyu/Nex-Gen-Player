@@ -5,11 +5,9 @@
 declare module 'vue' {
   export interface GlobalComponents {
     Aside: typeof import('./../renderer/components/Aside.vue')['default']
-    Contextmenu: typeof import('./../renderer/components/Contextmenu.vue')['default']
     Detail: typeof import('./../renderer/components/Detail.vue')['default']
     Footer: typeof import('./../renderer/components/Footer.vue')['default']
     Frame: typeof import('./../renderer/components/Frame.vue')['default']
-    List: typeof import('./../renderer/components/List.vue')['default']
     MasonryLayout: typeof import('./../renderer/components/MasonryLayout.vue')['default']
     NBadge: typeof import('naive-ui')['NBadge']
     NButton: typeof import('naive-ui')['NButton']
@@ -47,7 +45,6 @@ declare module 'vue' {
     NSpin: typeof import('naive-ui')['NSpin']
     NSwitch: typeof import('naive-ui')['NSwitch']
     Share: typeof import('./../renderer/components/Share.vue')['default']
-    Waterfall: typeof import('./../renderer/components/Waterfall.vue')['default']
   }
 }
 

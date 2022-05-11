@@ -13,8 +13,19 @@
               <Compass />
             </n-icon>
           </n-button>
-          <n-input class="searchInput" :clearable="true" @clear="handleClear" v-model:value="searchTxt" type="text"
-            @keydown.enter="handleSearch" />
+          <n-select
+            v-model:value="searchTxt"
+            class="searchInput"
+            placeholder="Search"
+            filterable
+            :options="searchOptions"
+            clearable
+            remote
+            :clear-filter-after-select="false"
+            @clear="handleClear"
+            @search="handleSuggest"
+            @on-update:value="handleSearch"
+          />
           <n-button tertiary type="primary" @click="handleSearch">
             <n-icon size="22">
               <Search />
@@ -58,7 +69,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getSiteById, getVideoList, search } from '@/renderer/utils/movie'
+import { getSiteById, getVideoList, search, getSearchSuggest } from '@/renderer/utils/movie'
 import { VideoDetailType } from '@/typings/video'
 import { Search, Compass } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
@@ -87,13 +98,12 @@ const router = useRouter()
 const message = useMessage()
 
 const scrollbar = ref<ScrollbarInst>()
+const searchOptions = ref([])
 
-// sites store
 const sitesStore = useSites()
 const { assignClassList, assignSites } = sitesStore
 async function getSites () {
   const dbSites = await assignSites()
-  // const dbSites = await db.all('sites')
   if (!dbSites.length) {
     emptyDesc.value = 'site is empty'
     return false
@@ -165,12 +175,16 @@ async function getMoreSearchList () {
   }
 }
 
+async function handleSuggest (wd: string) {
+  const w = wd.trim()
+  if (w) searchOptions.value = await getSearchSuggest(wd)
+}
+
 async function handleSearch () {
   if (!searchTxt.value) return changeSite()
   loading.value = true
   pages.value = 1
   list.value = []
-  document.querySelector('.waterfall').scrollIntoView(true)
   const res = await search(site.value.api, searchTxt.value)
   if (res) {
     list.value = res
@@ -184,7 +198,7 @@ async function handleSearch () {
 function handleClear () {
   pages.value = 1
   list.value = []
-  document.querySelector('.waterfall').scrollIntoView(true)
+  searchOptions.value = []
   changeClass()
 }
 
