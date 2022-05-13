@@ -84,6 +84,7 @@ import { db } from '../utils/database/controller/DBTools'
 import { Favorite } from '../utils/database/models/Favorite'
 import { IpcDirective } from '@/main/ipcEnum'
 import { settingsDB } from '../utils/database/controller/settingsDB'
+import { useStore } from '../pages/main/store/video'
 
 const router = useRouter()
 const video = ref<VideoDetailType>()
@@ -171,10 +172,12 @@ function filterContent (video: VideoDetailType) {
 }
 
 function handlePlay (index?: number) {
-  handleClose()
+  const videoStore = useStore()
+  const { setVideo } = videoStore
+  const data = { video: video.value, index: index, type: 'zy' }
+  setVideo(data)
   router.push({ name: 'play' })
-  const data = { video: video.value, index, type: 'zy' }
-  bus.emit('bus.video.play', data)
+  handleClose()
 }
 
 async function getThisVideoRating (name: string) {
