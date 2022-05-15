@@ -22,6 +22,10 @@ import { NButton } from 'naive-ui'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
 import { useRouter } from 'vue-router'
 import { useStore } from '../../store/video'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+
+dayjs.extend(duration)
 
 const router = useRouter()
 const historyList = ref([])
@@ -41,7 +45,12 @@ const columns: TableBaseColumn<History>[] = [
   {
     title: 'Time',
     key: 'time',
-    width: 120
+    width: 120,
+    render (row: History) {
+      const t = row.time
+      const m = dayjs.duration(t, 'second').format('HH:mm:ss')
+      return m
+    }
   },
   {
     title: 'Operator',

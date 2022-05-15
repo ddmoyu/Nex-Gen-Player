@@ -16,6 +16,7 @@
     "@vueuse/core": "^8.3.1",
     "@vueuse/shared": "^8.4.2",
     "core-js": "^3.21.1",
+    "dayjs": "^1.11.2",
     "dexie": "^3.2.2",
     "fast-xml-parser": "^4.0.7",
     "hls.js": "^1.1.5",
