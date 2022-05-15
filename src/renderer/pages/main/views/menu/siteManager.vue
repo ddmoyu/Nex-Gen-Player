@@ -160,7 +160,7 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     render (row: SiteUrlsType) {
       const url = row.url
       const arr = url.split('/')
-      const name = arr[arr.length - 1]
+      const name = arr[arr.length - 1].replace('.json', '')
       return name
     }
   },
@@ -183,10 +183,12 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
   {
     title: 'Operator',
     key: 'url',
-    width: 200,
+    width: 240,
     render (row: SiteUrlsType) {
       return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsEdit(row) }, { default: () => 'Edit' }),
+        row.url !== 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json'
+          ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsEdit(row) }, { default: () => 'Edit' })
+          : h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleUpdateSiteUrls() }, { default: () => 'Update' }),
         h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsCheck(row) }, { default: () => 'Check' }),
         h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsDelete(row) }, { default: () => 'Delete' })
       ])
