@@ -95,6 +95,7 @@ import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { cloneDeep } from 'lodash'
 import { getRealUrl } from '@/renderer/utils/movie'
 import { IpcDirective } from '@/main/ipcEnum'
+import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 
 // const route = useRoute()
 const message = useMessage()
@@ -132,11 +133,11 @@ const menuOptions = ref([
     key: 'download',
     icon: renderIcon(ArrowDownCircleOutline)
   },
-  {
-    label: 'Skip',
-    key: 'skip',
-    icon: renderIcon(PlaySkipForwardCircleOutline)
-  },
+  // {
+  //   label: 'Skip',
+  //   key: 'skip',
+  //   icon: renderIcon(PlaySkipForwardCircleOutline)
+  // },
   {
     label: 'Other Player',
     key: 'otherPlayer',
@@ -332,14 +333,12 @@ function handlePlaylist () {
     playList.value = []
   }
 }
-
 async function handlePlaylistPlay (idx: number) {
   const video = videoStore.video.video as VideoDetailType
   index.value = idx || 0
   await playFromZY(video, idx, 0)
 }
 
-// TODO
 async function handleHistory () {
   const list = await db.all('history')
   if (list && list.length) {
@@ -349,14 +348,19 @@ async function handleHistory () {
   }
   historyShow.value = true
 }
-// TODO
 async function handleHistoryPlay (item: History) {
   if (item.type === 'zy') {
     const detail = item.detail as VideoDetailType
+    const data = { video: detail, index: item.index, type: 'zy' }
+    const { setVideo } = videoStore
+    setVideo(data)
     return await playFromZY(detail, item.index, item.time)
   }
   if (item.type === 'url') {
     const detail = item.detail as HistroyDetailType
+    const data = { video: detail, index: item.index, type: 'url' }
+    const { setVideo } = videoStore
+    setVideo(data)
     return playFromURL({ name: detail.name, url: detail.url })
   }
 }
@@ -368,13 +372,28 @@ async function handleMenuSelect (key: string | number) {
     } else {
       message.warning('非资源视频，无详情介绍')
     }
+    return false
   }
   if (key === 'download') {
     if (type.value === 'player') {
-      window.ipc.invoke(IpcDirective.COPY, { type: 'text', data: 'download url' })
+      const video = videoStore.video.video
+      const url = video.urls[index.value]
+      window.ipc.invoke(IpcDirective.COPY, { type: 'text', data: url })
     } else {
       message.warning('无法下载')
     }
+    return false
+  }
+  if (key === 'otherPlayer') {
+    const otherPlayer = await settingsDB.getSetting('player')
+    if (!otherPlayer) {
+      message.warning('请先设置播放器软件路径')
+    } else {
+      const video = videoStore.video.video
+      const url = video.urls[index.value]
+      window.ipc.invoke(IpcDirective.PLAY_WITH, { path: otherPlayer, urls: url })
+    }
+    return false
   }
 }
 
@@ -401,11 +420,12 @@ onMounted(() => {
     }
   }
   .body{
-    flex: 1;
+    height: calc(100% - 80px);
     #video{
       width: 100%;
       height: 100%;
       background-color: #000;
+      object-fit: contain;
     }
   }
   .footer{
