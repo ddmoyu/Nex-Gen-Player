@@ -104,7 +104,9 @@ const searchLoading = ref(false)
 
 const sitesStore = useSites()
 const { assignClassList, assignSites } = sitesStore
+
 async function getSites () {
+  resetValue()
   const dbSites = await assignSites()
   if (!dbSites.length) {
     emptyDesc.value = 'site is empty'

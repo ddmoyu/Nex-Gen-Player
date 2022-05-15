@@ -3,7 +3,7 @@ import { IpcDirective } from '../ipcEnum'
 import win from '../router'
 import os from 'os'
 import { OpenDialogOptions } from 'electron/main'
-import { getJSONFile, openLink, playWithExternalPlayer } from './tools'
+import { getJSONFile, openLink, playWithExternalPlayer, copy } from './tools'
 import { writeFile } from 'fs'
 
 ipcMain.handle(IpcDirective.WIN_OPEN, (e, params) => {
@@ -73,4 +73,8 @@ ipcMain.handle(IpcDirective.WIN_SAVE_DIALOG, (e, params) => {
       }
     })
   })
+})
+
+ipcMain.handle(IpcDirective.COPY, (e, params) => {
+  copy(params.type, params.data)
 })

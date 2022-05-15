@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from 'fs'
 import { execFile, exec } from 'child_process'
-import { shell } from 'electron'
+import { clipboard, shell, nativeImage } from 'electron'
 
 export function getJSONFile (path: string) {
   const data = readFileSync(path)
@@ -19,4 +19,17 @@ export function playWithExternalPlayer (path: string, urls: string) {
 
 export function openLink (url: string) {
   shell.openExternal(url)
+}
+
+export function copy (type: string, data: string | HTMLCanvasElement) {
+  if (type === 'text') {
+    const txt = data as string
+    clipboard.writeText(txt)
+  }
+  if (type === 'image') {
+    const canvas = data as HTMLCanvasElement
+    const png = canvas.toDataURL('image/png')
+    const img = nativeImage.createFromDataURL(png)
+    clipboard.writeImage(img)
+  }
 }

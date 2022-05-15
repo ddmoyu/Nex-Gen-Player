@@ -39,7 +39,7 @@ export type HistroyDetailType = {
 export type VideoBusPlay = {
   video: VideoDetailType | HistroyDetailType | PlaylistItem
   index?: number
-  type?: string
+  type: string
 }
 
 export type VideoFromType = {

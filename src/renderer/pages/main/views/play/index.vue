@@ -1,7 +1,6 @@
 <template>
 <div class="play">
-  <!-- <div class="header">{{name}}<span class="index" v-show="index !== 0">{{index}}</span></div> -->
-  <div class="header">{{name}}<span class="index">{{index}}</span></div>
+  <div class="header">{{name}}<span class="index" v-show="index && index !== 0">第{{index + 1}}集</span></div>
   <div class="body">
     <video v-show="type === 'player'" id="video" controls></video>
     <iframe v-show="type === 'iframe'" :src="iframeSrc" frameborder="0" width="100%" height="100%"></iframe>
@@ -20,17 +19,7 @@
       </n-popover>
       <n-popover trigger="hover" placement="top-start">
         <template #trigger>
-          <n-button quaternary type="primary" size="small">
-            <n-icon size="22">
-              <ListCircleOutline />
-            </n-icon>
-          </n-button>
-        </template>
-        <span>Playlist</span>
-      </n-popover>
-      <n-popover trigger="hover" placement="top-start">
-        <template #trigger>
-          <n-button quaternary type="primary" size="small">
+          <n-button quaternary type="primary" size="small" @click="handleHistory">
             <n-icon size="22">
               <Time />
             </n-icon>
@@ -49,9 +38,19 @@
         </template>
         <span>Favorites</span>
       </n-popover>
+      <n-popover trigger="hover" placement="top-start">
+        <template #trigger>
+          <n-button quaternary type="primary" size="small" @click="handlePlaylist">
+            <n-icon size="22">
+              <ListCircleOutline />
+            </n-icon>
+          </n-button>
+        </template>
+        <span>Playlist</span>
+      </n-popover>
     </n-space>
     <n-space>
-      <n-dropdown :options="menuOptions">
+      <n-dropdown :options="menuOptions" @select="handleMenuSelect">
         <n-button quaternary type="primary" size="small">
           <n-icon size="22">
             <Menu />
@@ -60,6 +59,24 @@
       </n-dropdown>
     </n-space>
   </div>
+  <n-drawer v-model:show="playListShow" :width="200" :height="'100%'" :placement="'right'" :trap-focus="false" :block-scroll="false" to=".body" >
+    <n-drawer-content title="Playlist">
+      <n-scrollbar class="playlist">
+        <div class="item" v-for="(i, j) in playList" :key="j">
+          <n-button text type="primary" @click="handlePlaylistPlay(j)"> 第 {{j + 1}} 集 </n-button>
+        </div>
+      </n-scrollbar>
+    </n-drawer-content>
+  </n-drawer>
+  <n-drawer v-model:show="historyShow" :width="300" :height="'100%'" :placement="'right'" :trap-focus="false" :block-scroll="false" to=".body" >
+    <n-drawer-content title="Histroy">
+      <n-scrollbar class="playlist">
+        <div class="item" v-for="(i, j) in historyList" :key="j">
+          <n-button text type="primary" @click="handleHistoryPlay(i)">{{i.detail.name}}</n-button>
+        </div>
+      </n-scrollbar>
+    </n-drawer-content>
+  </n-drawer>
 </div>
 </template>
 <script lang="ts" setup>
@@ -77,6 +94,8 @@ import { History } from '@/renderer/utils/database/models/History'
 import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { cloneDeep } from 'lodash'
 import { getRealUrl } from '@/renderer/utils/movie'
+import { IpcDirective } from '@/main/ipcEnum'
+import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 
 // const route = useRoute()
 const message = useMessage()
@@ -87,8 +106,13 @@ let video: HTMLMediaElement = null
 const name = ref('')
 const isFave = ref(false)
 const index = ref(0)
+const from = ref('zy')
 const type = ref('player') // player || iframe
 const iframeSrc = ref('')
+const playList = ref([])
+const playListShow = ref(false)
+const historyList = ref([])
+const historyShow = ref(false)
 
 const renderIcon = (icon: any) => {
   return () => {
@@ -109,11 +133,11 @@ const menuOptions = ref([
     key: 'download',
     icon: renderIcon(ArrowDownCircleOutline)
   },
-  {
-    label: 'Skip',
-    key: 'skip',
-    icon: renderIcon(PlaySkipForwardCircleOutline)
-  },
+  // {
+  //   label: 'Skip',
+  //   key: 'skip',
+  //   icon: renderIcon(PlaySkipForwardCircleOutline)
+  // },
   {
     label: 'Other Player',
     key: 'otherPlayer',
@@ -135,13 +159,29 @@ function init () {
   playVideo(videoStore.video)
 }
 
+async function playVideo (item: VideoBusPlay) {
+  from.value = item.type
+  if (item.type === 'zy') {
+    const time = await checkHistoryTime(item)
+    await checkFavorite()
+    index.value = item.index || 0
+    return await playFromZY(item.video as VideoDetailType, item.index, time)
+  }
+  if (item.type === 'iptv') {
+    return playFromIPTV(item.video as PlaylistItem)
+  }
+  if (item.type === 'url') {
+    return playFromURL(item.video as HistroyDetailType)
+  }
+}
+
 async function checkHistoryTime (item: VideoBusPlay) {
   const key = item.video.name + item.video.id
   const res = await db.find<History>('history', { key })
   if (res) {
     return res.time
   } else {
-    await db.put<History>('history', { type: item.type, detail: item.video, index: item.index, time: 0, key })
+    await db.put<History>('history', { type: item.type, detail: cloneDeep(item.video), index: item.index, time: 0, key })
   }
   return 0
 }
@@ -167,21 +207,6 @@ async function handleFavorite () {
   } else {
     await db.put<Favorite>('favorites', { detail: cloneDeep(vs.video), hasUpdate: false, key }, { key })
     isFave.value = true
-  }
-}
-
-async function playVideo (item: VideoBusPlay) {
-  const type = item.type
-  if (type === 'zy') {
-    const time = await checkHistoryTime(item)
-    await checkFavorite()
-    return playFromZY(item.video as VideoDetailType, item.index, time)
-  }
-  if (type === 'iptv') {
-    return playFromIPTV(item.video as PlaylistItem)
-  }
-  if (type === 'url') {
-    return playFromURL(item.video as HistroyDetailType)
   }
 }
 
@@ -219,7 +244,6 @@ const recordTime = useThrottleFn(async () => {
 }, 5000)
 
 async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
-  console.log('playFromZY video', item)
   let list = []
   let urlType = 'm3u8'
   type.value = 'player'
@@ -244,18 +268,25 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
       iframeSrc.value = item.jiexi + url
     }
   }
-  reset()
-  name.value = item.name
-  player.destroy()
-  player = new Hls()
-  player.attachMedia(video)
-  player.once(Hls.Events.MEDIA_ATTACHED, () => {
-    player.loadSource(url)
-    if (time) video.currentTime = time
-    video.play()
-    playing()
-  })
-  playError()
+  try {
+    if (type.value === 'iframe') {
+      return false
+    }
+    reset()
+    name.value = item.name
+    player.destroy()
+    player = new Hls()
+    player.attachMedia(video)
+    player.once(Hls.Events.MEDIA_ATTACHED, () => {
+      player.loadSource(url)
+      if (time) video.currentTime = time
+      video.play()
+      playing()
+    })
+    playError()
+  } catch (_) {
+    message.warning('播放失败，请重试')
+  }
 }
 async function playFromIPTV (item: HistroyDetailType) {
   console.log('playFromIPTV item', item)
@@ -291,6 +322,81 @@ async function playFromURL (item: HistroyDetailType) {
   playError()
 }
 
+function handlePlaylist () {
+  const video = videoStore.video.video as VideoDetailType
+  playListShow.value = true
+  if (type.value === 'player') {
+    playList.value = video.urls
+  } else if (type.value === 'iframe') {
+    playList.value = video.jxUrls
+  } else {
+    playList.value = []
+  }
+}
+async function handlePlaylistPlay (idx: number) {
+  const video = videoStore.video.video as VideoDetailType
+  index.value = idx || 0
+  await playFromZY(video, idx, 0)
+}
+
+async function handleHistory () {
+  const list = await db.all('history')
+  if (list && list.length) {
+    historyList.value = list.reverse()
+  } else {
+    historyList.value = []
+  }
+  historyShow.value = true
+}
+async function handleHistoryPlay (item: History) {
+  if (item.type === 'zy') {
+    const detail = item.detail as VideoDetailType
+    const data = { video: detail, index: item.index, type: 'zy' }
+    const { setVideo } = videoStore
+    setVideo(data)
+    return await playFromZY(detail, item.index, item.time)
+  }
+  if (item.type === 'url') {
+    const detail = item.detail as HistroyDetailType
+    const data = { video: detail, index: item.index, type: 'url' }
+    const { setVideo } = videoStore
+    setVideo(data)
+    return playFromURL({ name: detail.name, url: detail.url })
+  }
+}
+// TODO
+async function handleMenuSelect (key: string | number) {
+  if (key === 'detail') {
+    if (videoStore.video.type === 'zy') {
+      bus.emit('bus.detail.show', videoStore.video.video)
+    } else {
+      message.warning('非资源视频，无详情介绍')
+    }
+    return false
+  }
+  if (key === 'download') {
+    if (type.value === 'player') {
+      const video = videoStore.video.video
+      const url = video.urls[index.value]
+      window.ipc.invoke(IpcDirective.COPY, { type: 'text', data: url })
+    } else {
+      message.warning('无法下载')
+    }
+    return false
+  }
+  if (key === 'otherPlayer') {
+    const otherPlayer = await settingsDB.getSetting('player')
+    if (!otherPlayer) {
+      message.warning('请先设置播放器软件路径')
+    } else {
+      const video = videoStore.video.video
+      const url = video.urls[index.value]
+      window.ipc.invoke(IpcDirective.PLAY_WITH, { path: otherPlayer, urls: url })
+    }
+    return false
+  }
+}
+
 onMounted(() => {
   init()
   bus.on('bus.video.play', playVideo)
@@ -306,13 +412,20 @@ onMounted(() => {
     height: 40px;
     display: flex;
     align-items: center;
+    .index{
+      margin-left: 10px;
+      opacity: 0.5;
+      font-size: 12px;
+      vertical-align: baseline;
+    }
   }
   .body{
-    flex: 1;
+    height: calc(100% - 80px);
     #video{
       width: 100%;
       height: 100%;
       background-color: #000;
+      object-fit: contain;
     }
   }
   .footer{
