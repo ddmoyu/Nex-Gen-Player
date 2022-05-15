@@ -1,17 +1,26 @@
 import { $fetch } from 'ohmyfetch'
 import type { FetchOptions } from 'ohmyfetch'
-
+import { BaseType } from './types/base.type'
 const request = $fetch.create({
   retry: 1,
-  baseURL: import.meta.env.VITE_BASEURL,
+  baseURL: process.env.VUE_APP_BASEURL,
   async onRequestError (err) {
-    console.log(err)
+    console.log('onRequestError', err)
   },
-  async onResponseError (response) {
-    console.log(response)
+  onResponseError (res) {
+    const { message } = res.response._data
+    window.$message.error(message)
+    return Promise.resolve(res.response._data)
   }
 })
 
-export function $http (url:string, options:FetchOptions) {
-  return request(url, options)
+export function $http<T> (url:string, options:FetchOptions) {
+  return new Promise<BaseType<T>>((resolve) => {
+    request(url, options).then(res => {
+      console.log('then', res)
+      resolve(res)
+    }).catch(err => {
+      resolve(err.response._data)
+    })
+  })
 }

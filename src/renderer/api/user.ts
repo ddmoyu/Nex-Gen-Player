@@ -6,7 +6,7 @@ enum UserApi {
   GET_V_CODE = 'validateEmail'
 }
 
-export function getVCode (email:string) {
+export function getVCodeApi (email:string) {
   return $http(UserApi.GET_V_CODE, { params: { email } })
 }
 
