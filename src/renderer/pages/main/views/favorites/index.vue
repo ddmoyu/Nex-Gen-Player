@@ -62,7 +62,7 @@ async function getFavorites () {
   if (!favList.length) {
     emptyVideoList.value = 'No favorites'
   } else {
-    list.value = favList
+    list.value = favList.reverse()
   }
   isOver.value = true
   isLoading.value = false
