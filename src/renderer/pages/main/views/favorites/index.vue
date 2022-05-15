@@ -87,8 +87,10 @@ function handlePlay (item: VideoDetailType) {
   router.push({ name: 'play' })
 }
 
-async function handleDelete (item: Favorite) {
-  await db.delete('favorites', item.id)
+async function handleDelete (item: VideoDetailType) {
+  const key = item.name + item.id
+  const res = await db.find<Favorite>('favorites', { key })
+  await db.delete('favorites', res.id)
   message.success('删除成功')
   await getFavorites()
 }

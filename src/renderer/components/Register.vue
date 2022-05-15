@@ -13,10 +13,10 @@
       :model="formValue"
       :rules="rules"
     >
-      <n-form-item label="姓名" path="user.name">
+      <n-form-item label="姓名" path="username">
         <n-input v-model:value="formValue.username" placeholder="输入用户名" />
       </n-form-item>
-      <n-form-item label="年龄" path="user.age">
+      <n-form-item label="密码" path="password">
         <n-input
           v-model:value="formValue.password"
           type="password"
@@ -32,10 +32,10 @@
           </template>
         </n-input>
       </n-form-item>
-      <n-form-item label="电话号码" path="phone">
+      <n-form-item label="邮箱" path="email">
         <n-input v-model:value="formValue.email" placeholder="邮箱" />
       </n-form-item>
-      <n-form-item label="电话号码" path="phone">
+      <n-form-item label="验证码" path="vCode">
         <n-input v-model:value="formValue.vCode" placeholder="验证码" />
       </n-form-item>
       <n-form-item>
