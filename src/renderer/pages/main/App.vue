@@ -20,13 +20,21 @@ onMounted(async () => {
 
 async function getSettingsTheme () {
   const res = await settingsDB.getSetting('theme')
-  activeTheme.value = res === 'light' ? lightTheme : darkTheme
+  if (res === 'system') {
+    const theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    activeTheme.value = theme ? darkTheme : lightTheme
+  } else {
+    activeTheme.value = res === 'light' ? lightTheme : darkTheme
+  }
 }
 
-function changeTheme (theme: 'dark' | 'light') {
-  if (theme === 'dark') {
+function changeTheme (theme: 'dark' | 'light' | 'system') {
+  if (theme === 'system') {
+    const theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    activeTheme.value = theme ? darkTheme : lightTheme
+  } else if (theme === 'dark') {
     activeTheme.value = darkTheme
-  } else {
+  } else if (theme === 'light') {
     activeTheme.value = lightTheme
   }
   settingsDB.updateSetting({ theme: theme })

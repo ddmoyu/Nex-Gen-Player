@@ -1,7 +1,6 @@
 export const initSettings = [
   {
     id: 0,
-    view: 'waterfull',
     windows: false,
     play: {
       multiple: false,
@@ -22,8 +21,8 @@ export const initSettings = [
     exclude: {
       classToggle: false,
       class: ['伦理', '福利'],
-      txtToggle: false,
-      txt: ['激情']
+      videoToggle: false,
+      video: ['激情']
     },
     proxy: {
       toggle: false,
@@ -37,7 +36,20 @@ export const initSettings = [
       password: ''
     },
     siteUrls: [
-      { id: 0, url: 'https://gist.githubusercontent.com/ddmoyu/cbc89ccc52a5b10e6371c418a5c5135b/raw/04f46b54d4aebd0cf464191d346e3325ea862209/tv.json', active: true, state: true, loading: false }
+      {
+        id: 0,
+        url: 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json',
+        active: true,
+        state: true,
+        loading: false
+      },
+      {
+        id: 1,
+        url: 'https://gist.githubusercontent.com/ddmoyu/cbc89ccc52a5b10e6371c418a5c5135b/raw/04f46b54d4aebd0cf464191d346e3325ea862209/tv.json',
+        active: true,
+        state: true,
+        loading: false
+      }
     ]
   }
 ]

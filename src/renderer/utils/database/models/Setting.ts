@@ -3,7 +3,6 @@ import { SetStores } from '../../decorator'
 @SetStores('id, view, windows, play, theme, language, os, shortcut, player, downlaoder, exclude, proxy, password, siteUrls')
 export class Setting {
   readonly id?: number
-  readonly view?: string
   readonly windows?: boolean
   readonly play?: {[key:string]:any}
   readonly theme: 'dark' | 'light' | 'system'
