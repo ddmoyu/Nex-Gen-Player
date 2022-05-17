@@ -109,6 +109,9 @@
         </template>
         <n-spin :show="checking">
           <n-form ref="formRef" label-placement="left" label-width="auto">
+            <n-form-item label="Name">
+              <n-input v-model:value="siteName" placeholder="Name" />
+            </n-form-item>
             <n-form-item label="Url">
               <n-input v-model:value="siteUrl" placeholder="URL" />
             </n-form-item>
@@ -148,19 +151,21 @@ onMounted(() => {
 const siteUrls = ref([])
 const addEditSiteUrl = ref(false)
 const siteUrl = ref('')
+const siteName = ref('')
 const siteUrlType = ref('add')
 const siteItem = ref()
 const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
   {
-    title: 'Url',
-    key: 'url',
+    title: 'Name',
+    key: 'name',
     ellipsis: {
       tooltip: true
     },
     render (row: SiteUrlsType) {
+      if (row.name) return row.name
       const url = row.url
       const arr = url.split('/')
-      const name = arr[arr.length - 1].replace('.json', '')
+      const name = arr[arr.length - 1]
       return name
     }
   },
@@ -190,7 +195,9 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
           ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsEdit(row) }, { default: () => 'Edit' })
           : h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleUpdateSiteUrls() }, { default: () => 'Update' }),
         h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsCheck(row) }, { default: () => 'Check' }),
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsDelete(row) }, { default: () => 'Delete' })
+        row.url !== 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json'
+          ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsDelete(row) }, { default: () => 'Delete' })
+          : ''
       ])
     }
   }
@@ -223,6 +230,9 @@ async function handleSiteUrlCancel () {
   checking.value = false
 }
 async function handleSiteUrlConfirm () {
+  if (!siteName.value.trim()) {
+    return message.warning('请输入名字')
+  }
   if (!siteUrl.value.trim()) {
     return message.warning('请输入链接')
   }
@@ -233,6 +243,7 @@ async function handleSiteUrlConfirm () {
     if (siteUrlType.value === 'add') {
       const d = {
         id: new Date().getTime(),
+        name: siteName.value,
         url: siteUrl.value,
         active: true,
         state: true,
@@ -244,6 +255,7 @@ async function handleSiteUrlConfirm () {
       for (const i of siteUrls.value) {
         if (i.id === siteItem.value.id) {
           i.url = siteUrl.value
+          i.name = siteName.value
           break
         }
       }
@@ -261,6 +273,7 @@ async function handleSiteUrlsActive (item: SiteUrlsType) {
 async function handleSiteUrlsEdit (item: SiteUrlsType) {
   siteItem.value = item
   siteUrlType.value = 'edit'
+  siteName.value = item.name
   siteUrl.value = item.url
   addEditSiteUrl.value = true
 }
@@ -566,6 +579,10 @@ async function mergeSites (list: Site[]) {
     if (flag < 0) {
       const d = { key: i.key, name: i.name, api: i.api, jiexi: i.jiexi, jsonApi: i.jsonApi, isActive: i.isActive, group: i.group, state: i.state }
       await db.put<Site>('sites', d)
+    } else {
+      const item = oList[flag]
+      const d = { key: i.key, name: i.name, api: i.api, jiexi: i.jiexi, jsonApi: i.jsonApi, isActive: i.isActive, group: i.group, state: i.state }
+      await db.update<Site>('sites', item.id, d)
     }
   }
   await getSites()

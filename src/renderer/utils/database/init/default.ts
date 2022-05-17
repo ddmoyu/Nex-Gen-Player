@@ -38,6 +38,7 @@ export const initSettings = [
     siteUrls: [
       {
         id: 0,
+        name: '奈菲迷高清源',
         url: 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json',
         active: true,
         state: true,
@@ -45,7 +46,8 @@ export const initSettings = [
       },
       {
         id: 1,
-        url: 'https://gist.githubusercontent.com/ddmoyu/cbc89ccc52a5b10e6371c418a5c5135b/raw/04f46b54d4aebd0cf464191d346e3325ea862209/tv.json',
+        name: '网络源',
+        url: 'https://gist.githubusercontent.com/ddmoyu/cbc89ccc52a5b10e6371c418a5c5135b/raw/',
         active: true,
         state: true,
         loading: false

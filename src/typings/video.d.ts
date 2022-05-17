@@ -48,6 +48,7 @@ export type VideoFromType = {
 }
 
 export type SiteUrlsType = {
+  name?: string
   url: string
   active: boolean
   state: boolean
