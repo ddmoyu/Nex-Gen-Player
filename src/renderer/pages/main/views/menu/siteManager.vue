@@ -288,8 +288,8 @@ async function handleSiteUrlsCheck (item: SiteUrlsType) {
     item.state = false
     item.active = false
   }
-  await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
   item.loading = false
+  await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
 }
 async function handleSiteUrlsDelete (item: SiteUrlsType) {
   if (checkAll.value) return false
@@ -510,8 +510,8 @@ async function handleCheck (item: Site) {
     item.state = false
     item.isActive = false
   }
-  await db.update('sites', item.id, item)
   item.loading = false
+  await db.update('sites', item.id, item)
   getSites()
 }
 async function handleDelete (item: Site) {
@@ -523,8 +523,10 @@ async function handleDelete (item: Site) {
 async function getSites () {
   const res = await db.all('sites')
   const list = sortBy(res, 'id')
-  list.forEach(item => { item.loading = false })
-  siteList.value = list
+  siteList.value = []
+  setTimeout(() => {
+    siteList.value = list
+  }, 10)
 }
 async function handleExport () {
   if (checkAll.value) return false
@@ -597,17 +599,30 @@ async function handleCheckAll () {
       item.loading = true
       const flag = await checkApi(item.url)
       item.state = flag
+      item.active = flag
       item.loading = false
       await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
-    }))
+    })).finally(() => {
+      siteUrls.value.map(async site => {
+        site.loading = false
+        await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
+      })
+    })
   } else {
     await Promise.all(siteList.value.map(async site => {
       site.loading = true
       const flag = await checkApi(site.api)
       site.state = flag
-      await db.update('sites', site.id, site)
+      site.isActive = flag
       site.loading = false
-    }))
+      await db.update('sites', site.id, site)
+    })).finally(() => {
+      siteList.value.map(async site => {
+        site.loading = false
+        await db.update('sites', site.id, site)
+      })
+    })
+    await getSites()
   }
   checkAll.value = false
   message.info('检测完毕')
