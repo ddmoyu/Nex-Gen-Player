@@ -8,11 +8,14 @@
       </div>
       <div class="right">
         <n-input-group>
-          <n-button :tertiary="!searchAll" type="primary" @click="searchAll = !searchAll">
-            <n-icon size="22">
-              <Compass />
-            </n-icon>
-          </n-button>
+          <n-popover trigger="hover" placement="bottom-end">
+            <template #trigger>
+              <n-button :tertiary="!searchAll" type="primary" @click="searchAll = !searchAll">
+                <n-icon size="22"><Compass /></n-icon>
+              </n-button>
+            </template>
+            <span>Search all sites</span>
+          </n-popover>
           <n-select
             v-model:value="searchTxt"
             class="searchInput"
