@@ -319,9 +319,8 @@ export async function getOnlineJSON (url: string) {
 }
 
 export async function getSearchSuggest (wd: string) {
-  const s5 = await suggest555dy(wd)
   const sd = await suggestDouban(wd)
-  const list = [...s5, ...sd]
+  const list = [...sd]
   list.unshift({ label: wd, value: wd })
   const data = uniqBy(list, 'value')
   return data

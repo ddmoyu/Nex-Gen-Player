@@ -191,12 +191,23 @@ async function handleSearch () {
   loading.value = true
   pages.value = 1
   list.value = []
-  const res = await search(site.value.api, searchTxt.value)
-  if (res) {
-    list.value = res
-    emptyVideoList.value = ''
+  if (searchAll.value) {
+    sites.value.forEach(async site => {
+      const res = await search(site.api, searchTxt.value)
+      if (searchTxt.value === '') return false
+      if (res) {
+        list.value.push(...res)
+        emptyVideoList.value = ''
+      }
+    })
   } else {
-    emptyVideoList.value = 'No content found !'
+    const res = await search(site.value.api, searchTxt.value)
+    if (res) {
+      list.value = res
+      emptyVideoList.value = ''
+    } else {
+      emptyVideoList.value = 'No content found !'
+    }
   }
   loading.value = false
 }
