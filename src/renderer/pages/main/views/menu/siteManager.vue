@@ -193,7 +193,7 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
       return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
         row.url !== 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json'
           ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsEdit(row) }, { default: () => 'Edit' })
-          : h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleUpdateSiteUrls() }, { default: () => 'Update' }),
+          : h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleUpdateSingleSiteUrls(row) }, { default: () => 'Update' }),
         h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsCheck(row) }, { default: () => 'Check' }),
         row.url !== 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json'
           ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsDelete(row) }, { default: () => 'Delete' })
@@ -202,6 +202,18 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     }
   }
 ]
+async function handleUpdateSingleSiteUrls (item: SiteUrlsType) {
+  try {
+    const res = await getOnlineJSON(item.url)
+    if (res) {
+      const json = JSON.parse(res)
+      await mergeSites(json)
+    }
+  } catch (_) {
+    return message.warning('更新失败')
+  }
+}
+
 async function handleUpdateSiteUrls () {
   try {
     await Promise.all(siteUrls.value.map(async item => {
