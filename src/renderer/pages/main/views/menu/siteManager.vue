@@ -204,11 +204,8 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
 ]
 async function handleUpdateSingleSiteUrls (item: SiteUrlsType) {
   try {
-    const res = await getOnlineJSON(item.url)
-    if (res) {
-      const json = JSON.parse(res)
-      await mergeSites(json)
-    }
+    const json = await getOnlineJSON(item.url)
+    await mergeSites(json)
   } catch (_) {
     return message.warning('更新失败')
   }
@@ -219,9 +216,11 @@ async function handleUpdateSiteUrls () {
     await Promise.all(siteUrls.value.map(async item => {
       if (item.active) {
         const res = await getOnlineJSON(item.url)
-        if (res) {
+        if (res && typeof res === 'string') {
           const json = JSON.parse(res)
           await mergeSites(json)
+        } else if (res && typeof res === 'object') {
+          await mergeSites(res)
         }
       }
     }))

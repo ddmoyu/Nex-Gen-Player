@@ -282,7 +282,7 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
   }
   if (urlType === 'jiexi') {
     const res = await getRealUrl(url, item.jiexi)
-    if (!res) {
+    if (res) {
       url = res
     } else {
       type.value = 'iframe'

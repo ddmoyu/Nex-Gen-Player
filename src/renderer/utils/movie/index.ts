@@ -326,17 +326,6 @@ export async function getSearchSuggest (wd: string) {
   return data
 }
 
-async function suggest555dy (wd: string) {
-  const res = await api(`https://www.555dy3.com/index.php/ajax/suggest?mid=1&wd=${encodeURI(wd)}`)
-  if (!res || !res.list.length) return []
-  const arr = []
-  for (const i of res.list) {
-    const item = { label: i.name, value: i.name }
-    arr.push(item)
-  }
-  return arr
-}
-
 async function suggestDouban (wd: string) {
   const res = await api(`https://movie.douban.com/j/subject_suggest?q=${encodeURI(wd)}`)
   if (!res || !res.length) return []
