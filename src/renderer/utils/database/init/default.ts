@@ -20,9 +20,9 @@ export const initSettings = [
     downloader: '',
     exclude: {
       classToggle: false,
-      class: ['伦理', '福利'],
+      class: '伦理,福利',
       videoToggle: false,
-      video: ['激情']
+      video: '激情'
     },
     proxy: {
       toggle: false,

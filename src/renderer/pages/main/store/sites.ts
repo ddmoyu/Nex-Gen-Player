@@ -1,7 +1,9 @@
 import { db } from '@/renderer/utils/database/controller/DBTools'
+import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 import { Site } from '@/renderer/utils/database/models/Site'
 import { getClass } from '@/renderer/utils/movie'
 import { ClassType } from '@/typings/video'
+import { differenceBy } from 'lodash'
 import { defineStore } from 'pinia'
 
 export const useSites = defineStore('app-sites', {
@@ -10,7 +12,6 @@ export const useSites = defineStore('app-sites', {
     classCache: new Map() as Map<string, ClassType>
   }),
   getters: {
-    // :{label:string, value:number}[]
     getSiteOptions: ({ sites }) => {
       return sites.map(item => ({
         label: item.name,
@@ -26,24 +27,40 @@ export const useSites = defineStore('app-sites', {
     },
     async assignClassList (site:Site) {
       if (!site.key) {
-        // error handling
         return []
       }
       const cache = this.classCache.get(site.key)
+      const exclude = await settingsDB.getSetting('exclude')
       if (cache) {
-        // TODO:后续决定是否需要再次发送请求刷新缓存
-        return cache.class.map(item => ({
-          label: item._t, value: item.id
-        }))
+        if (exclude.classToggle) {
+          try {
+            const els = exclude.class.split(',').map((item: string, idx: number) => ({ _t: item, id: idx }))
+            const arr = differenceBy(cache.class, els, '_t')
+            return arr.map(item => ({ label: item._t, value: item.id }))
+          } catch (_) {
+            const res = await getClass(site.api)
+            if (res) {
+              this.classCache.set(site.key, res)
+              return res.class.map(item => ({ label: item._t, value: item.id }))
+            } else {
+              return []
+            }
+          }
+        } else {
+          return cache.class.map(item => ({ label: item._t, value: item.id }))
+        }
       } else {
         const res = await getClass(site.api)
         if (res) {
-          this.classCache.set(site.key, res)
-          return res.class.map(item => ({
-            label: item._t, value: item.id
-          }))
+          if (exclude.classToggle) {
+            const els = exclude.class.split(',').map((item: string, idx: number) => ({ _t: item, id: idx }))
+            const arr = differenceBy(res.class, els, '_t')
+            return arr.map(item => ({ label: item._t, value: item.id }))
+          } else {
+            this.classCache.set(site.key, res)
+            return res.class.map(item => ({ label: item._t, value: item.id }))
+          }
         } else {
-          // error handling
           return []
         }
       }

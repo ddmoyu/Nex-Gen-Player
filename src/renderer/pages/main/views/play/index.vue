@@ -99,7 +99,7 @@
 </div>
 </template>
 <script lang="ts" setup>
-import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, PlaySkipForwardCircleOutline, DocumentTextOutline, Menu } from '@vicons/ionicons5'
+import { SyncCircleOutline, ListCircleOutline, Time, Heart, HeartOutline, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, DocumentTextOutline, Menu } from '@vicons/ionicons5'
 import { NIcon, useMessage } from 'naive-ui'
 import bus from '../../plugins/mitt'
 import { VideoBusPlay, VideoDetailType, HistroyDetailType } from '@/typings/video'

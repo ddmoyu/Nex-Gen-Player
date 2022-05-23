@@ -42,14 +42,14 @@
               <div>快捷键</div>
             </n-collapse-item>
             <n-collapse-item title="Exclude" name="6">
-              <div class="exclude">
+              <div class="exclude" v-if="filter">
                 <div class="left">
-                  <div class="toggle">过滤分类：<n-switch v-model:value="filter.class" :round="false" @on-update:value="changeFilterClassToggle" /></div>
-                  <div><n-input v-model:value="filter.classValue" type="textarea" /></div>
+                  <div class="toggle">过滤分类：<n-switch v-model:value="filter.classToggle" :round="false" @update:value="handleFilterChange" /></div>
+                  <div><n-input v-model:value="filter.class" type="textarea" @change="handleFilterChange" /></div>
                 </div>
-                <div class="right">
-                  <div class="toggle">过滤视频：<n-switch v-model:value="filter.video" :round="false" @on-update:value="changeFilterClassToggle" /></div>
-                  <div><n-input v-model:value="filter.videoValue" type="textarea" /></div>
+                <div class="right" v-if="filter">
+                  <div class="toggle">过滤视频：<n-switch v-model:value="filter.videoToggle" :round="false" @update:value="handleFilterChange" /></div>
+                  <div><n-input v-model:value="filter.video" type="textarea" @input="handleFilterChange"/></div>
                 </div>
               </div>
             </n-collapse-item>
@@ -79,6 +79,7 @@
 import { IpcDirective } from '@/main/ipcEnum'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
+import { cloneDeep } from 'lodash'
 import { useI18n } from 'vue-i18n'
 import bus from '../../plugins/mitt'
 
@@ -87,18 +88,14 @@ const theme = ref('light')
 const language = ref('en-US')
 const player = ref('')
 const downloader = ref('')
-const filter = reactive({
-  class: false,
-  classValue: '',
-  video: false,
-  videoValue: ''
-})
+const filter = ref()
 
 async function initSettings () {
   theme.value = await settingsDB.getSetting('theme')
   language.value = await settingsDB.getSetting('language')
   player.value = await settingsDB.getSetting('player')
   downloader.value = await settingsDB.getSetting('downloader')
+  filter.value = await settingsDB.getSetting('exclude')
 }
 
 function changeTheme () {
@@ -131,8 +128,10 @@ function handleResetConfirm () {
   })
 }
 
-function changeFilterClassToggle () {
-  console.log('class filter toggle')
+function handleFilterChange () {
+  const exclude = cloneDeep(filter.value)
+  settingsDB.updateSetting({ exclude })
+  bus.emit('bus.class.change')
 }
 
 onMounted(() => {

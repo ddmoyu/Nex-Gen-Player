@@ -130,6 +130,7 @@ function resetValue () {
 }
 
 async function getClassList () {
+  list.value = []
   const res = await assignClassList(site.value)
   scrollbar.value.scrollTo({ top: 0 })
   classOptions.value = res
@@ -247,6 +248,7 @@ async function handleFavorite (item: VideoDetailType) {
 onMounted(() => {
   getSites()
   bus.on('bus.sites.change', getSites)
+  bus.on('bus.class.change', getClassList)
 })
 </script>
 <style lang="scss" scoped>
