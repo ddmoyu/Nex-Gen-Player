@@ -9,7 +9,7 @@
     <n-space>
       <n-popover trigger="hover" placement="top-start">
         <template #trigger>
-          <n-button quaternary type="primary" size="small">
+          <n-button quaternary type="primary" size="small" @click="handleSwitchSites">
             <n-icon size="22">
               <SyncCircleOutline />
             </n-icon>
@@ -59,6 +59,25 @@
       </n-dropdown>
     </n-space>
   </div>
+  <n-drawer v-model:show="siteListShow" :width="300" :height="'100%'" :placement="'right'" :trap-focus="false" :block-scroll="false" to=".body" >
+    <n-drawer-content title="Switch Site">
+      <n-scrollbar class="playlist">
+        <div class="item" v-for="(i, j) in siteList" :key="j">
+          <n-popover trigger="hover" placement="bottom-end">
+            <template #trigger>
+              <n-button text type="primary" @click="handlePlaySitelistPlay(i)">{{i.name}}</n-button>
+            </template>
+            <template #header>
+              <n-text strong depth="1">
+                {{i.name}}
+              </n-text>
+            </template>
+            {{i.class}} - {{i.area}}
+          </n-popover>
+        </div>
+      </n-scrollbar>
+    </n-drawer-content>
+  </n-drawer>
   <n-drawer v-model:show="playListShow" :width="200" :height="'100%'" :placement="'right'" :trap-focus="false" :block-scroll="false" to=".body" >
     <n-drawer-content title="Playlist">
       <n-scrollbar class="playlist">
@@ -93,7 +112,7 @@ import { db } from '@/renderer/utils/database/controller/DBTools'
 import { History } from '@/renderer/utils/database/models/History'
 import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { cloneDeep } from 'lodash'
-import { getRealUrl } from '@/renderer/utils/movie'
+import { getRealUrl, search } from '@/renderer/utils/movie'
 import { IpcDirective } from '@/main/ipcEnum'
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 
@@ -109,6 +128,8 @@ const index = ref(0)
 const from = ref('zy')
 const type = ref('player') // player || iframe
 const iframeSrc = ref('')
+const siteList = ref([])
+const siteListShow = ref(false)
 const playList = ref([])
 const playListShow = ref(false)
 const historyList = ref([])
@@ -339,6 +360,25 @@ async function handlePlaylistPlay (idx: number) {
   await playFromZY(video, idx, 0)
 }
 
+async function handleSwitchSites () {
+  const sites = await db.all('sites')
+  const list = sites.filter(i => i.isActive)
+  siteList.value = []
+  list.forEach(async site => {
+    const res = await search(site.api, name.value)
+    if (res) {
+      siteList.value.push(...res)
+    }
+  })
+  siteListShow.value = true
+}
+async function handlePlaySitelistPlay (v: VideoDetailType) {
+  const data = { video: v, index: 0, type: 'zy' }
+  const { setVideo } = videoStore
+  const time = video.currentTime
+  setVideo(data)
+  return await playFromZY(v, 0, time)
+}
 async function handleHistory () {
   const list = await db.all('history')
   if (list && list.length) {

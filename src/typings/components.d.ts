@@ -45,6 +45,7 @@ declare module 'vue' {
     NSpace: typeof import('naive-ui')['NSpace']
     NSpin: typeof import('naive-ui')['NSpin']
     NSwitch: typeof import('naive-ui')['NSwitch']
+    NText: typeof import('naive-ui')['NText']
     Register: typeof import('./../renderer/components/Register.vue')['default']
     Share: typeof import('./../renderer/components/Share.vue')['default']
   }
