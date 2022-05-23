@@ -21,15 +21,13 @@ export function openLink (url: string) {
   shell.openExternal(url)
 }
 
-export function copy (type: string, data: string | HTMLCanvasElement) {
+export function copy (type: string, data: string) {
   if (type === 'text') {
     const txt = data as string
     clipboard.writeText(txt)
   }
   if (type === 'image') {
-    const canvas = data as HTMLCanvasElement
-    const png = canvas.toDataURL('image/png')
-    const img = nativeImage.createFromDataURL(png)
+    const img = nativeImage.createFromDataURL(data)
     clipboard.writeImage(img)
   }
 }

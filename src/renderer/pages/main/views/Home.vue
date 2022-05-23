@@ -19,6 +19,7 @@
           <detail :detail="videoDetail" />
         </n-drawer-content>
       </n-drawer>
+      <Share :detail="videoDetail" v-if="shareShow" v-on-click-outside="handleCloseShare" />
     </n-layout>
     <n-layout-footer>
       <Footer />
@@ -32,22 +33,24 @@ import { IpcDirective } from '@/main/ipcEnum'
 import { useI18n } from 'vue-i18n'
 import bus from '../plugins/mitt'
 import { VideoDetailType } from '@/typings/video'
+import { vOnClickOutside } from '@vueuse/components'
 
 window.$message = useMessage()
 
 const { locale } = useI18n()
 const detailShow = ref(false)
+const shareShow = ref(false)
 const videoDetail = ref<VideoDetailType>()
 
 onMounted(async () => {
   getSystemLanguage()
   bus.on('bus.detail.show', handleDetailShow)
+  bus.on('bus.share.show', handleShareShow)
 })
 
 async function getSystemLanguage () {
   const lang = await settingsDB.getSetting('language')
   if (!lang) {
-    // debugger
     window.ipc.invoke(IpcDirective.SYS_LANGUAGE)
     window.ipc.once(IpcDirective.SYS_LANGUAGE_REPLAY, (e, args) => {
       if (args === 'zh-CN') {
@@ -58,7 +61,6 @@ async function getSystemLanguage () {
       settingsDB.updateSetting({ language: locale.value })
     })
   } else {
-    // TODO: lang type
     locale.value = lang
   }
 }
@@ -66,6 +68,15 @@ async function getSystemLanguage () {
 function handleDetailShow (detail?: VideoDetailType) {
   if (detail) videoDetail.value = detail
   detailShow.value = !detailShow.value
+}
+
+function handleShareShow (detail: VideoDetailType) {
+  videoDetail.value = detail
+  shareShow.value = true
+}
+
+function handleCloseShare () {
+  shareShow.value = false
 }
 
 </script>

@@ -435,6 +435,14 @@ async function handleMenuSelect (key: string | number) {
     }
     return false
   }
+  if (key === 'share') {
+    if (videoStore.video.type === 'zy') {
+      bus.emit('bus.share.show', videoStore.video.video)
+    } else {
+      message.warning('非资源视频，无法分享')
+    }
+    return false
+  }
 }
 
 onMounted(() => {

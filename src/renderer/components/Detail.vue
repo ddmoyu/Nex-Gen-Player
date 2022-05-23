@@ -146,6 +146,9 @@ function handleMenuSelect (key: string | number) {
   if (key === 'otherPlayer') {
     return handleOtherPlay()
   }
+  if (key === 'share') {
+    return bus.emit('bus.share.show', video.value)
+  }
 }
 
 async function handleOtherPlay () {
