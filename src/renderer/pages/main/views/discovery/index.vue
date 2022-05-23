@@ -208,7 +208,7 @@ function handleClear () {
 }
 
 function goSettingsView () {
-  router.push({ name: 'settings' })
+  router.push({ name: 'siteManager' })
 }
 
 function handleDetail (item: VideoDetailType) {

@@ -5,13 +5,13 @@
         <div class="logo">
           <img src="../../../../assets/logo.png" alt="">
         </div>
-        <div class="name">tv player <span>v0.1.0-alpha.1</span></div>
+        <div class="name">Nex-Gen Player 次时代播放器 <span>v0.1.0-beta.1</span></div>
         <div class="link">
           <n-button text @click="linkOpen('https://github.com/ddmoyu/tv')">官网</n-button>
           <n-button text @click="linkOpen('https://github.com/ddmoyu/tv')">Github</n-button>
           <n-button text @click="linkOpen('https://github.com/ddmoyu/tv/releases')">更新日志</n-button>
           <n-button text @click="linkOpen('https://github.com/ddmoyu/tv/discussions')">常见问题</n-button>
-          <n-button text @click="linkOpen('https://txc.qq.com/')">问题反馈</n-button>
+          <n-button text @click="linkOpen('https://support.qq.com/product/408964')">问题反馈</n-button>
         </div>
         <div class="donate">
           捐助
@@ -65,6 +65,8 @@ function linkOpen (url: string) {
     }
     .disclaimers{
       margin-top: 20px;
+      color: red;
+      opacity: 0.8;
     }
   }
 }
