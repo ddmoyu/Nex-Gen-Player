@@ -117,13 +117,8 @@ async function validateEmail () {
 
 function handleValidateClick () {
   formRef.value.validate((err) => {
-    if (!err) {
-
-    } else {
-      console.log(err)
-    }
+    if (!err) {} else {}
   })
-  //
 }
 </script>
 

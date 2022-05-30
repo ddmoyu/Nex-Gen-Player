@@ -14,6 +14,38 @@ module.exports = {
       mainProcessWatch: ['src/main/', 'src/preload/'],
       preload: {
         preload: 'src/preload/index.ts'
+      },
+      builderOptions: {
+        oneClick: false,
+        allowToChangeInstallationDirectory: true
+      },
+      appId: 'com.nexgen.player',
+      copyright: 'ddmoyu',
+      productName: 'Nex-Gen Player',
+      publish: [
+        {
+          provide: 'github',
+          owner: 'ddmoyu',
+          repo: 'Nex-Gen-Player'
+        }
+      ],
+      mac: {
+        icon: 'build/icon/icon.icns',
+        category: 'public.app-category.developer-tools',
+        target: 'default',
+        extendInfo: {
+          LSUIElement: 1
+        }
+      },
+      win: {
+        icon: 'build/icons/icon.ico',
+        target: 'nsis'
+      },
+      linux: {
+        icon: 'build/icons/'
+      },
+      snap: {
+        publish: ['github']
       }
     }
   },
@@ -31,6 +63,10 @@ module.exports = {
         dts: 'src/typings/components.d.ts',
         resolvers: [NaiveUiResolver()]
       })
-    ]
+    ],
+    performance: {
+      maxEntrypointSize: 5000000,
+      maxAssetSize: 5000000
+    }
   }
 }

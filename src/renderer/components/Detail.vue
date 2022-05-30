@@ -48,11 +48,12 @@
               </n-button>
             </div>
             <div class="right">
-              <n-dropdown :options="onlineOptions" placement="top-end" @select="handleOnlineSelect">
+              <!-- TODO: online -->
+              <!-- <n-dropdown :options="onlineOptions" placement="top-end" @select="handleOnlineSelect">
                 <n-button quaternary type="primary" size="small">
                   <n-icon size="22"><Globe /></n-icon>
                 </n-button>
-              </n-dropdown>
+              </n-dropdown> -->
               <n-dropdown :options="menuOptions" placement="top-end" @select="handleMenuSelect">
                 <n-button quaternary type="primary" size="small">
                   <n-icon size="22"><Menu /></n-icon>
@@ -78,7 +79,7 @@ import { VideoDetailType } from '@/typings/video'
 import bus from '../pages/main/plugins/mitt'
 import { NIcon, useMessage } from 'naive-ui'
 import { getRating } from '../utils/movie'
-import { Close, Globe, Heart, HeartOutline, Play, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, Menu } from '@vicons/ionicons5'
+import { Close, Heart, HeartOutline, Play, ArrowDownCircleOutline, ShareSocialOutline, PlayCircleOutline, Menu } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
 import { db } from '../utils/database/controller/DBTools'
 import { Favorite } from '../utils/database/models/Favorite'
@@ -101,20 +102,21 @@ const renderIcon = (icon: any) => {
   }
 }
 
-const onlineOptions = ref([
-  {
-    label: 'Download',
-    key: 'download'
-  },
-  {
-    label: 'Other Player',
-    key: 'otherPlayer'
-  },
-  {
-    label: 'Share',
-    key: 'share'
-  }
-])
+// TODO
+// const onlineOptions = ref([
+//   {
+//     label: 'Download',
+//     key: 'download'
+//   },
+//   {
+//     label: 'Other Player',
+//     key: 'otherPlayer'
+//   },
+//   {
+//     label: 'Share',
+//     key: 'share'
+//   }
+// ])
 
 const menuOptions = ref([
   {
@@ -138,9 +140,8 @@ function handleClose () {
   bus.emit('bus.detail.show')
 }
 
-function handleOnlineSelect (key: string | number) {
-  console.log('=== key ===', key)
-}
+// TODO: online
+// function handleOnlineSelect (key: string | number) {}
 
 function handleMenuSelect (key: string | number) {
   if (key === 'otherPlayer') {

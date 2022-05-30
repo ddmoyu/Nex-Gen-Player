@@ -310,7 +310,6 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
   }
 }
 async function playFromIPTV (item: HistroyDetailType) {
-  console.log('playFromIPTV item', item)
   const url = item.url
   if (!url) return false
   type.value = 'player'
@@ -327,7 +326,6 @@ async function playFromIPTV (item: HistroyDetailType) {
   playError()
 }
 async function playFromURL (item: HistroyDetailType) {
-  console.log('playFromURL video', item)
   const url = item.url
   if (!url) return false
   type.value = 'player'
@@ -444,6 +442,9 @@ async function handleMenuSelect (key: string | number) {
     return false
   }
 }
+
+// TODO iframe
+// onActivated(() => {})
 
 onMounted(() => {
   init()

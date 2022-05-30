@@ -34,7 +34,6 @@ const link = ref('')
 onBeforeMount(() => {
   video.value = props.detail
   link.value = 'http://hunlongyu.gitee.io/zy-player-web?url=' + video.value.urls[0]
-  console.log('link', link.value)
 })
 
 onMounted(() => {

@@ -1,5 +1,5 @@
 import { $http } from './request'
-import { LoginType, RegisterType } from './types/user.type'
+// import { LoginType, RegisterType } from './types/user.type'
 
 enum UserApi {
   LOGIN = 'login',
@@ -10,9 +10,9 @@ export function getVCodeApi (email:string) {
   return $http(UserApi.GET_V_CODE, { params: { email } })
 }
 
-export function registerAPi (params:RegisterType) {
-//
-}
-export function loginApi (params:LoginType) {
-//
-}
+// export function registerAPi (params:RegisterType) {
+// //
+// }
+// export function loginApi (params:LoginType) {
+// //
+// }

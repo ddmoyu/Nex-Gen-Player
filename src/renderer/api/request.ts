@@ -4,9 +4,7 @@ import { BaseType } from './types/base.type'
 const request = $fetch.create({
   retry: 1,
   baseURL: process.env.VUE_APP_BASEURL,
-  async onRequestError (err) {
-    console.log('onRequestError', err)
-  },
+  // async onRequestError (err) {},
   onResponseError (res) {
     const { message } = res.response._data
     window.$message.error(message)
@@ -17,7 +15,6 @@ const request = $fetch.create({
 export function $http<T> (url:string, options:FetchOptions) {
   return new Promise<BaseType<T>>((resolve) => {
     request(url, options).then(res => {
-      console.log('then', res)
       resolve(res)
     }).catch(err => {
       resolve(err.response._data)

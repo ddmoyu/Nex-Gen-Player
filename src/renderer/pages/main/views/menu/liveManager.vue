@@ -261,7 +261,7 @@ async function handleCheckAll () {
     tv.loading = true
     const { flag } = await checkM3uUrl(tv.api)
     tv.state = flag
-    await db.update('sites', tv.id, tv)
+    await db.update('iptv', tv.id, tv)
     tv.loading = false
   }))
   checkAll.value = false

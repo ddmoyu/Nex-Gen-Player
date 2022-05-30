@@ -108,7 +108,7 @@
         <n-avatar
           class="avatar"
           round
-          size="large"
+          :size="30"
           :src="require('../assets/img/defaultavatar.png')"
           @click="showRegister = true"
         />
