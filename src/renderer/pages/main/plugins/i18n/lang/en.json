@@ -51,5 +51,14 @@
     "canNotDownload": "can not download",
     "setPlayerPath": "Please set the player software path first",
     "canNotShare": "Unable to share"
+  },
+  "History": {
+    "clear": "Clear",
+    "name": "Name",
+    "type": "Type",
+    "time": "Time",
+    "action": "Action",
+    "play": "Play",
+    "delete": "Delete"
   }
 }

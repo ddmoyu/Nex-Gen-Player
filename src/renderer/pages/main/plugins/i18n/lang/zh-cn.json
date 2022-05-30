@@ -51,5 +51,14 @@
     "canNotDownload": "无法下载",
     "setPlayerPath": "请先设置播放器软件路径",
     "canNotShare": "非资源视频，无法分享"
+  },
+  "History": {
+    "clear": "清空",
+    "name": "名字",
+    "type": "类型",
+    "time": "时间",
+    "action": "操作",
+    "play": "播放",
+    "delete": "删除"
   }
 }

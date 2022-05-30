@@ -1,7 +1,7 @@
 <template>
   <div class="history">
     <div class="header">
-      <n-button tertiary type="primary" @click="handleClear">Clear</n-button>
+      <n-button tertiary type="primary" @click="handleClear">{{$t('History.clear')}}</n-button>
     </div>
     <div class="list">
       <n-data-table
@@ -24,26 +24,28 @@ import { useRouter } from 'vue-router'
 import { useStore } from '../../store/video'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { useI18n } from 'vue-i18n'
 
 dayjs.extend(duration)
 
+const { t } = useI18n()
 const router = useRouter()
 const historyList = ref([])
 const columns: TableBaseColumn<History>[] = [
   {
-    title: 'Name',
+    title: t('History.name'),
     key: 'detail.name',
     ellipsis: {
       tooltip: true
     }
   },
   {
-    title: 'Type',
+    title: t('History.type'),
     key: 'type',
     width: 100
   },
   {
-    title: 'Time',
+    title: t('History.time'),
     key: 'time',
     width: 120,
     render (row: History) {
@@ -53,13 +55,13 @@ const columns: TableBaseColumn<History>[] = [
     }
   },
   {
-    title: 'Operator',
+    title: t('History.action'),
     key: 'key',
     width: 160,
     render (row: History) {
       return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handlePlay(row) }, { default: () => 'Play' }),
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleDelete(row) }, { default: () => 'Delete' })
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handlePlay(row) }, { default: () => t('History.play') }),
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleDelete(row) }, { default: () => t('History.delete') })
       ])
     }
   }
