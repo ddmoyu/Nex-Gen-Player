@@ -104,7 +104,7 @@
       </n-popover>
     </div>
     <div class="bottom">
-      <div>
+      <!-- <div>
         <n-avatar
           class="avatar"
           round
@@ -115,7 +115,7 @@
         <n-modal v-model:show="showRegister">
           <Register></Register>
         </n-modal>
-      </div>
+      </div> -->
       <n-popover trigger="hover" placement="right">
         <template #trigger>
           <n-button quaternary circle type="primary" size="large">
