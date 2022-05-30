@@ -2,11 +2,12 @@
   <div class="favorites">
     <div class="header">
       <div class="left">
-        <n-button tertiary type="primary" @click="getFavorites">Import</n-button>
-        <n-button tertiary type="primary" @click="getFavorites">Export</n-button>
+        <!-- <n-button tertiary type="primary" @click="getFavorites">Import</n-button>
+        <n-button tertiary type="primary" @click="getFavorites">Export</n-button> -->
       </div>
       <div class="right">
-        <n-button tertiary type="primary" @click="getFavorites">Clear</n-button>
+        <!-- TODO -->
+        <n-button tertiary type="primary" @click="clearFavorites">Clear</n-button>
       </div>
     </div>
     <div class="body">
@@ -60,9 +61,11 @@ async function getFavorites () {
   isLoading.value = true
   const favList = await db.all('favorites')
   if (!favList.length) {
+    list.value = []
     emptyVideoList.value = 'No favorites'
   } else {
     list.value = favList.reverse()
+    emptyVideoList.value = ''
   }
   isOver.value = true
   isLoading.value = false
@@ -92,6 +95,13 @@ async function handleDelete (item: VideoDetailType) {
   const res = await db.find<Favorite>('favorites', { key })
   await db.delete('favorites', res.id)
   message.success('删除成功')
+  await getFavorites()
+}
+
+async function clearFavorites () {
+  await db.clear('favorites')
+  message.success('清空成功')
+  list.value = []
   await getFavorites()
 }
 
