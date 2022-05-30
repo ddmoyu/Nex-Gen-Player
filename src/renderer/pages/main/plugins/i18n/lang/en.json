@@ -7,5 +7,16 @@
   "history": "History",
   "download": "Download",
   "notifications": "Notifications",
-  "menu": "Menu"
+  "menu": "Menu",
+  "Discovery": {
+    "searchAllSites": "Search all sites",
+    "importSites": "Import Sites",
+    "siteIsEmpty": "Site is empty",
+    "classNoVideo": "This class no video, Please change class and try again !",
+    "noContent": "No content found !"
+  },
+  "Favorites": {
+    "hasFavorites": "Collected, please do not repeat the collection",
+    "success": "Collection succeeded"
+  }
 }

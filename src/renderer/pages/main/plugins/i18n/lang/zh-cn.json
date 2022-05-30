@@ -7,5 +7,16 @@
   "history": "历史",
   "download": "下载",
   "notifications": "公告",
-  "menu": "菜单"
+  "menu": "菜单",
+  "Discovery": {
+    "searchAllSites": "搜素所有视频源",
+    "importSites": "导入视频源",
+    "siteIsEmpty": "视频源为空",
+    "classNoVideo": "这个分类下没有视频，请切换分类重试！",
+    "noContent": "没有内容"
+  },
+  "Favorites": {
+    "hasFavorites": "已收藏，请勿重复收藏",
+    "success": "收藏成功"
+  }
 }

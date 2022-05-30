@@ -2,8 +2,7 @@
   <div class="discovery">
     <div class="header">
       <div class="left">
-        <n-select class="select" v-model:value="siteName" :options="sitesStore.getSiteOptions"
-          @update:value="changeSite" />
+        <n-select class="select" v-model:value="siteName" :options="sitesStore.getSiteOptions" @update:value="changeSite" />
         <n-select class="select" v-model:value="classVal" :options="classOptions" @update:value="changeClass" />
       </div>
       <div class="right">
@@ -14,7 +13,7 @@
                 <n-icon size="22"><Compass /></n-icon>
               </n-button>
             </template>
-            <span>Search all sites</span>
+            <span>{{ $t("Discovery.searchAllSites") }}</span>
           </n-popover>
           <n-select
             v-model:value="searchTxt"
@@ -42,7 +41,7 @@
       <n-scrollbar id="v_lazy_root" class="custom-scrollbar" ref="scrollbar">
         <n-empty v-if="emptyDesc" :description="emptyDesc">
           <template #extra>
-            <n-button size="small" @click="goSettingsView">Import sites</n-button>
+            <n-button size="small" @click="goSettingsView">{{ $t("Discovery.importSites") }}</n-button>
           </template>
         </n-empty>
         <n-empty v-if="emptyVideoList" :description="emptyVideoList"></n-empty>
@@ -84,7 +83,9 @@ import { Site } from '@/renderer/utils/database/models/Site'
 import { ScrollbarInst, useMessage } from 'naive-ui'
 import { useSites } from '../../store/sites'
 import { useStore } from '../../store/video'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const site = ref<Site>()
 const sites = ref([])
 const siteName = ref()
@@ -112,7 +113,7 @@ async function getSites () {
   resetValue()
   const dbSites = await assignSites()
   if (!dbSites.length) {
-    emptyDesc.value = 'site is empty'
+    emptyDesc.value = t('Discovery.siteIsEmpty')
     return false
   } else {
     emptyDesc.value = ''
@@ -166,7 +167,7 @@ async function getMoreVideosList () {
     pages.value++
     emptyVideoList.value = ''
   } else {
-    emptyVideoList.value = list.value.length === 0 ? 'This class no video, Please change class and try again !' : ''
+    emptyVideoList.value = list.value.length === 0 ? t('Discovery.classNoVideo') : ''
   }
   loading.value = false
 }
@@ -210,7 +211,7 @@ async function handleSearch () {
       list.value = res
       emptyVideoList.value = ''
     } else {
-      emptyVideoList.value = 'No content found !'
+      emptyVideoList.value = t('Discovery.noContent')
     }
   }
   loading.value = false
@@ -241,8 +242,8 @@ function handlePlay (item: VideoDetailType) {
 async function handleFavorite (item: VideoDetailType) {
   const key = item.name + item.id
   const flag = await db.put<Favorite>('favorites', { detail: item, hasUpdate: false, key }, { key })
-  if (!flag) return message.warning('已收藏，请勿重复收藏')
-  message.success('收藏成功')
+  if (!flag) return message.warning(t('Favorites.hasFavorites'))
+  message.success(t('Favorites.success'))
 }
 
 onMounted(() => {
