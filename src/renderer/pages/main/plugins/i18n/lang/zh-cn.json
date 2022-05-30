@@ -35,5 +35,21 @@
     "group": "分组",
     "action": "操作",
     "play": "播放"
+  },
+  "Play": {
+    "switchSite": "切换源",
+    "history": "播放记录",
+    "favorites": "收藏",
+    "playlist": "播放列表",
+    "detail": "视频详情",
+    "download": "复制播放链接",
+    "otherPlayer": "其他播放器",
+    "share": "分享视频",
+    "noVideoUrl": "未发现视频链接",
+    "playError": "播放失败，请重试",
+    "noDetail": "非资源视频，无详情介绍",
+    "canNotDownload": "无法下载",
+    "setPlayerPath": "请先设置播放器软件路径",
+    "canNotShare": "非资源视频，无法分享"
   }
 }

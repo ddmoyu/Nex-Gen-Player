@@ -15,7 +15,7 @@
             </n-icon>
           </n-button>
         </template>
-        <span>Switch Site</span>
+        <span>{{$t('Play.switchSite')}}</span>
       </n-popover>
       <n-popover trigger="hover" placement="top-start">
         <template #trigger>
@@ -25,7 +25,7 @@
             </n-icon>
           </n-button>
         </template>
-        <span>History</span>
+        <span>{{$t('Play.history')}}</span>
       </n-popover>
       <n-popover trigger="hover" placement="top-start">
         <template #trigger>
@@ -36,7 +36,7 @@
             </n-icon>
           </n-button>
         </template>
-        <span>Favorites</span>
+        <span>{{$t('Play.favorites')}}</span>
       </n-popover>
       <n-popover trigger="hover" placement="top-start">
         <template #trigger>
@@ -46,7 +46,7 @@
             </n-icon>
           </n-button>
         </template>
-        <span>Playlist</span>
+        <span>{{$t('Play.playlist')}}</span>
       </n-popover>
     </n-space>
     <n-space>
@@ -79,7 +79,7 @@
     </n-drawer-content>
   </n-drawer>
   <n-drawer v-model:show="playListShow" :width="200" :height="'100%'" :placement="'right'" :trap-focus="false" :block-scroll="false" to=".body" >
-    <n-drawer-content title="Playlist">
+    <n-drawer-content :title="$t('Play.playlist')">
       <n-scrollbar class="playlist">
         <div class="item" v-for="(i, j) in playList" :key="j">
           <n-button text type="primary" @click="handlePlaylistPlay(j)"> 第 {{j + 1}} 集 </n-button>
@@ -88,7 +88,7 @@
     </n-drawer-content>
   </n-drawer>
   <n-drawer v-model:show="historyShow" :width="300" :height="'100%'" :placement="'right'" :trap-focus="false" :block-scroll="false" to=".body" >
-    <n-drawer-content title="Histroy">
+    <n-drawer-content :title="$t('Play.history')">
       <n-scrollbar class="playlist">
         <div class="item" v-for="(i, j) in historyList" :key="j">
           <n-button text type="primary" @click="handleHistoryPlay(i)">{{i.detail.name}}</n-button>
@@ -104,7 +104,6 @@ import { NIcon, useMessage } from 'naive-ui'
 import bus from '../../plugins/mitt'
 import { VideoBusPlay, VideoDetailType, HistroyDetailType } from '@/typings/video'
 import { useStore } from '../../store/video'
-// import { useRoute } from 'vue-router'
 import type { PlaylistItem } from 'iptv-playlist-parser'
 import Hls from 'hls.js'
 import { useThrottleFn } from '@vueuse/shared'
@@ -115,8 +114,9 @@ import { cloneDeep } from 'lodash'
 import { getRealUrl, search } from '@/renderer/utils/movie'
 import { IpcDirective } from '@/main/ipcEnum'
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
+import { useI18n } from 'vue-i18n'
 
-// const route = useRoute()
+const { t } = useI18n()
 const message = useMessage()
 const videoStore = useStore()
 
@@ -145,12 +145,12 @@ const renderIcon = (icon: any) => {
 
 const menuOptions = ref([
   {
-    label: 'Detail',
+    label: t('Play.detail'),
     key: 'detail',
     icon: renderIcon(DocumentTextOutline)
   },
   {
-    label: 'Download',
+    label: t('Play.download'),
     key: 'download',
     icon: renderIcon(ArrowDownCircleOutline)
   },
@@ -160,12 +160,12 @@ const menuOptions = ref([
   //   icon: renderIcon(PlaySkipForwardCircleOutline)
   // },
   {
-    label: 'Other Player',
+    label: t('Play.otherPlayer'),
     key: 'otherPlayer',
     icon: renderIcon(PlayCircleOutline)
   },
   {
-    label: 'Share',
+    label: t('Play.share'),
     key: 'share',
     icon: renderIcon(ShareSocialOutline)
   }
@@ -277,7 +277,7 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
   }
   let url = list[index]
   if (!url) {
-    message.warning('未发现视频链接')
+    message.warning(t('Play.noVideoUrl'))
     return false
   }
   if (urlType === 'jiexi') {
@@ -306,7 +306,7 @@ async function playFromZY (item: VideoDetailType, index = 0, time = 0) {
     })
     playError()
   } catch (_) {
-    message.warning('播放失败，请重试')
+    message.warning(t('Play.playError'))
   }
 }
 async function playFromIPTV (item: HistroyDetailType) {
@@ -408,7 +408,7 @@ async function handleMenuSelect (key: string | number) {
     if (videoStore.video.type === 'zy') {
       bus.emit('bus.detail.show', videoStore.video.video)
     } else {
-      message.warning('非资源视频，无详情介绍')
+      message.warning(t('Play.noDetail'))
     }
     return false
   }
@@ -418,14 +418,14 @@ async function handleMenuSelect (key: string | number) {
       const url = video.urls[index.value]
       window.ipc.invoke(IpcDirective.COPY, { type: 'text', data: url })
     } else {
-      message.warning('无法下载')
+      message.warning(t('Play.canNotDownload'))
     }
     return false
   }
   if (key === 'otherPlayer') {
     const otherPlayer = await settingsDB.getSetting('player')
     if (!otherPlayer) {
-      message.warning('请先设置播放器软件路径')
+      message.warning(t('Play.setPlayerPath'))
     } else {
       const video = videoStore.video.video
       const url = video.urls[index.value]
@@ -437,7 +437,7 @@ async function handleMenuSelect (key: string | number) {
     if (videoStore.video.type === 'zy') {
       bus.emit('bus.share.show', videoStore.video.video)
     } else {
-      message.warning('非资源视频，无法分享')
+      message.warning(t('Play.canNotShare'))
     }
     return false
   }

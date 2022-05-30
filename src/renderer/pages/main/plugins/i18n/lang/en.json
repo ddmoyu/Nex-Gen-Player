@@ -26,5 +26,30 @@
     "noFavorites": "No favorites",
     "deleteSuccess": "Delete success",
     "clearSuccess": "Clear success"
+  },
+  "Iptv": {
+    "iptvManager": "IPTV manager",
+    "name": "Name",
+    "country": "Country",
+    "language": "Language",
+    "group": "Group",
+    "action": "Action",
+    "play": "Play"
+  },
+  "Play": {
+    "switchSite": "Switch Site",
+    "history": "History",
+    "favorites": "Favorites",
+    "playlist": "PlayList",
+    "detail": "Detail",
+    "download": "download",
+    "otherPlayer": "Other Player",
+    "share": "Share",
+    "noVideoUrl": "can not play",
+    "playError": "play failed",
+    "noDetail": "no detail",
+    "canNotDownload": "can not download",
+    "setPlayerPath": "Please set the player software path first",
+    "canNotShare": "Unable to share"
   }
 }
