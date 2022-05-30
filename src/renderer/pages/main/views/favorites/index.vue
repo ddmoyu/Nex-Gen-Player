@@ -6,8 +6,7 @@
         <n-button tertiary type="primary" @click="getFavorites">Export</n-button> -->
       </div>
       <div class="right">
-        <!-- TODO -->
-        <n-button tertiary type="primary" @click="clearFavorites">Clear</n-button>
+        <n-button tertiary type="primary" @click="clearFavorites">{{$t('Favorites.clear')}}</n-button>
       </div>
     </div>
     <div class="body">
@@ -18,8 +17,8 @@
             <div class="masonry-layout">
               <div class="btns">
                 <div class="btns-wrapper">
-                  <span @click.stop="handlePlay(item.detail)">Play</span>
-                  <span @click.stop="handleDelete(item.detail)">Delete</span>
+                  <span @click.stop="handlePlay(item.detail)">{{$t('Favorites.play')}}</span>
+                  <span @click.stop="handleDelete(item.detail)">{{$t('Favorites.delete')}}</span>
                 </div>
               </div>
               <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @click="handleDetail(item.detail)">
@@ -47,7 +46,9 @@ import bus from '../../plugins/mitt'
 import { db } from '@/renderer/utils/database/controller/DBTools'
 import { Favorite } from '@/renderer/utils/database/models/Favorite'
 import { useMessage } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const list = ref<Favorite[]>([])
 const emptyVideoList = ref('')
 const isLoading = ref(false)
@@ -62,7 +63,7 @@ async function getFavorites () {
   const favList = await db.all('favorites')
   if (!favList.length) {
     list.value = []
-    emptyVideoList.value = 'No favorites'
+    emptyVideoList.value = t('Favorites.noFavorites')
   } else {
     list.value = favList.reverse()
     emptyVideoList.value = ''
@@ -94,13 +95,13 @@ async function handleDelete (item: VideoDetailType) {
   const key = item.name + item.id
   const res = await db.find<Favorite>('favorites', { key })
   await db.delete('favorites', res.id)
-  message.success('删除成功')
+  message.success(t('Favorites.deleteSuccess'))
   await getFavorites()
 }
 
 async function clearFavorites () {
   await db.clear('favorites')
-  message.success('清空成功')
+  message.success(t('Favorites.clearSuccess'))
   list.value = []
   await getFavorites()
 }

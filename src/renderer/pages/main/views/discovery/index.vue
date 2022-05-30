@@ -50,8 +50,8 @@
             <div class="masonry-layout">
               <div class="btns">
                 <div class="btns-wrapper">
-                  <span @click.stop="handlePlay(item)">Play</span>
-                  <span @click.stop="handleFavorite(item)">Favorite</span>
+                  <span @click.stop="handlePlay(item)">{{t('Discovery.play')}}</span>
+                  <span @click.stop="handleFavorite(item)">{{t('Discovery.favorite')}}</span>
                 </div>
               </div>
               <n-card class="card" embedded content-style="padding: 8px 6px 10px;" @itemClick="handleDetail(item)">

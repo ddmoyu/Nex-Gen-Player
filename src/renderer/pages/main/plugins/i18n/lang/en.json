@@ -13,10 +13,18 @@
     "importSites": "Import Sites",
     "siteIsEmpty": "Site is empty",
     "classNoVideo": "This class no video, Please change class and try again !",
-    "noContent": "No content found !"
+    "noContent": "No content found !",
+    "play": "Play",
+    "favorite": "Favorite"
   },
   "Favorites": {
     "hasFavorites": "Collected, please do not repeat the collection",
-    "success": "Collection succeeded"
+    "success": "Collection succeeded",
+    "clear": "Clear",
+    "play": "Play",
+    "delete": "Delete",
+    "noFavorites": "No favorites",
+    "deleteSuccess": "Delete success",
+    "clearSuccess": "Clear success"
   }
 }

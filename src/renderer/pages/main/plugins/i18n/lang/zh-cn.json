@@ -13,10 +13,18 @@
     "importSites": "导入视频源",
     "siteIsEmpty": "视频源为空",
     "classNoVideo": "这个分类下没有视频，请切换分类重试！",
-    "noContent": "没有内容"
+    "noContent": "没有内容",
+    "play": "播放",
+    "favorite": "收藏"
   },
   "Favorites": {
     "hasFavorites": "已收藏，请勿重复收藏",
-    "success": "收藏成功"
+    "success": "收藏成功",
+    "clear": "清空",
+    "play": "播放",
+    "delete": "删除",
+    "noFavorites": "收藏夹为空",
+    "deleteSuccess": "删除成功",
+    "clearSuccess": "清空成功"
   }
 }
