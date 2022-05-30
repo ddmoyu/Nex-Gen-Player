@@ -7,8 +7,8 @@ export const initSettings = [
       minimize: false,
       switch: false
     },
-    theme: 'light',
-    language: 'en-US',
+    theme: 'system',
+    language: 'zh-CN',
     os: '',
     shortcut: {
       toggle: false,

@@ -4,11 +4,12 @@
       <n-space vertical>
         <n-space justify="space-between">
           <n-space>
-            <n-button tertiary type="primary" @click="handleManager" v-if="!iptv">
-              <n-icon size="22">
-                <Build />
-              </n-icon>
-            </n-button>
+            <n-popover trigger="hover" placement="right">
+              <template #trigger>
+                <n-button tertiary type="primary" @click="handleManager" v-if="!iptv"><n-icon size="22"><Build /></n-icon></n-button>
+              </template>
+              <span>{{ $t("Iptv.iptvManager") }}</span>
+            </n-popover>
             <n-select v-if="iptv || iptv === 0" v-model:value="iptv" :options="iptvList" @update:value="getTvList"></n-select>
             <n-button v-if="iptv || iptv === 0" tertiary type="primary" @click="handleRefresh">
               <n-icon size="22">
@@ -47,8 +48,10 @@ import { db } from '@/renderer/utils/database/controller/DBTools'
 import bus from '../../plugins/mitt'
 import { useRouter } from 'vue-router'
 import { useStore } from '../../store/video'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const { t } = useI18n()
 
 const iptv = ref()
 const iptvList = ref([])
@@ -60,7 +63,7 @@ const value = ref('')
 
 const columns: TableBaseColumn<PlaylistItem>[] = [
   {
-    title: 'Name',
+    title: t('Iptv.name'),
     key: 'name',
     ellipsis: {
       tooltip: true
@@ -71,7 +74,7 @@ const columns: TableBaseColumn<PlaylistItem>[] = [
     }
   },
   {
-    title: 'Country',
+    title: t('Iptv.country'),
     key: 'tvg.country',
     width: 100,
     ellipsis: {
@@ -79,7 +82,7 @@ const columns: TableBaseColumn<PlaylistItem>[] = [
     }
   },
   {
-    title: 'Language',
+    title: t('Iptv.language'),
     key: 'tvg.language',
     width: 120,
     ellipsis: {
@@ -87,7 +90,7 @@ const columns: TableBaseColumn<PlaylistItem>[] = [
     }
   },
   {
-    title: 'Group',
+    title: t('Iptv.group'),
     key: 'group.title',
     width: 140,
     ellipsis: {
@@ -95,7 +98,7 @@ const columns: TableBaseColumn<PlaylistItem>[] = [
     }
   },
   {
-    title: 'Action',
+    title: t('Iptv.action'),
     key: 'actions',
     width: 100,
     render (row: PlaylistItem) {
@@ -105,7 +108,7 @@ const columns: TableBaseColumn<PlaylistItem>[] = [
           onClick: () => handlePlay(row)
         },
         {
-          default: () => 'Play'
+          default: () => t('Iptv.play')
         }
       )
     }

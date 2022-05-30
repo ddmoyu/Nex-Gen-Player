@@ -26,5 +26,14 @@
     "noFavorites": "收藏夹为空",
     "deleteSuccess": "删除成功",
     "clearSuccess": "清空成功"
+  },
+  "Iptv": {
+    "iptvManager": "直播源管理",
+    "name": "名字",
+    "country": "国家",
+    "language": "语言",
+    "group": "分组",
+    "action": "操作",
+    "play": "播放"
   }
 }
