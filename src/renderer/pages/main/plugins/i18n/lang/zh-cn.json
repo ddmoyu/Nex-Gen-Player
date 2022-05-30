@@ -60,5 +60,17 @@
     "action": "操作",
     "play": "播放",
     "delete": "删除"
+  },
+  "Settings": {
+    "settings": "设置",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "system": "系统",
+    "language": "语言",
+    "zh-CN": "中文简体",
+    "en-US": "英文",
+    "externalPlayer": "第三方播放器",
+    "externalDownloader": "第三方下载器"
   }
 }

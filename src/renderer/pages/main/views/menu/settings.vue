@@ -19,13 +19,13 @@
                 <n-radio-button :value="'en-US'" label="en-US" />
               </n-radio-group>
             </n-collapse-item>
-            <n-collapse-item title="Play" name="9">
+            <!-- <n-collapse-item title="Play" name="9">
               <div>开启关闭 最小化暂停播放</div>
             </n-collapse-item>
             <n-collapse-item title="Window" name="8">
               <div>开启关闭 记录窗口位置</div>
               <div>开启关闭 记录窗口大小</div>
-            </n-collapse-item>
+            </n-collapse-item> -->
             <n-collapse-item title="External Player" name="3">
               <n-input-group>
                 <n-input v-model:value="player" :style="{ width: '50%' }" disabled /><n-button type="primary" @click="changePath('player')">Edit</n-button>
@@ -36,11 +36,11 @@
                 <n-input v-model:value="downloader" :style="{ width: '50%' }" disabled /><n-button type="primary" @click="changePath('downloader')">Edit</n-button>
               </n-input-group>
             </n-collapse-item>
-            <n-collapse-item title="Shortcut" name="5">
+            <!-- <n-collapse-item title="Shortcut" name="5">
               <div>开启关闭 快捷键</div>
               <div>老板键</div>
               <div>快捷键</div>
-            </n-collapse-item>
+            </n-collapse-item> -->
             <n-collapse-item title="Exclude" name="6">
               <div class="exclude" v-if="filter">
                 <div class="left">
@@ -53,10 +53,10 @@
                 </div>
               </div>
             </n-collapse-item>
-            <n-collapse-item title="Password" name="7">
+            <!-- <n-collapse-item title="Password" name="7">
               <div>设置密码</div>
               <div>修改密码</div>
-            </n-collapse-item>
+            </n-collapse-item> -->
             <n-collapse-item title="Reset" name="11">
               <n-popconfirm
                 @positive-click="handleResetConfirm"

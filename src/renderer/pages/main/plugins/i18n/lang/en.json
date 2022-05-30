@@ -60,5 +60,17 @@
     "action": "Action",
     "play": "Play",
     "delete": "Delete"
+  },
+  "Settings": {
+    "settings": "Settings",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "zh-CN": "zh-CN",
+    "en-US": "en-US",
+    "externalPlayer": "External Player",
+    "externalDownloader": "External Downloader"
   }
 }
