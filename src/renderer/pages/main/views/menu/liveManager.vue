@@ -2,10 +2,10 @@
   <n-layout class="siteManager">
     <div class="header">
       <n-button @click="handleAddIptv">
-        <template #icon><n-icon size="20"><Add /></n-icon></template>Add
+        <template #icon><n-icon size="20"><Add /></n-icon></template>添加
       </n-button>
       <n-button @click="handleCheckAll">
-        <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>Check
+        <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>检查
       </n-button>
     </div>
     <div class="list">
@@ -63,19 +63,19 @@ const message = useMessage()
 const iptvList = ref([])
 const columns: TableBaseColumn<IpTv>[] = [
   {
-    title: 'Name',
+    title: '名称',
     key: 'name',
     width: 200
   },
   {
-    title: 'Note',
+    title: '备注',
     key: 'note',
     ellipsis: {
       tooltip: true
     }
   },
   {
-    title: 'Number',
+    title: '数量',
     key: 'list.length',
     width: 140,
     ellipsis: {
@@ -83,7 +83,7 @@ const columns: TableBaseColumn<IpTv>[] = [
     }
   },
   {
-    title: 'Active',
+    title: '启用',
     key: 'active',
     width: 140,
     render (row: IpTv) {
@@ -91,15 +91,15 @@ const columns: TableBaseColumn<IpTv>[] = [
     }
   },
   {
-    title: 'Operator',
+    title: '操作',
     key: 'key',
     width: 300,
     render (row: IpTv) {
       return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleTop(row) }, { default: () => 'Top' }),
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleEdit(row) }, { default: () => 'Edit' }),
-        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleCheck(row) }, { default: () => 'Check' }),
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleDelete(row) }, { default: () => 'Delete' })
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleTop(row) }, { default: () => '置顶' }),
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleEdit(row) }, { default: () => '编辑' }),
+        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleCheck(row) }, { default: () => '检查' }),
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleDelete(row) }, { default: () => '删除' })
       ])
     }
   }

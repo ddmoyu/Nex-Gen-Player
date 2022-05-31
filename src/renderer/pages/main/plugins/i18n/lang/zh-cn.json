@@ -72,5 +72,17 @@
     "en-US": "英文",
     "externalPlayer": "第三方播放器",
     "externalDownloader": "第三方下载器"
+  },
+  "SiteManager": {
+    "update": "更新",
+    "add": "新增",
+    "import": "导入",
+    "export": "导出",
+    "check": "检查",
+    "group": "分组",
+    "active": "启用",
+    "cancel": "取消",
+    "confirm": "确认",
+    "importonlineUrl": "导入在线的视频源合集地址"
   }
 }

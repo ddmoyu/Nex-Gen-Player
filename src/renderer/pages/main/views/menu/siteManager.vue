@@ -6,24 +6,24 @@
       </div>
       <div class="right">
         <n-button @click="handleUpdateSiteUrls" v-show="toggle">
-          <template #icon><n-icon size="20"><CloudDownloadOutline /></n-icon></template>Update
+          <template #icon><n-icon size="20"><CloudDownloadOutline /></n-icon></template>{{$t('SiteManager.update')}}
         </n-button>
         <n-button @click="handleAddSiteUrl" v-show="toggle">
-          <template #icon><n-icon size="20"><Add /></n-icon></template>Add
+          <template #icon><n-icon size="20"><Add /></n-icon></template>{{$t('SiteManager.add')}}
         </n-button>
         <n-button @click="handleAddSite" v-show="!toggle">
-          <template #icon><n-icon size="20"><Add /></n-icon></template>Add
+          <template #icon><n-icon size="20"><Add /></n-icon></template>{{$t('SiteManager.add')}}
         </n-button>
         <n-dropdown :options="importOptions" placement="bottom-end" @select="handleImportSelect">
           <n-button v-show="!toggle">
-            <n-icon size="20"><ArrowDown /></n-icon>Import
+            <n-icon size="20"><ArrowDown /></n-icon>{{$t('SiteManager.import')}}
           </n-button>
         </n-dropdown>
         <n-button @click="handleExport" v-show="!toggle">
-          <template #icon><n-icon size="20"><ArrowUp /></n-icon></template>Export
+          <template #icon><n-icon size="20"><ArrowUp /></n-icon></template>{{$t('SiteManager.export')}}
         </n-button>
         <n-button @click="handleCheckAll">
-          <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>Check
+          <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>{{$t('SiteManager.check')}}
         </n-button>
       </div>
     </div>
@@ -66,18 +66,18 @@
             <n-form-item label="Jiexi" path="jiexi">
               <n-input v-model:value="site.jiexi" placeholder="Jiexi" />
             </n-form-item>
-            <n-form-item label="Group" path="group">
+            <n-form-item :label="$t('SiteManager.group')" path="group">
               <n-select v-model:value="site.group" :options="groupOptions" filterable tag />
             </n-form-item>
-            <n-form-item label="Active" path="isActive">
+            <n-form-item :label="$t('SiteManager.active')" path="isActive">
               <n-switch v-model:value="site.isActive" />
             </n-form-item>
           </n-form>
         </n-spin>
         <template #footer>
           <div class="btns" style="display: flex; justify-content: flex-end;">
-            <n-button @click="handleFormCancel">cancel</n-button>
-            <n-button @click="handleFormConfirm" style="margin-left: 10px">confirm</n-button>
+            <n-button @click="handleFormCancel">{{$t('SiteManager.cancel')}}</n-button>
+            <n-button @click="handleFormConfirm" style="margin-left: 10px">{{$t('SiteManager.confirm')}}</n-button>
           </div>
         </template>
       </n-card>
@@ -85,7 +85,7 @@
     <n-modal v-model:show="onlineShow">
       <n-card style="width: 500px" role="dialog" aria-modal="true">
         <template #header>
-          Import from online json url
+          {{$t('SiteManager.importonlineUrl')}}
         </template>
         <n-spin :show="checking">
           <n-form ref="formRef" :model="site" label-placement="left" label-width="auto">
@@ -96,8 +96,8 @@
         </n-spin>
         <template #footer>
           <div class="btns" style="display: flex; justify-content: flex-end;">
-            <n-button @click="handleJsonCancel">cancel</n-button>
-            <n-button @click="handleJsonConfirm" style="margin-left: 10px">confirm</n-button>
+            <n-button @click="handleJsonCancel">{{$t('SiteManager.cancel')}}</n-button>
+            <n-button @click="handleJsonConfirm" style="margin-left: 10px">{{$t('SiteManager.confirm')}}</n-button>
           </div>
         </template>
       </n-card>
@@ -156,7 +156,7 @@ const siteUrlType = ref('add')
 const siteItem = ref()
 const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
   {
-    title: 'Name',
+    title: '名称',
     key: 'name',
     ellipsis: {
       tooltip: true
@@ -170,7 +170,7 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     }
   },
   {
-    title: 'State',
+    title: '状态',
     key: 'state',
     width: 100,
     render (row: SiteUrlsType) {
@@ -178,7 +178,7 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     }
   },
   {
-    title: 'Active',
+    title: '启用',
     key: 'active',
     width: 100,
     render (row: SiteUrlsType) {
@@ -186,17 +186,18 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     }
   },
   {
-    title: 'Operator',
+    title: '操作',
     key: 'url',
     width: 240,
     render (row: SiteUrlsType) {
       return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
         row.url !== 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json'
-          ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsEdit(row) }, { default: () => 'Edit' })
-          : h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleUpdateSingleSiteUrls(row) }, { default: () => 'Update' }),
-        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsCheck(row) }, { default: () => 'Check' }),
+          ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsEdit(row) }, { default: () => '编辑' })
+          : '',
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleUpdateSingleSiteUrls(row) }, { default: () => '更新' }),
+        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsCheck(row) }, { default: () => '检查' }),
         row.url !== 'https://nfm-blu-ray.naifeimi.com/upload/jsonapi/naifeimiapi.json'
-          ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsDelete(row) }, { default: () => 'Delete' })
+          ? h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleSiteUrlsDelete(row) }, { default: () => '删除' })
           : ''
       ])
     }
@@ -316,14 +317,14 @@ async function handleSiteUrlsDelete (item: SiteUrlsType) {
 const siteList = ref([])
 const columns: TableBaseColumn<Site>[] = [
   {
-    title: 'Name',
+    title: '名称',
     key: 'name',
     ellipsis: {
       tooltip: true
     }
   },
   {
-    title: 'Group',
+    title: '分组',
     key: 'group',
     width: 100,
     ellipsis: {
@@ -331,7 +332,7 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: 'jiexi',
+    title: '解析',
     key: 'jiexi',
     width: 60,
     render (row: Site) {
@@ -339,7 +340,7 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: 'State',
+    title: '状态',
     key: 'state',
     width: 100,
     render (row: Site) {
@@ -347,7 +348,7 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: 'Active',
+    title: '启用',
     key: 'isActive',
     width: 100,
     render (row: Site) {
@@ -355,26 +356,26 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: 'Operator',
+    title: '操作',
     key: 'key',
     width: 300,
     render (row: Site) {
       return h('div', { style: { display: 'flex', alignItems: 'center' } }, [
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleTop(row) }, { default: () => 'Top' }),
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleEdit(row) }, { default: () => 'Edit' }),
-        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleCheck(row) }, { default: () => 'Check' }),
-        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleDelete(row) }, { default: () => 'Delete' })
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleTop(row) }, { default: () => '置顶' }),
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleEdit(row) }, { default: () => '编辑' }),
+        h(NButton, { loading: handleBtnLoading(row.loading), style: { marginRight: '6px' }, size: 'small', onClick: () => handleCheck(row) }, { default: () => '检查' }),
+        h(NButton, { style: { marginRight: '6px' }, size: 'small', onClick: () => handleDelete(row) }, { default: () => '删除' })
       ])
     }
   }
 ]
 const importOptions = ref([
   {
-    label: 'Online JSON',
+    label: '在线JSON地址',
     key: 'online'
   },
   {
-    label: 'Local JSON',
+    label: '本地JSON文件',
     key: 'local'
   }
 ])

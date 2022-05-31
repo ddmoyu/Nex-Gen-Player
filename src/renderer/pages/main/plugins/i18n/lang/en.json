@@ -72,5 +72,17 @@
     "en-US": "en-US",
     "externalPlayer": "External Player",
     "externalDownloader": "External Downloader"
+  },
+  "SiteManager": {
+    "update": "Update",
+    "add": "Add",
+    "import": "Import",
+    "export": "Export",
+    "check": "Check",
+    "group": "Group",
+    "active": "Active",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "importonlineUrl": "Import from online json url"
   }
 }
