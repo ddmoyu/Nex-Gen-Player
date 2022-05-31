@@ -1,6 +1,8 @@
 {
   "name": "nexgenplayer",
   "version": "0.1.0-alpha.2",
+  "description": "Nex-Gen Player",
+  "author": "ddmoyu",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

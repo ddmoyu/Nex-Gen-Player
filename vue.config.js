@@ -16,36 +16,38 @@ module.exports = {
         preload: 'src/preload/index.ts'
       },
       builderOptions: {
-        oneClick: false,
-        allowToChangeInstallationDirectory: true
-      },
-      appId: 'com.nexgen.player',
-      copyright: 'ddmoyu',
-      productName: 'Nex-Gen Player',
-      publish: [
-        {
-          provide: 'github',
-          owner: 'ddmoyu',
-          repo: 'Nex-Gen-Player'
+        nsis: {
+          oneClick: false,
+          allowToChangeInstallationDirectory: true
+        },
+        appId: 'com.nexgen.player',
+        copyright: 'Copyright @ 2022 ddmoyu',
+        productName: 'Nex-Gen Player',
+        // publish: [
+        //   {
+        //     provide: 'github',
+        //     owner: 'ddmoyu',
+        //     repo: 'Nex-Gen-Player'
+        //   }
+        // ],
+        mac: {
+          icon: 'build/icon/icon.icns',
+          category: 'public.app-category.developer-tools',
+          target: 'default',
+          extendInfo: {
+            LSUIElement: 1
+          }
+        },
+        win: {
+          icon: 'build/icons/icon.ico',
+          target: 'nsis'
+        },
+        linux: {
+          icon: 'build/icons/'
+        },
+        snap: {
+          publish: ['github']
         }
-      ],
-      mac: {
-        icon: 'build/icon/icon.icns',
-        category: 'public.app-category.developer-tools',
-        target: 'default',
-        extendInfo: {
-          LSUIElement: 1
-        }
-      },
-      win: {
-        icon: 'build/icons/icon.ico',
-        target: 'nsis'
-      },
-      linux: {
-        icon: 'build/icons/'
-      },
-      snap: {
-        publish: ['github']
       }
     }
   },

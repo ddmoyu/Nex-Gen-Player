@@ -9,7 +9,6 @@ declare module 'vue' {
     Footer: typeof import('./../renderer/components/Footer.vue')['default']
     Frame: typeof import('./../renderer/components/Frame.vue')['default']
     MasonryLayout: typeof import('./../renderer/components/MasonryLayout.vue')['default']
-    NBadge: typeof import('naive-ui')['NBadge']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
     NCollapse: typeof import('naive-ui')['NCollapse']
