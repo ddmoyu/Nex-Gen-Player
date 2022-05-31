@@ -1,22 +1,22 @@
 <template>
   <div class="settings">
-    <div class="header">Settings</div>
+    <div class="header">{{$t('Settings.settings')}}</div>
     <n-divider />
     <div class="main">
       <div class="wrapper">
         <n-scrollbar>
           <n-collapse :accordion="true" :default-expanded-names="['0']">
-            <n-collapse-item title="Theme" name="1">
+            <n-collapse-item :title="$t('Settings.theme')" name="1">
               <n-radio-group v-model:value="theme" @change="changeTheme">
-                <n-radio-button :value="'light'" label="light" />
-                <n-radio-button :value="'dark'" label="dark" />
-                <n-radio-button :value="'system'" label="system" />
+                <n-radio-button :value="'light'" :label="$t('Settings.light')" />
+                <n-radio-button :value="'dark'" :label="$t('Settings.dark')" />
+                <n-radio-button :value="'system'" :label="$t('Settings.system')" />
               </n-radio-group>
             </n-collapse-item>
-            <n-collapse-item title="Language" name="2">
+            <n-collapse-item :title="$t('Settings.language')" name="2">
               <n-radio-group v-model:value="language" @change="changeLanguage">
-                <n-radio-button :value="'zh-CN'" label="zh-CN" />
-                <n-radio-button :value="'en-US'" label="en-US" />
+                <n-radio-button :value="'zh-CN'" :label="$t('Settings.zh-CN')" />
+                <n-radio-button :value="'en-US'" :label="$t('Settings.en-US')" />
               </n-radio-group>
             </n-collapse-item>
             <!-- <n-collapse-item title="Play" name="9">
@@ -26,12 +26,12 @@
               <div>开启关闭 记录窗口位置</div>
               <div>开启关闭 记录窗口大小</div>
             </n-collapse-item> -->
-            <n-collapse-item title="External Player" name="3">
+            <n-collapse-item :title="$t('Settings.externalPlayer')" name="3">
               <n-input-group>
                 <n-input v-model:value="player" :style="{ width: '50%' }" disabled /><n-button type="primary" @click="changePath('player')">Edit</n-button>
               </n-input-group>
             </n-collapse-item>
-            <n-collapse-item title="External Downloader" name="4">
+            <n-collapse-item :title="$t('Settings.externalDownloader')" name="4">
               <n-input-group>
                 <n-input v-model:value="downloader" :style="{ width: '50%' }" disabled /><n-button type="primary" @click="changePath('downloader')">Edit</n-button>
               </n-input-group>
