@@ -7,7 +7,12 @@
   "history": "History",
   "download": "Download",
   "notifications": "Notifications",
-  "menu": "Menu",
+  "menu": {
+    "settings": "Settings",
+    "siteManager": "Site Manager",
+    "liveManager": "Live Manager",
+    "about": "About"
+  },
   "Discovery": {
     "searchAllSites": "Search all sites",
     "importSites": "Import Sites",

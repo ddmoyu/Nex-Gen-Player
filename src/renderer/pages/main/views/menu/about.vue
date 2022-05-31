@@ -13,9 +13,9 @@
           <n-button text @click="linkOpen('https://github.com/ddmoyu/tv/discussions')">常见问题</n-button>
           <n-button text @click="linkOpen('https://support.qq.com/product/408964')">问题反馈</n-button>
         </div>
-        <div class="donate">
+        <!-- <div class="donate">
           捐助
-        </div>
+        </div> -->
         <div class="disclaimers">
           所有资源来自网上, 该软件不参与任何制作, 上传, 储存等内容, 禁止传播违法资源. 该软件仅供学习参考, 请于安装后24小时内删除.
         </div>
