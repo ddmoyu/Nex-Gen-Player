@@ -5,7 +5,7 @@
         <div class="logo">
           <img src="../../../../assets/logo.png" alt="">
         </div>
-        <div class="name">Nex-Gen Player 次时代播放器 <span>v0.1.0-beta.1</span></div>
+        <div class="name">Nex-Gen Player 次时代播放器 <span>v{{pkg.version}}</span></div>
         <div class="link">
           <n-button text @click="linkOpen('https://github.com/ddmoyu/tv')">官网</n-button>
           <n-button text @click="linkOpen('https://github.com/ddmoyu/tv')">Github</n-button>
@@ -25,6 +25,7 @@
 </template>
 <script lang="ts" setup>
 import { IpcDirective } from '@/main/ipcEnum'
+import pkg from '../../../../../../package.json'
 function linkOpen (url: string) {
   window.ipc.invoke(IpcDirective.SHELL, { url })
 }
