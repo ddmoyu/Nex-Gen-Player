@@ -3,21 +3,19 @@
     <div class="header">
       <n-space vertical>
         <n-space justify="space-between">
-          <n-space>
+          <n-space v-if="!iptv">
             <n-popover trigger="hover" placement="right">
               <template #trigger>
-                <n-button tertiary type="primary" @click="handleManager" v-if="!iptv"><n-icon size="22"><Build /></n-icon></n-button>
+                <n-button tertiary type="primary" @click="handleManager"><n-icon size="22"><Build /></n-icon></n-button>
               </template>
               <span>{{ $t("Iptv.iptvManager") }}</span>
             </n-popover>
-            <n-select v-if="iptv || iptv === 0" v-model:value="iptv" :options="iptvList" @update:value="getTvList"></n-select>
-            <n-button v-if="iptv || iptv === 0" tertiary type="primary" @click="handleRefresh">
-              <n-icon size="22">
-                <RefreshCircle />
-              </n-icon>
-            </n-button>
           </n-space>
-          <n-input v-if="iptv" placeholder="Search" clearable v-model:value="value" @input="handleInput">
+          <n-space v-if="iptv">
+            <n-select v-model:value="iptv" :options="iptvList" @update:value="getTvList"></n-select>
+            <n-button tertiary type="primary" @click="handleRefresh"><n-icon size="22"><RefreshCircle /></n-icon></n-button>
+          </n-space>
+          <n-input placeholder="Search" clearable v-model:value="value" @input="handleInput">
             <template #suffix>
               <n-icon><Search /></n-icon>
             </template>
@@ -53,7 +51,7 @@ import { useI18n } from 'vue-i18n'
 const router = useRouter()
 const { t } = useI18n()
 
-const iptv = ref()
+const iptv = ref(0)
 const iptvList = ref([])
 const iptvRaw = ref([])
 
@@ -122,11 +120,13 @@ onMounted(() => {
 
 async function getIptvList () {
   const res = await db.all('iptv')
+  iptvList.value = []
   if (res.length) {
     iptvRaw.value = res
     const arr = []
     for (const i of res) {
       arr.push({ label: i.name, value: i.id })
+      // iptvList.value.push({ label: i.name, value: i.id })
     }
     iptvList.value = arr
     iptv.value = res[0].id

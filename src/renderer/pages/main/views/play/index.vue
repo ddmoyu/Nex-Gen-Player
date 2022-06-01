@@ -457,6 +457,7 @@ onMounted(() => {
   padding: 0 10px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   .header{
     height: 40px;
     display: flex;

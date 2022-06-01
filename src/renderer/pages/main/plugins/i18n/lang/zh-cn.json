@@ -7,7 +7,12 @@
   "history": "历史",
   "download": "下载",
   "notifications": "公告",
-  "menu": "菜单",
+  "menu": {
+    "settings": "设置",
+    "siteManager": "视频源管理",
+    "liveManager": "直播源管理",
+    "about": "关于"
+  },
   "Discovery": {
     "searchAllSites": "搜素所有视频源",
     "importSites": "导入视频源",

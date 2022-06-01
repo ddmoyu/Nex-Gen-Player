@@ -116,7 +116,7 @@
           <Register></Register>
         </n-modal>
       </div> -->
-      <n-popover trigger="hover" placement="right">
+      <!-- <n-popover trigger="hover" placement="right">
         <template #trigger>
           <n-button quaternary circle type="primary" size="large">
             <n-icon size="20">
@@ -126,57 +126,38 @@
           </n-button>
         </template>
         <span>{{ $t("notifications") }}</span>
-      </n-popover>
+      </n-popover> -->
       <n-popover trigger="hover" placement="right-end">
         <template #trigger>
           <n-button
             circle
             type="primary"
             size="large"
-            :quaternary="
-              !['settings', 'siteManager', 'liveManager'].includes(active)
-            "
-            :dashed="
-              ['settings', 'siteManager', 'liveManager'].includes(active)
-            "
-          >
-            <n-icon size="20">
-              <Menu />
-            </n-icon>
+            :quaternary="!['settings', 'siteManager', 'liveManager'].includes(active)"
+            :dashed="['settings', 'siteManager', 'liveManager'].includes(active)">
+            <n-icon size="20"><Menu /></n-icon>
           </n-button>
         </template>
         <template #default>
-          <n-button @click="goView('settings')" text
-            ><template #icon>
-              <n-icon size="16">
-                <Settings />
-              </n-icon> </template
-            >Settings</n-button
-          >
+          <n-button @click="goView('settings')" text>
+            <template #icon><n-icon size="16"><Settings /></n-icon></template>
+            {{$t('menu.settings')}}
+          </n-button>
           <div style="height: 10px"></div>
-          <n-button @click="goView('siteManager')" text
-            ><template #icon>
-              <n-icon size="16">
-                <ConstructOutline />
-              </n-icon> </template
-            >Site Manager</n-button
-          >
+          <n-button @click="goView('siteManager')" text>
+            <template #icon><n-icon size="16"><ConstructOutline /></n-icon></template>
+            {{$t('menu.siteManager')}}
+          </n-button>
           <div style="height: 10px"></div>
-          <n-button @click="goView('liveManager')" text
-            ><template #icon>
-              <n-icon size="16">
-                <Build />
-              </n-icon> </template
-            >Live Manager</n-button
-          >
+          <n-button @click="goView('liveManager')" text>
+            <template #icon><n-icon size="16"><Build /></n-icon></template>
+            {{$t('menu.liveManager')}}
+          </n-button>
           <div style="height: 10px"></div>
-          <n-button @click="goView('about')" text
-            ><template #icon>
-              <n-icon size="16">
-                <WaterOutline />
-              </n-icon> </template
-            >About</n-button
-          >
+          <n-button @click="goView('about')" text>
+            <template #icon><n-icon size="16"><WaterOutline /></n-icon></template>
+            {{$t('menu.about')}}
+          </n-button>
         </template>
       </n-popover>
     </div>

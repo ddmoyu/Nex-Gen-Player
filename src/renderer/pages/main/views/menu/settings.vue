@@ -41,7 +41,7 @@
               <div>老板键</div>
               <div>快捷键</div>
             </n-collapse-item> -->
-            <n-collapse-item title="Exclude" name="6">
+            <n-collapse-item title="过滤" name="6">
               <div class="exclude" v-if="filter">
                 <div class="left">
                   <div class="toggle">过滤分类：<n-switch v-model:value="filter.classToggle" :round="false" @update:value="handleFilterChange" /></div>
@@ -57,7 +57,7 @@
               <div>设置密码</div>
               <div>修改密码</div>
             </n-collapse-item> -->
-            <n-collapse-item title="Reset" name="11">
+            <n-collapse-item title="重置" name="11">
               <n-popconfirm
                 @positive-click="handleResetConfirm"
                 positive-text="确认"
