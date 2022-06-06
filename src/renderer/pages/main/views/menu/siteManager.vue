@@ -139,6 +139,7 @@ import { cloneDeep, sortBy, uniqBy } from 'lodash'
 import { checkApi, getOnlineJSON } from '@/renderer/utils/movie'
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 import { SiteUrlsType } from '@/typings/video'
+import { GenIterator } from '@/renderer/utils/iterator/GenIterator'
 
 const message = useMessage()
 const toggle = ref(false)
@@ -620,24 +621,29 @@ async function handleCheckAll () {
         await settingsDB.updateSetting({ siteUrls: cloneDeep(siteUrls.value) })
       })
     })
+    checkAll.value = false
+    message.info('检测完毕')
   } else {
-    await Promise.all(siteList.value.map(async site => {
+    const promiseArr = siteList.value.map(site => {
       site.loading = true
-      const flag = await checkApi(site.api)
-      site.state = flag
-      site.isActive = flag
-      site.loading = false
-      await db.update('sites', site.id, site)
-    })).finally(() => {
-      siteList.value.map(async site => {
-        site.loading = false
-        await db.update('sites', site.id, site)
-      })
+      return () => checkApi(site.api)
     })
-    await getSites()
+    const gen = new GenIterator()
+    gen.genIterator(promiseArr)
+    gen.run<boolean>((flag, index) => {
+      const site = siteList.value[index]
+      site.loading = false
+      if (!flag || flag !== site.flag) {
+        site.state = flag
+        site.isActive = flag
+        db.update('sites', site.id, site)
+      }
+    }, () => {
+      getSites()
+      checkAll.value = false
+      message.info('检测完毕')
+    })
   }
-  checkAll.value = false
-  message.info('检测完毕')
 }
 
 </script>
