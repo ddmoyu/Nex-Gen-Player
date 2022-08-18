@@ -1,17 +1,17 @@
 {
   "name": "nex-gen-player",
-  "version": "0.1.0",
+  "version": "0.1.20",
   "description": "Nex-Gen Player",
   "author": "ddmoyu",
   "private": true,
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "vite",
-    "bd": "vite build && electron-builder",
+    "bd": "vite build && electron-builder -p always",
     "build": "vue-tsc --noEmit && vite build",
     "bde": "vue-tsc --noEmit && vite build && electron-builder",
     "preview": "vite preview",
-    "release": "vite build && electron-builder -p always"
+    "release": "vite build && electron-builder"
   },
   "dependencies": {
     "@vueuse/components": "^9.1.0",

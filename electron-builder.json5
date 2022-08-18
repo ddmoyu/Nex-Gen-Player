@@ -8,8 +8,9 @@
   },
   files: ['dist'],
   mac: {
-    icon: 'build/icons/icon.ico',
+    icon: 'build/icons/512x512.ico',
     artifactName: '${productName}_${version}.${ext}',
+    category: 'public.app-category.developer-tools',
     target: ['dmg']
   },
   win: {
@@ -17,10 +18,14 @@
     target: [
       {
         target: 'nsis',
-        arch: ['x64']
+        arch: ['x64', 'ia32', 'arm64']
       }
     ],
     artifactName: '${productName}_${version}_${arch}.${ext}'
+  },
+  linux: {
+    icon: 'build/icons/256x256.png',
+    target: 'AppImage'
   },
   nsis: {
     oneClick: false,
