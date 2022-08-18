@@ -1,43 +1,33 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
-import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import { app } from 'electron'
 import win from './router'
-import { registerIpcEvent } from './events'
-import { registerShortcut, unregisterShortcut } from './shortcut/shortcut'
+import './events'
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } }
-])
+app.disableHardwareAcceleration()
+
+// app.on('ready', () => {
+//   win.open()
+// })
+
+app.whenReady().then(() => {
+  win.open()
+})
+
+app.on('second-instance', () => {
+  win.open()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    unregisterShortcut()
     app.quit()
   }
 })
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) win.open('main')
-})
-
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    try {
-      await installExtension(VUEJS3_DEVTOOLS)
-    } catch (err) {
-      console.error('Vue Devtools failed to install:', JSON.stringify(err))
-    }
-  }
-  win.open('main')
-  registerShortcut()
-  registerIpcEvent()
-  // autoUpdater.checkForUpdatesAndNotify()
-})
-
-if (isDevelopment) {
+const isDev = process.env.NODE_ENV !== 'production'
+if (isDev) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {

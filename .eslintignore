@@ -1,1 +1,2 @@
-/dist_electron
+node_modules
+dist/*

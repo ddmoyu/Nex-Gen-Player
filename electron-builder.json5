@@ -1,0 +1,31 @@
+{
+  productName: 'Nex-Gen Player',
+  appId: 'ddmoyu.nexgenplayer.app',
+  copyright: 'Copyright @ 2022 ddmoyu',
+  asar: true,
+  directories: {
+    output: 'release/${version}'
+  },
+  files: ['dist'],
+  mac: {
+    icon: 'build/icons/icon.ico',
+    artifactName: '${productName}_${version}.${ext}',
+    target: ['dmg']
+  },
+  win: {
+    icon: 'build/icons/icon.ico',
+    target: [
+      {
+        target: 'nsis',
+        arch: ['x64']
+      }
+    ],
+    artifactName: '${productName}_${version}_${arch}.${ext}'
+  },
+  nsis: {
+    oneClick: false,
+    perMachine: false,
+    allowToChangeInstallationDirectory: true,
+    deleteAppDataOnUninstall: true
+  }
+}

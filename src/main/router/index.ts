@@ -1,94 +1,67 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import WinConfig from './config'
+import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
+import { join } from 'path'
 
-class Router {
-  windows: Map<string, BrowserWindow>
-  windowSizeStatus:Map<string, boolean>
-  constructor () {
-    this.windows = new Map()
-    this.windowSizeStatus = new Map()
-  }
-
-  mini (name: string) {
-    const win = this.get(name)
-    win && win.minimize()
-  }
-
-  max (name: string) {
-    const status = this.windowSizeStatus.get(name)
-    const win = this.get(name)
-    if (!win) return
-    status ? win.unmaximize() : win.maximize()
-    this.windowSizeStatus.set(name, !status)
-  }
-
-  close (name?: string) {
-    const win = this.get(name)
-    win && win.close()
-  }
-
-  get (name?: string) {
-    return name ? this.windows.get(name) ? this.windows.get(name) : BrowserWindow.getFocusedWindow() : BrowserWindow.getFocusedWindow()
-  }
-
-  getIsMaximize (name:string) {
-    return this.windowSizeStatus.get(name)
-  }
-
-  getAll () {
-    return this.windows
-  }
-
-  closeAll () {
-    BrowserWindow.getAllWindows().forEach(win => {
-      win.close()
-    })
-    process.exit(0)
-  }
-
-  async open (name: string, config?: BrowserWindowConstructorOptions) {
-    const win = this.windows.get(name)
-    if (win) {
-      const isMax = this.windowSizeStatus.get(name)
-      isMax && win.restore()
-      win.focus()
-      return false
-    }
-
-    const nw = await createWindow(name, config)
-    this.windows.set(name, nw)
-    nw.on('close', () => {
-      nw && nw.hide()
-      this.windows.delete(name)
-      nw.destroy()
-    })
-
-    nw.once('ready-to-show', () => {
-      nw.show()
-    })
-
-    return nw
+const defaultConfig: BrowserWindowConstructorOptions = {
+  frame: false,
+  width: app.isPackaged ? 1280 : 1680,
+  height: 860,
+  autoHideMenuBar: true,
+  webPreferences: {
+    devTools: !app.isPackaged,
+    webSecurity: false,
+    contextIsolation: false,
+    nodeIntegration: true
   }
 }
 
-async function createWindow (name: string, config?: BrowserWindowConstructorOptions) {
-  const _config = Object.assign(WinConfig.default, WinConfig[name], config)
-  const devPath = name === 'index' ? '' : name
-
-  const win = new BrowserWindow(_config)
-
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + devPath)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
-    createProtocol('app')
-    await win.loadURL(`app://./${name}.html`)
+class Router {
+  // 【窗口】 最小化
+  public mini(): void {
+    const win = BrowserWindow.getFocusedWindow()
+    if (win) win.minimize()
   }
 
-  win.on('closed', () => { win.destroy() })
+  // 【窗口】 最大化
+  public max(): void {
+    const win = BrowserWindow.getFocusedWindow()
+    if (win) win.isMaximized() ? win.unmaximize() : win.maximize()
+  }
 
-  return win
+  // 【窗口】 关闭
+  public close(): void {
+    const win = BrowserWindow.getFocusedWindow()
+    if (win) win.close()
+  }
+
+  public async open(config?: BrowserWindowConstructorOptions): Promise<BrowserWindow> {
+    let win = BrowserWindow.getFocusedWindow()
+    if (win) {
+      win.isMaximized() ? win.unmaximize() : win.maximize()
+    } else {
+      win = await this.createWindow(config)
+    }
+    return win
+  }
+
+  private async createWindow(config?: BrowserWindowConstructorOptions): Promise<BrowserWindow> {
+    const _config = Object.assign(defaultConfig, config)
+    const win = new BrowserWindow(_config)
+
+    if (app.isPackaged) {
+      const filePath = join(__dirname, '../index.html')
+      win.loadFile(filePath)
+    } else {
+      const URL = process.env.VITE_DEV_SERVER_URL
+      await win.loadURL(`${URL}/index.html`)
+      win.webContents.openDevTools()
+    }
+
+    win.on('closed', () => {
+      win.destroy()
+    })
+
+    return win
+  }
 }
 
 export default new Router()

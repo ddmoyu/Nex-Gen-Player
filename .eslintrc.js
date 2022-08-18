@@ -1,32 +1,14 @@
 module.exports = {
-  root: true,
   env: {
+    browser: true,
+    es2021: true,
     node: true
   },
-  extends: [
-    'vue-global-api',
-    'plugin:vue/vue3-essential',
-    '@vue/standard',
-    '@vue/typescript/recommended'
-  ],
+  extends: ['plugin:vue/vue3-recommended', 'standard', 'plugin:prettier/recommended'],
   parserOptions: {
-    ecmaVersion: 2020
+    ecmaVersion: 'latest',
+    parser: '@typescript-eslint/parser'
   },
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    '@typescript-eslint/no-var-requires': 0,
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': ['off'],
-    '@typescript-eslint/no-non-null-assertion': 'off',
-    'no-useless-constructor': 'off',
-    '@typescript-eslint/ban-types':'off',
-    'camelcase': 'off'
-  },
-  globals: {
-    defineProps: 'readonly',
-    defineEmits: 'readonly',
-    defineExpose: 'readonly',
-    withDefaults: 'readonly',
-  }
+  plugins: ['vue', '@typescript-eslint'],
+  rules: {}
 }

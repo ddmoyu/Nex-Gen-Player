@@ -20,8 +20,8 @@
 </template>
 <script lang="ts" setup>
 import { Remove, Add, Close } from '@vicons/ionicons5'
-import { IpcDirective } from '@/main/ipcEnum'
 import { settingsDB } from '../utils/database/controller/settingsDB'
+import { ipcRenderer } from 'electron'
 
 const os = ref<string>('')
 
@@ -29,48 +29,43 @@ onMounted(() => {
   getOS()
 })
 
-async function getOS () {
+async function getOS() {
   const s = await settingsDB.getSetting('os')
-  if (!s) {
-    window.ipc.invoke(IpcDirective.SYS_OS)
-    window.ipc.once(IpcDirective.SYS_OS_REPLAY, (e, args) => {
-      os.value = args
-      settingsDB.updateSetting({ os: args })
-      window.ipc.removeAllListeners(IpcDirective.SYS_OS_REPLAY)
-    })
+  if (s) {
+    os.value = s
   } else {
-    // XXX: os type string
-    os.value = s as string
+    const sys = await ipcRenderer.invoke('event.os.sys')
+    settingsDB.updateSetting({ os: sys })
   }
 }
 
-function mini () {
-  window.ipc.invoke(IpcDirective.WIN_MINI)
+function mini() {
+  ipcRenderer.invoke('event.win.mini')
 }
-function maximize () {
-  window.ipc.invoke(IpcDirective.WIN_MAXIMIZE)
+function maximize() {
+  ipcRenderer.invoke('event.win.max')
 }
-function close () {
-  window.ipc.invoke(IpcDirective.WIN_CLOSE)
+function close() {
+  ipcRenderer.invoke('event.win.close')
 }
 </script>
 <style lang="scss" scoped>
-.frame{
+.frame {
   height: 40px;
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
   -webkit-app-region: drag;
-  button{
+  button {
     -webkit-app-region: no-drag;
   }
-  .mac{
+  .mac {
     position: absolute;
     left: 0;
     height: 40px;
     display: flex;
     align-items: center;
-    span{
+    span {
       display: inline-block;
       width: 14px;
       height: 14px;
@@ -79,13 +74,13 @@ function close () {
       margin-left: 10px;
       cursor: pointer;
     }
-    .close{
+    .close {
       background-color: #ff6057;
     }
-    .max{
+    .max {
       background-color: #ffbd2e;
     }
-    .min{
+    .min {
       background-color: #29c940;
     }
   }
