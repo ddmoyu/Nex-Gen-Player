@@ -3,7 +3,7 @@ name: release-build
 on:
   push:
     tags:
-      - v*
+      - v*.*.*
 
 jobs:
   release:
