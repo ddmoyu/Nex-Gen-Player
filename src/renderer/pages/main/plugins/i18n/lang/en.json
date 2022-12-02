@@ -39,7 +39,11 @@
     "language": "Language",
     "group": "Group",
     "action": "Action",
-    "play": "Play"
+    "play": "Play",
+    "active": "Active",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "note": "Note"
   },
   "Play": {
     "switchSite": "Switch Site",
@@ -88,6 +92,39 @@
     "active": "Active",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "importonlineUrl": "Import from online json url"
+    "importonlineUrl": "Import from online json url",
+    "key": "Key",
+    "edit": "Edit",
+    "name": "Name",
+    "country": "Country",
+    "language": "Language",
+    "action": "Action",
+    "play": "Play",
+    "note": "Note",
+    "jiexi": "Jiexi",
+    "state": "State"
+  },
+  "LiveManager": {
+    "update": "Update",
+    "add": "Add",
+    "length": "Length",
+    "import": "Import",
+    "export": "Export",
+    "check": "Check",
+    "group": "Group",
+    "active": "Active",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "importonlineUrl": "Import from online json url",
+    "key": "Key",
+    "edit": "Edit",
+    "name": "Name",
+    "country": "Country",
+    "language": "Language",
+    "action": "Action",
+    "play": "Play",
+    "note": "Note",
+    "jiexi": "Jiexi",
+    "state": "State"
   }
 }

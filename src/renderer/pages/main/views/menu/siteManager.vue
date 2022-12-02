@@ -50,21 +50,21 @@
     <n-modal v-model:show="addEdit">
       <n-card style="width: 500px" role="dialog" aria-modal="true">
         <template #header>
-          {{ site.type === 'add' ? 'Add' : 'Edit' }}
+          {{ site.type === 'add' ? $t('SiteManager.add') : $t('SiteManager.edit') }}
         </template>
         <n-spin :show="checking">
           <n-form ref="formRef" :model="site" label-placement="left" label-width="auto" :rules="rules">
-            <n-form-item label="Name" path="name">
-              <n-input v-model:value="site.name" placeholder="Name" />
+            <n-form-item :label="$t('SiteManager.name')" path="name">
+              <n-input v-model:value="site.name" :placeholder="$t('SiteManager.name')" />
             </n-form-item>
-            <n-form-item label="Key" path="key">
-              <n-input v-model:value="site.key" placeholder="Key" />
+            <n-form-item :label="$t('SiteManager.key')" path="key">
+              <n-input v-model:value="site.key" :placeholder="$t('SiteManager.key')" />
             </n-form-item>
             <n-form-item label="Api" path="api">
               <n-input v-model:value="site.api" placeholder="Api" />
             </n-form-item>
-            <n-form-item label="Jiexi" path="jiexi">
-              <n-input v-model:value="site.jiexi" placeholder="Jiexi" />
+            <n-form-item :label="$t('SiteManager.jiexi')" path="jiexi">
+              <n-input v-model:value="site.jiexi" :placeholder="$t('SiteManager.jiexi')" />
             </n-form-item>
             <n-form-item :label="$t('SiteManager.group')" path="group">
               <n-select v-model:value="site.group" :options="groupOptions" filterable tag />
@@ -140,8 +140,10 @@ import { checkApi, getOnlineJSON } from '@/renderer/utils/movie'
 import { settingsDB } from '@/renderer/utils/database/controller/settingsDB'
 import { SiteUrlsType } from '@/typings/video'
 import { GenIterator } from '@/renderer/utils/iterator/GenIterator'
+import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
+const { t } = useI18n()
 const toggle = ref(false)
 const checking = ref(false)
 
@@ -157,7 +159,7 @@ const siteUrlType = ref('add')
 const siteItem = ref()
 const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
   {
-    title: '名称',
+    title: t('SiteManager.name'),
     key: 'name',
     ellipsis: {
       tooltip: true
@@ -171,7 +173,7 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     }
   },
   {
-    title: '状态',
+    title: t('SiteManager.state'),
     key: 'state',
     width: 100,
     render (row: SiteUrlsType) {
@@ -179,7 +181,7 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     }
   },
   {
-    title: '启用',
+    title: t('SiteManager.active'),
     key: 'active',
     width: 100,
     render (row: SiteUrlsType) {
@@ -187,7 +189,7 @@ const siteUrlsCol: TableBaseColumn<SiteUrlsType>[] = [
     }
   },
   {
-    title: '操作',
+    title: t('SiteManager.action'),
     key: 'url',
     width: 240,
     render (row: SiteUrlsType) {
@@ -318,14 +320,14 @@ async function handleSiteUrlsDelete (item: SiteUrlsType) {
 const siteList = ref([])
 const columns: TableBaseColumn<Site>[] = [
   {
-    title: '名称',
+    title: t('SiteManager.name'),
     key: 'name',
     ellipsis: {
       tooltip: true
     }
   },
   {
-    title: '分组',
+    title: t('SiteManager.group'),
     key: 'group',
     width: 100,
     ellipsis: {
@@ -333,7 +335,7 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: '解析',
+    title: t('SiteManager.jiexi'),
     key: 'jiexi',
     width: 60,
     render (row: Site) {
@@ -341,7 +343,7 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: '状态',
+    title: t('SiteManager.state'),
     key: 'state',
     width: 100,
     render (row: Site) {
@@ -349,7 +351,7 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: '启用',
+    title: t('SiteManager.active'),
     key: 'isActive',
     width: 100,
     render (row: Site) {
@@ -357,7 +359,7 @@ const columns: TableBaseColumn<Site>[] = [
     }
   },
   {
-    title: '操作',
+    title: t('SiteManager.action'),
     key: 'key',
     width: 300,
     render (row: Site) {
