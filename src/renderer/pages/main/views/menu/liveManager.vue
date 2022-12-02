@@ -2,10 +2,10 @@
   <n-layout class="siteManager">
     <div class="header">
       <n-button @click="handleAddIptv">
-        <template #icon><n-icon size="20"><Add /></n-icon></template>添加
+        <template #icon><n-icon size="20"><Add /></n-icon></template>{{$t('SiteManager.add')}}
       </n-button>
       <n-button @click="handleCheckAll">
-        <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>检查
+        <template #icon><n-icon size="20"><ShieldCheckmarkOutline /></n-icon></template>{{$t('SiteManager.check')}}
       </n-button>
     </div>
     <div class="list">
@@ -21,28 +21,28 @@
     <n-modal v-model:show="addEdit">
       <n-card style="width: 500px" role="dialog" aria-modal="true">
         <template #header>
-          {{ iptv.type === 'add' ? 'Add' : 'Edit' }}
+          {{ iptv.type === 'add' ? $t('LiveManager.add') : $t('LiveManager.edit')}}
         </template>
         <n-spin :show="checking">
           <n-form ref="formRef" :model="iptv" label-placement="left" label-width="auto" :rules="rules">
-            <n-form-item label="Name" path="name">
-              <n-input v-model:value="iptv.name" placeholder="Name" />
+            <n-form-item :label="$t('LiveManager.name')" path="name">
+              <n-input v-model:value="iptv.name" :placeholder="$t('Iptv.name')" />
             </n-form-item>
             <n-form-item label="Url" path="url">
               <n-input v-model:value="iptv.url" placeholder="Url" />
             </n-form-item>
-            <n-form-item label="Note" path="note">
-              <n-input v-model:value="iptv.note" placeholder="Note" type="textarea" />
+            <n-form-item :label="$t('LiveManager.note')" path="note">
+              <n-input v-model:value="iptv.note" :placeholder="$t('Iptv.note')" type="textarea" />
             </n-form-item>
-            <n-form-item label="Active" path="isActive">
+            <n-form-item :label="$t('LiveManager.active')" path="isActive">
               <n-switch v-model:value="iptv.active" />
             </n-form-item>
           </n-form>
         </n-spin>
         <template #footer>
           <div class="btns" style="display: flex; justify-content: flex-end;">
-            <n-button @click="handleFormCancel">cancel</n-button>
-            <n-button @click="handleFormConfirm" style="margin-left: 10px">confirm</n-button>
+            <n-button @click="handleFormCancel">{{$t('LiveManager.cancel')}}</n-button>
+            <n-button @click="handleFormConfirm" style="margin-left: 10px">{{$t('LiveManager.confirm')}}</n-button>
           </div>
         </template>
       </n-card>
@@ -58,24 +58,26 @@ import { NButton, NSwitch, useMessage } from 'naive-ui'
 import { TableBaseColumn } from 'naive-ui/lib/data-table/src/interface'
 import { checkM3uUrl } from '@/renderer/utils/iptv'
 import { cloneDeep, sortBy } from 'lodash'
+import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
+const { t } = useI18n()
 const iptvList = ref([])
 const columns: TableBaseColumn<IpTv>[] = [
   {
-    title: '名称',
+    title: t('LiveManager.name'),
     key: 'name',
     width: 200
   },
   {
-    title: '备注',
+    title: t('LiveManager.note'),
     key: 'note',
     ellipsis: {
       tooltip: true
     }
   },
   {
-    title: '数量',
+    title: t('LiveManager.length'),
     key: 'list.length',
     width: 140,
     ellipsis: {
@@ -83,7 +85,7 @@ const columns: TableBaseColumn<IpTv>[] = [
     }
   },
   {
-    title: '启用',
+    title: t('LiveManager.active'),
     key: 'active',
     width: 140,
     render (row: IpTv) {
@@ -91,7 +93,7 @@ const columns: TableBaseColumn<IpTv>[] = [
     }
   },
   {
-    title: '操作',
+    title: t('LiveManager.action'),
     key: 'key',
     width: 300,
     render (row: IpTv) {
